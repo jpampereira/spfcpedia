@@ -1,0 +1,12 @@
+module.exports = {
+	db: {
+		host: '',
+		port: '',
+		database: '',
+		user: '',
+		password: ''
+	}
+}
+
+// File template
+// Create .env file to store database connection parameters
