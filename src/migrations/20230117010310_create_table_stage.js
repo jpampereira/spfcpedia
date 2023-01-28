@@ -4,7 +4,7 @@ exports.up = (knex) => {
   return knex.schema.createTable('stage', (table) => {
     table.increments('id').primary();
     table.string('name').notNull();
-    table.integer('tournament_id').references('id').inTable('tournament');
+    table.integer('tournament_id').references('id').inTable('tournament').notNull();
     table.timestamp('inserted_at').defaultTo(CURRENT_TIMESTAMP);
     table.timestamp('updated_at');
   });

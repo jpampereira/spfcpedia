@@ -7,11 +7,16 @@ exports.seed = (knex) => {
     .then(() => knex('city').del())
     .then(() => knex('country').del())
     .then(() => knex('tournament').insert([
-      { id: 10000, name: 'Paulistinha' },
+      { id: 10000, name: 'Campeonato Paulista' },
       { id: 10001, name: 'Campeonato Brasileiro' },
       { id: 10002, name: 'Copa do Brasil' },
+      { id: 10003, name: 'Copa Sul-Americana' },
     ]))
     .then(() => knex('stage').insert([
-      { id: 11000, name: 'Fase Única', tournament_id: 10001 },
+      { id: 11000, name: 'Primeira Fase', tournament_id: 10000 },
+      { id: 11001, name: 'Quartas de Final', tournament_id: 10000 },
+      { id: 11002, name: 'Semi Final', tournament_id: 10000 },
+      { id: 11003, name: 'Final', tournament_id: 10000 },
+      { id: 11004, name: 'Fase Única', tournament_id: 10001 },
     ]));
 };
