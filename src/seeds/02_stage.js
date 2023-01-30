@@ -18,5 +18,12 @@ exports.seed = (knex) => {
       { id: 11002, name: 'Semi Final', tournament_id: 10000 },
       { id: 11003, name: 'Final', tournament_id: 10000 },
       { id: 11004, name: 'Fase Única', tournament_id: 10001 },
+      { id: 11005, name: 'Primeira Fase', tournament_id: 10002 },
+      { id: 11006, name: 'Segunda Fase', tournament_id: 10002 },
+      { id: 11007, name: 'Terceira Fase', tournament_id: 10002 },
+      { id: 11008, name: 'Oitavas de Final', tournament_id: 10002 },
+      { id: 11009, name: 'Quartas de Final', tournament_id: 10002 },
+      { id: 11010, name: 'Semi Final', tournament_id: 10002 },
+      { id: 11011, name: 'Final', tournament_id: 10002 },
     ]));
 };

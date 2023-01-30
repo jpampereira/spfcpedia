@@ -1,12 +1,12 @@
 const request = require('supertest');
 
 const app = require('../../src/app');
-const execCommandInTerminal = require('../executeCommandInTerminal');
+const { run } = require('../seed');
 
 const MAIN_ROUTE = '/stage';
 
 beforeAll(() => {
-  execCommandInTerminal('.\\node_modules\\.bin\\knex seed:run --specific=02_stage.js');
+  run('02_stage');
 });
 
 test('Deve listar todas as fases de todos os campeonatos', () => {
@@ -42,18 +42,36 @@ test('Deve retornar todas as fases de um campeonato', () => {
 test('Deve inserir as fases de um campeonato com sucesso', () => {
   return request(app).post(MAIN_ROUTE)
     .send([
-      { name: 'Primeira Fase', tournament_id: 10002 },
-      { name: 'Segunda Fase', tournament_id: 10002 },
-      { name: 'Terceira Fase', tournament_id: 10002 },
-      { name: 'Oitavas de Final', tournament_id: 10002 },
-      { name: 'Quartas de Final', tournament_id: 10002 },
-      { name: 'Semi Final', tournament_id: 10002 },
-      { name: 'Final', tournament_id: 10002 },
+      { name: 'Primeira Fase', tournament_id: 10003 },
+      { name: 'Fase de Grupos', tournament_id: 10003 },
+      { name: 'Playoffs de Oitavas de Final', tournament_id: 10003 },
     ])
     .then((res) => {
       expect(res.status).toBe(201);
-      expect(res.body.length).toBe(7);
+      expect(res.body.length).toBe(3);
     });
+});
+
+describe('Não deve inserir uma fase...', () => {
+  const testTemplate = (data, errorMessage) => {
+    return request(app).post(MAIN_ROUTE)
+      .send(data)
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe(errorMessage);
+      });
+  };
+
+  const newData = [
+    { name: 'Oitavas de Final', tournament_id: 10003 },
+    { name: 'Quartas de Final', tournament_id: 10003 },
+    { name: 'Semi Final', tournament_id: 10003 },
+  ];
+
+  test('sem o atributo name', () => testTemplate([...newData, { tournament_id: 10003 }], 'Nome é um atributo obrigatório'));
+  test('sem o atributo tournament_id', () => testTemplate([...newData, { name: 'Final' }], 'ID do campeonato é um atributo obrigatório'));
+  test('de um campeonato não cadastrado', () => testTemplate([...newData, { name: 'Final', tournament_id: 10004 }], 'ID do campeonato inexistente'));
+  test('cujo campeonato já possui outra fase com esse nome cadastrado', () => testTemplate([...newData, { name: 'Playoffs de Oitavas de Final', tournament_id: 10003 }], 'O campeonato já possui uma fase com esse nome'));
 });
 
 test('Deve atualizar uma fase com sucesso', () => {
@@ -62,6 +80,21 @@ test('Deve atualizar uma fase com sucesso', () => {
     .then((res) => {
       expect(res.status).toBe(204);
     });
+});
+
+describe('Não deve atualizar a fase...', () => {
+  const testTemplate = (id, data, errorMessage) => {
+    return request(app).put(`${MAIN_ROUTE}/${id}`)
+      .send(data)
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe(errorMessage);
+      });
+  };
+
+  test('de ID não encontrado', () => testTemplate(11012, { name: 'Semi Final', tournament_id: 10002 }, 'Fase não cadastrada'));
+  test('para um campeonato inexistente', () => testTemplate(11011, { tournament_id: 10004 }, 'ID do campeonato inexistente'));
+  test('cujo campeonato já possui outra fase com esse nome cadastrado', () => testTemplate(11011, { name: 'Semi Final' }, 'O campeonato já possui uma fase com esse nome'));
 });
 
 test('Deve remover uma fase com sucesso', () => {

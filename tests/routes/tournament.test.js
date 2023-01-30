@@ -1,12 +1,12 @@
 const request = require('supertest');
 
 const app = require('../../src/app');
-const execCommandInTerminal = require('../executeCommandInTerminal');
+const { run } = require('../seed');
 
 const MAIN_ROUTE = '/tournament';
 
 beforeAll(() => {
-  execCommandInTerminal('.\\node_modules\\.bin\\knex seed:run --specific=01_tournament.js');
+  run('01_tournament');
 });
 
 test('Deve listar todos os campeonatos', () => {
@@ -29,20 +29,32 @@ test('Deve retornar um campeonato pelo Id', () => {
 
 test('Deve inserir um campeonato com sucesso', () => {
   return request(app).post(MAIN_ROUTE)
-    .send({ name: 'Copa Sul-Americana' })
+    .send([
+      { name: 'Copa Sul-Americana' },
+      { name: 'Copa Libertadores da América' },
+    ])
     .then((res) => {
       expect(res.status).toBe(201);
-      expect(res.body.length).toBe(1);
+      expect(res.body.length).toBe(2);
     });
 });
 
-test('Não deve inserir dois campeonatos com o mesmo nome', () => {
-  return request(app).post(MAIN_ROUTE)
-    .send({ name: 'Copa Sul-Americana' })
-    .then((res) => {
-      expect(res.status).toBe(400);
-      expect(res.body.error).toBe('Já existe um campeonato com esse nome');
-    });
+describe('Não deve inserir um campeonato...', () => {
+  const testTemplate = (data, errorMessage) => {
+    return request(app).post(MAIN_ROUTE)
+      .send(data)
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe(errorMessage);
+      });
+  };
+
+  const newData = [
+    { name: 'Mundial de Clubes' },
+  ];
+
+  test('sem o atributo name', () => testTemplate([...newData, {}], 'Nome é um atributo obrigatório'));
+  test('se o mesmo já estiver cadastrado', () => testTemplate([...newData, { name: 'Campeonato Brasileiro' }], 'Já existe um campeonato com esse nome'));
 });
 
 test('Deve atualizar um campeonato com sucesso', () => {
@@ -53,13 +65,18 @@ test('Deve atualizar um campeonato com sucesso', () => {
     });
 });
 
-test('Não deve atualizar um campeonato para um nome já existente', () => {
-  return request(app).put(`${MAIN_ROUTE}/10001`)
-    .send({ name: 'Campeonato Paulista' })
-    .then((res) => {
-      expect(res.status).toBe(400);
-      expect(res.body.error).toBe('Já existe um campeonato com esse nome');
-    });
+describe('Não deve atualizar um campeonato...', () => {
+  const testTemplate = (id, data, errorMessage) => {
+    return request(app).put(`${MAIN_ROUTE}/${id}`)
+      .send(data)
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe(errorMessage);
+      });
+  };
+
+  test('de ID não encontrado', () => testTemplate(10004, { name: 'Copa do Brasil' }, 'Campeonato não cadastrado'));
+  test('se o mesmo já estiver cadastrado', () => testTemplate(10001, { name: 'Copa do Brasil' }, 'Já existe um campeonato com esse nome'));
 });
 
 test('Deve remover um campeonato com sucesso', () => {

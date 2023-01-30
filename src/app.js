@@ -7,6 +7,7 @@ app.db = db;
 
 consign({ cwd: 'src', verbose: false })
   .include('./configs/middlewares.js')
+  .then('./errors/validator.js')
   .then('./services')
   .then('./routes')
   .then('./configs/router.js')
