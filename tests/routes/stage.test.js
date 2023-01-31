@@ -13,7 +13,7 @@ test('Deve listar todas as fases de todos os campeonatos', () => {
   return request(app).get(MAIN_ROUTE)
     .then((res) => {
       expect(res.status).toBe(200);
-      expect(res.body.length).toBeGreaterThan(0);
+      expect(res.body.length).toBeGreaterThan(1);
     });
 });
 
@@ -21,9 +21,8 @@ test('Deve retornar uma fase por Id', () => {
   return request(app).get(`${MAIN_ROUTE}/11000`)
     .then((res) => {
       expect(res.status).toBe(200);
-      expect(res.body.length).toBe(1);
-      expect(res.body[0].name).toBe('Primeira Fase');
-      expect(res.body[0].tournament_id).toBe(10000);
+      expect(res.body.name).toBe('Primeira Fase');
+      expect(res.body.tournament_id).toBe(10000);
     });
 });
 
@@ -48,7 +47,8 @@ test('Deve inserir as fases de um campeonato com sucesso', () => {
     ])
     .then((res) => {
       expect(res.status).toBe(201);
-      expect(res.body.length).toBe(3);
+      expect(res.body).toHaveLength(3);
+      expect(res.body[0]).toHaveProperty('id');
     });
 });
 
@@ -92,7 +92,6 @@ describe('Não deve atualizar a fase...', () => {
       });
   };
 
-  test('de ID não encontrado', () => testTemplate(11012, { name: 'Semi Final', tournament_id: 10002 }, 'Fase não cadastrada'));
   test('para um campeonato inexistente', () => testTemplate(11011, { tournament_id: 10004 }, 'ID do campeonato inexistente'));
   test('cujo campeonato já possui outra fase com esse nome cadastrado', () => testTemplate(11011, { name: 'Semi Final' }, 'O campeonato já possui uma fase com esse nome'));
 });

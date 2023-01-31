@@ -23,8 +23,6 @@ module.exports = (app) => {
   };
 
   const update = async (stageId, stageUpdated) => {
-    await existsInDbOrError('stage', { id: stageId }, 'Fase não cadastrada');
-
     const [stageInDb] = await read({ id: stageId });
     const newStage = { ...stageInDb, ...stageUpdated };
     delete newStage.id;

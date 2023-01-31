@@ -14,10 +14,10 @@ module.exports = (app) => {
     return app.db('opponent').insert(newOpponents, ['id', 'name']);
   };
 
-  const update = async (opponentId, opponentUpdated) => {
-    await notExistsInDbOrError('opponent', { name: opponentUpdated.name }, 'Adversário já cadastrado');
+  const update = async (opponentId, updatedOpponent) => {
+    await notExistsInDbOrError('opponent', { name: updatedOpponent.name }, 'Adversário já cadastrado');
 
-    const newOpponent = { ...opponentUpdated, updated_at: 'now' };
+    const newOpponent = { ...updatedOpponent, updated_at: 'now' };
 
     return app.db('opponent').update(newOpponent).where({ id: opponentId });
   };

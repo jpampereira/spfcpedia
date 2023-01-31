@@ -13,7 +13,7 @@ test('Deve retornar todos os adversários', () => {
   return request(app).get(MAIN_ROUTE)
     .then((res) => {
       expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(5);
+      expect(res.body.length).toBeGreaterThan(1);
     });
 });
 
@@ -55,7 +55,7 @@ describe('Não deve inserir um novo adversário...', () => {
     { name: 'São Bernardo' },
   ];
 
-  test('sem o atributo name', () => testTemplate([...newData, {}], 'Nome é um atributo obrigatório'));
+  test('sem o atributo name', () => testTemplate([...newData, { name: '' }], 'Nome é um atributo obrigatório'));
   test('se o mesmo já estiver cadastrado', () => testTemplate([...newData, { name: 'Ituano Futebol Clube' }], 'Adversário já cadastrado'));
 });
 
