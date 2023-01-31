@@ -3,9 +3,7 @@ const ValidationError = require('./ValidationError');
 module.exports = (app) => {
   function existsOrError(value, msg) {
     if (!value) throw new ValidationError(msg);
-    if (Array.isArray(value) && value.length === 0) throw new ValidationError(msg);
     if (typeof value === 'string' && !value.trim()) throw new ValidationError(msg);
-    if (typeof value === 'object' && Object.entries(value).length === 0) throw new ValidationError(msg);
   }
 
   function notExistsOrError(value, msg) {
