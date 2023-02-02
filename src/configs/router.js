@@ -7,6 +7,7 @@ module.exports = (app) => {
   router.use('/stage', app.routes.stage);
   router.use('/opponent', app.routes.opponent);
   router.use('/referee', app.routes.referee);
+  router.use('/country', app.routes.country);
 
   app.use(router);
 };
