@@ -6,7 +6,7 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/country';
 
 beforeAll(() => {
-  run('05_country_city');
+  run('05_country_city_stadium');
 });
 
 test('Deve retornar todos os países', () => {
@@ -81,7 +81,7 @@ test('Deve remover um país com sucesso', () => {
     });
 });
 
-test('Não deve remover um país que possui cidades cadastradas', () => {
+test('Não deve remover um país que possui cidades associadas', () => {
   return request(app).delete(`${MAIN_ROUTE}/10000`)
     .then((res) => {
       expect(res.status).toBe(400);

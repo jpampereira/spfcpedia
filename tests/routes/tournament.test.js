@@ -80,7 +80,7 @@ test('Deve remover um campeonato com sucesso', () => {
     });
 });
 
-test('Não deve remover um campeonato que possui fases cadastradas', () => {
+test('Não deve remover um campeonato que possui fases associadas', () => {
   return request(app).delete(`${MAIN_ROUTE}/10001`)
     .then((res) => {
       expect(res.status).toBe(400);

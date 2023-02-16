@@ -1,5 +1,5 @@
 module.exports = (app) => {
-  const { existsOrError, notExistsInDbOrError } = app.errors.validator;
+  const { existsOrError, notExistsInDbOrError, removeTableControlFields } = app.errors.validator;
 
   const read = (filter = {}) => {
     return app.db('opponent').select(['id', 'name']).where(filter);
@@ -9,6 +9,8 @@ module.exports = (app) => {
     for (const opponent of newOpponents) {
       existsOrError(opponent.name, 'Nome é um atributo obrigatório');
       await notExistsInDbOrError('opponent', { name: opponent.name }, 'Adversário já cadastrado');
+
+      removeTableControlFields(opponent);
     }
 
     return app.db('opponent').insert(newOpponents, ['id', 'name']);
@@ -17,6 +19,7 @@ module.exports = (app) => {
   const update = async (opponentId, updatedOpponent) => {
     await notExistsInDbOrError('opponent', { name: updatedOpponent.name }, 'Adversário já cadastrado');
 
+    removeTableControlFields(updatedOpponent);
     const newOpponent = { ...updatedOpponent, updated_at: 'now' };
 
     return app.db('opponent').update(newOpponent).where({ id: opponentId });

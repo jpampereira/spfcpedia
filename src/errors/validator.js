@@ -31,7 +31,19 @@ module.exports = (app) => {
     throw new ValidationError(msg);
   }
 
+  function removeTableControlFields(object) {
+    const newObject = object;
+
+    delete newObject.id;
+    delete newObject.inserted_at;
+    delete newObject.updated_at;
+  }
+
   return {
-    existsOrError, notExistsOrError, existsInDbOrError, notExistsInDbOrError,
+    existsOrError,
+    notExistsOrError,
+    existsInDbOrError,
+    notExistsInDbOrError,
+    removeTableControlFields,
   };
 };

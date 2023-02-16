@@ -8,6 +8,8 @@ module.exports = (app) => {
   router.use('/opponent', app.routes.opponent);
   router.use('/referee', app.routes.referee);
   router.use('/country', app.routes.country);
+  router.use('/city', app.routes.city);
+  router.use('/stadium', app.routes.stadium);
 
   app.use(router);
 };

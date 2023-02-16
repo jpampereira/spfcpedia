@@ -1,5 +1,5 @@
 module.exports = (app) => {
-  const { existsOrError, notExistsInDbOrError } = app.errors.validator;
+  const { existsOrError, notExistsInDbOrError, removeTableControlFields } = app.errors.validator;
 
   const read = (filter = {}) => {
     return app.db('tournament').select(['id', 'name']).where(filter);
@@ -9,6 +9,8 @@ module.exports = (app) => {
     for (const tournament of newTournaments) {
       existsOrError(tournament.name, 'Nome é um atributo obrigatório');
       await notExistsInDbOrError('tournament', { name: tournament.name }, 'Campeonato já cadastrado');
+
+      removeTableControlFields(tournament);
     }
 
     return app.db('tournament').insert(newTournaments, ['id', 'name']);
@@ -17,6 +19,7 @@ module.exports = (app) => {
   const update = async (tournamentId, updatedTournament) => {
     await notExistsInDbOrError('tournament', { name: updatedTournament.name }, 'Campeonato já cadastrado');
 
+    removeTableControlFields(updatedTournament);
     const newTournament = { ...updatedTournament, updated_at: 'now' };
 
     return app.db('tournament').update(newTournament).where({ id: tournamentId });

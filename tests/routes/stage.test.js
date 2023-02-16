@@ -9,7 +9,7 @@ beforeAll(() => {
   run('02_stage');
 });
 
-test('Deve listar todas as fases de todos os campeonatos', () => {
+test('Deve listar todas as fases', () => {
   return request(app).get(MAIN_ROUTE)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -29,12 +29,14 @@ test('Deve retornar uma fase por Id', () => {
 test('Deve retornar todas as fases de um campeonato', () => {
   return request(app).get(`${MAIN_ROUTE}/byTournament/10000`)
     .then((res) => {
+      const lastPos = res.body.length - 1;
+
       expect(res.status).toBe(200);
       expect(res.body.length).toBe(4);
       expect(res.body[0].id).toBe(11000);
       expect(res.body[0].name).toBe('Primeira Fase');
-      expect(res.body[res.body.length - 1].id).toBe(11003);
-      expect(res.body[res.body.length - 1].name).toBe('Final');
+      expect(res.body[lastPos].id).toBe(11003);
+      expect(res.body[lastPos].name).toBe('Final');
     });
 });
 
@@ -71,7 +73,7 @@ describe('Não deve inserir uma fase...', () => {
   test('sem o atributo name', () => testTemplate([...newData, { tournament_id: 10003 }], 'Nome é um atributo obrigatório'));
   test('sem o atributo tournament_id', () => testTemplate([...newData, { name: 'Final' }], 'ID do campeonato é um atributo obrigatório'));
   test('de um campeonato não cadastrado', () => testTemplate([...newData, { name: 'Final', tournament_id: 10004 }], 'ID do campeonato inexistente'));
-  test('cujo campeonato já possui outra fase com esse nome cadastrado', () => testTemplate([...newData, { name: 'Playoffs de Oitavas de Final', tournament_id: 10003 }], 'O campeonato já possui uma fase com esse nome'));
+  test('cujo campeonato já possui outra fase com o mesmo nome', () => testTemplate([...newData, { name: 'Playoffs de Oitavas de Final', tournament_id: 10003 }], 'O campeonato já possui uma fase com esse nome'));
 });
 
 test('Deve atualizar uma fase com sucesso', () => {
@@ -93,7 +95,7 @@ describe('Não deve atualizar a fase...', () => {
   };
 
   test('para um campeonato inexistente', () => testTemplate(11011, { tournament_id: 10004 }, 'ID do campeonato inexistente'));
-  test('cujo campeonato já possui outra fase com esse nome cadastrado', () => testTemplate(11011, { name: 'Semi Final' }, 'O campeonato já possui uma fase com esse nome'));
+  test('cujo campeonato já possui outra fase com o mesmo nome', () => testTemplate(11011, { name: 'Semi Final' }, 'O campeonato já possui uma fase com esse nome'));
 });
 
 test('Deve remover uma fase com sucesso', () => {

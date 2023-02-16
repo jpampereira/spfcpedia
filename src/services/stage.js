@@ -1,14 +1,13 @@
 module.exports = (app) => {
-  const { existsOrError, existsInDbOrError, notExistsInDbOrError } = app.errors.validator;
+  const {
+    existsOrError,
+    existsInDbOrError,
+    notExistsInDbOrError,
+    removeTableControlFields,
+  } = app.errors.validator;
 
   const read = (filter = {}) => {
     return app.db('stage').select(['id', 'name', 'tournament_id']).where(filter);
-  };
-
-  const readByTournament = (tournamentId) => {
-    return app.db('stage').select(['stage.id', 'stage.name'])
-      .leftJoin('tournament', 'tournament.id', 'stage.tournament_id')
-      .where({ 'tournament.id': tournamentId });
   };
 
   const create = async (newStages) => {
@@ -17,20 +16,24 @@ module.exports = (app) => {
       existsOrError(stage.tournament_id, 'ID do campeonato é um atributo obrigatório');
       await existsInDbOrError('tournament', { id: stage.tournament_id }, 'ID do campeonato inexistente');
       await notExistsInDbOrError('stage', stage, 'O campeonato já possui uma fase com esse nome');
+
+      removeTableControlFields(stage);
     }
 
     return app.db('stage').insert(newStages, ['id', 'name', 'tournament_id']);
   };
 
-  const update = async (stageId, stageUpdated) => {
+  const update = async (stageId, updatedStage) => {
     const [stageInDb] = await read({ id: stageId });
-    const newStage = { ...stageInDb, ...stageUpdated };
-    delete newStage.id;
+    const newStage = { ...stageInDb, ...updatedStage };
+    removeTableControlFields(newStage);
 
     await existsInDbOrError('tournament', { id: newStage.tournament_id }, 'ID do campeonato inexistente');
     await notExistsInDbOrError('stage', newStage, 'O campeonato já possui uma fase com esse nome');
 
-    return app.db('stage').update(stageUpdated).where({ id: stageId });
+    newStage.updated_at = 'now';
+
+    return app.db('stage').update(newStage).where({ id: stageId });
   };
 
   const remove = (stageId) => {
@@ -38,6 +41,6 @@ module.exports = (app) => {
   };
 
   return {
-    read, readByTournament, create, update, remove,
+    read, create, update, remove,
   };
 };
