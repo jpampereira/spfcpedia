@@ -7,13 +7,14 @@ module.exports = (app) => {
   } = app.errors.validator;
 
   const read = (filter = {}) => {
-    return app.db('stadium').select(['id', 'name', 'nickname', 'city_id']).where(filter);
+    return app.db('stadium').select(['id', 'name', 'nickname', 'city_id']).where(filter).orderBy('id');
   };
 
   const readByCountry = (countryId) => {
     return app.db('stadium').select(['stadium.id', 'stadium.name', 'stadium.nickname', 'stadium.city_id'])
       .join('city', 'stadium.city_id', 'city.id')
-      .where({ 'city.country_id': countryId });
+      .where({ 'city.country_id': countryId })
+      .orderBy('stadium.id');
   };
 
   const create = async (newStadiums) => {

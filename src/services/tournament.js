@@ -2,7 +2,7 @@ module.exports = (app) => {
   const { existsOrError, notExistsInDbOrError, removeTableControlFields } = app.errors.validator;
 
   const read = (filter = {}) => {
-    return app.db('tournament').select(['id', 'name']).where(filter);
+    return app.db('tournament').select(['id', 'name']).where(filter).orderBy('id');
   };
 
   const create = async (newTournaments) => {

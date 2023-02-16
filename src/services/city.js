@@ -7,7 +7,7 @@ module.exports = (app) => {
   } = app.errors.validator;
 
   const read = (filter = {}) => {
-    return app.db('city').select(['id', 'name', 'country_id']).where(filter);
+    return app.db('city').select(['id', 'name', 'country_id']).where(filter).orderBy('id');
   };
 
   const create = async (newCities) => {

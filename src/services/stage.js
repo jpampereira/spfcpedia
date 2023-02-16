@@ -7,7 +7,7 @@ module.exports = (app) => {
   } = app.errors.validator;
 
   const read = (filter = {}) => {
-    return app.db('stage').select(['id', 'name', 'tournament_id']).where(filter);
+    return app.db('stage').select(['id', 'name', 'tournament_id']).where(filter).orderBy('id');
   };
 
   const create = async (newStages) => {
