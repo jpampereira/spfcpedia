@@ -29,7 +29,9 @@ module.exports = (app) => {
     return app.db('opponent').update(newOpponent).where({ id: opponentId });
   };
 
-  const remove = (opponentId) => {
+  const remove = async (opponentId) => {
+    await notExistsInDbOrError('match', { opponent: opponentId }, 'O adversário possui partidas associadas');
+
     return app.db('opponent').del().where({ id: opponentId });
   };
 

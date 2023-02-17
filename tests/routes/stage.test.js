@@ -105,3 +105,17 @@ test('Deve remover uma fase com sucesso', () => {
       expect(res.status).toBe(204);
     });
 });
+
+describe('Não deve remover uma fase...', () => {
+  beforeAll(() => {
+    run('06_match');
+  });
+
+  test('que possui partidas associadas', () => {
+    return request(app).delete(`${MAIN_ROUTE}/16000`)
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe('A fase possui partidas associadas');
+      });
+  });
+});

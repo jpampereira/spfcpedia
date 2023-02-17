@@ -37,7 +37,9 @@ module.exports = (app) => {
     return app.db('stage').update(newStage).where({ id: stageId });
   };
 
-  const remove = (stageId) => {
+  const remove = async (stageId) => {
+    await notExistsInDbOrError('match', { tournament_stage: stageId }, 'A fase possui partidas associadas');
+
     return app.db('stage').del().where({ id: stageId });
   };
 

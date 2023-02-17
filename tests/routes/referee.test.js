@@ -89,3 +89,17 @@ test('Deve remover um árbitro com sucesso', () => {
       expect(res.status).toBe(204);
     });
 });
+
+describe('Não deve remover um árbitro...', () => {
+  beforeAll(() => {
+    run('06_match');
+  });
+
+  test('que possui partidas associadas', () => {
+    return request(app).delete(`${MAIN_ROUTE}/14000`)
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe('O árbitro possui partidas associadas');
+      });
+  });
+});

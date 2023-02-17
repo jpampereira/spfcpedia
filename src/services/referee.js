@@ -29,7 +29,9 @@ module.exports = (app) => {
     return app.db('referee').update(newReferee).where({ id: refereeId });
   };
 
-  const remove = (refereeId) => {
+  const remove = async (refereeId) => {
+    await notExistsInDbOrError('match', ['referee = ? or assistant_referee_1 = ? or assistant_referee_2 = ? or fourth_official = ?', refereeId], 'O árbitro possui partidas associadas');
+
     return app.db('referee').del().where({ id: refereeId });
   };
 

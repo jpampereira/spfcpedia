@@ -46,7 +46,9 @@ module.exports = (app) => {
     return app.db('stadium').update(newStadium).where({ id: stadiumId });
   };
 
-  const remove = (stadiumId) => {
+  const remove = async (stadiumId) => {
+    await notExistsInDbOrError('match', { local: stadiumId }, 'O estádio possui partidas associadas');
+
     return app.db('stadium').del().where({ id: stadiumId });
   };
 

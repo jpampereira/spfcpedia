@@ -10,6 +10,7 @@ module.exports = (app) => {
   router.use('/country', app.routes.country);
   router.use('/city', app.routes.city);
   router.use('/stadium', app.routes.stadium);
+  router.use('/match', app.routes.match);
 
   app.use(router);
 };
