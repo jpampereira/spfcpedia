@@ -19,11 +19,11 @@ module.exports = (app) => {
 
   const create = async (newStadiums) => {
     for (const stadium of newStadiums) {
-      existsOrError(stadium.name, 'Nome é um atributo obrigatório');
-      existsOrError(stadium.city_id, 'ID da cidade é um atributo obrigatório');
+      existsOrError(stadium.name, 'O atributo name é obrigatório');
+      existsOrError(stadium.city_id, 'O atributo city_id é obrigatório');
       await existsInDbOrError('city', { id: stadium.city_id }, 'ID da cidade inexistente');
-      await notExistsInDbOrError('stadium', { name: stadium.name }, 'Já existe um estádio cadastrado com esse nome');
-      if (stadium.nickname !== '') await notExistsInDbOrError('stadium', { nickname: stadium.nickname }, 'Já existe um estádio cadastrado com esse apelido');
+      await notExistsInDbOrError('stadium', { name: stadium.name }, 'Estádio já cadastrado');
+      if (stadium.nickname) await notExistsInDbOrError('stadium', { nickname: stadium.nickname }, 'Apelido já utilizado por outro estádio');
 
       removeTableControlFields(stadium);
     }
@@ -32,12 +32,16 @@ module.exports = (app) => {
   };
 
   const update = async (stadiumId, updatedStadium) => {
-    if (updatedStadium.city_id) await existsInDbOrError('city', { id: updatedStadium.city_id }, 'ID da cidade inexistente');
-    if (updatedStadium.name) await notExistsInDbOrError('stadium', { name: updatedStadium.name }, 'Já existe um estádio cadastrado com esse nome');
-    if (updatedStadium.nickname) await notExistsInDbOrError('stadium', { nickname: updatedStadium.nickname }, 'Já existe um estádio cadastrado com esse apelido');
+    const [stadiumInDb] = await read({ id: stadiumId });
+    const newStadium = { ...stadiumInDb, ...updatedStadium };
+    removeTableControlFields(newStadium);
 
-    removeTableControlFields(updatedStadium);
-    const newStadium = { ...updatedStadium, updated_at: 'now' };
+    existsOrError(newStadium.name, 'O atributo name deve ser preenchido');
+    await existsInDbOrError('city', { id: newStadium.city_id }, 'ID da cidade inexistente');
+    await notExistsInDbOrError('stadium', ['name = ? and id <> ?', [newStadium.name, stadiumId]], 'Estádio já cadastrado');
+    if (newStadium.nickname) await notExistsInDbOrError('stadium', ['nickname = ? and id <> ?', [newStadium.nickname, stadiumId]], 'Apelido já utilizado por outro estádio');
+
+    newStadium.updated_at = 'now';
 
     return app.db('stadium').update(newStadium).where({ id: stadiumId });
   };

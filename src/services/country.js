@@ -7,7 +7,7 @@ module.exports = (app) => {
 
   const create = async (newCountries) => {
     for (const country of newCountries) {
-      existsOrError(country.name, 'Nome é um atributo obrigatório');
+      existsOrError(country.name, 'O atributo name é obrigatório');
       await notExistsInDbOrError('country', { name: country.name }, 'País já cadastrado');
 
       removeTableControlFields(country);
@@ -17,10 +17,14 @@ module.exports = (app) => {
   };
 
   const update = async (countryId, updatedCountry) => {
-    await notExistsInDbOrError('country', { name: updatedCountry.name }, 'País já cadastrado');
+    const [countryInDb] = await read({ id: countryId });
+    const newCountry = { ...countryInDb, ...updatedCountry };
+    removeTableControlFields(newCountry);
 
-    removeTableControlFields(updatedCountry);
-    const newCountry = { ...updatedCountry, updated_at: 'now' };
+    existsOrError(newCountry.name, 'O atributo name deve ser preenchido');
+    await notExistsInDbOrError('country', ['name = ? and id <> ?', [newCountry.name, countryId]], 'País já cadastrado');
+
+    newCountry.updated_at = 'now';
 
     return app.db('country').update(newCountry).where({ id: countryId });
   };

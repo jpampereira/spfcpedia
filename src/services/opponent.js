@@ -7,7 +7,7 @@ module.exports = (app) => {
 
   const create = async (newOpponents) => {
     for (const opponent of newOpponents) {
-      existsOrError(opponent.name, 'Nome é um atributo obrigatório');
+      existsOrError(opponent.name, 'O atributo name é obrigatório');
       await notExistsInDbOrError('opponent', { name: opponent.name }, 'Adversário já cadastrado');
 
       removeTableControlFields(opponent);
@@ -17,10 +17,14 @@ module.exports = (app) => {
   };
 
   const update = async (opponentId, updatedOpponent) => {
-    await notExistsInDbOrError('opponent', { name: updatedOpponent.name }, 'Adversário já cadastrado');
+    const [opponentInDb] = await read({ id: opponentId });
+    const newOpponent = { ...opponentInDb, ...updatedOpponent };
+    removeTableControlFields(newOpponent);
 
-    removeTableControlFields(updatedOpponent);
-    const newOpponent = { ...updatedOpponent, updated_at: 'now' };
+    existsOrError(newOpponent.name, 'O atributo name deve ser preenchido');
+    await notExistsInDbOrError('opponent', ['name = ? and id <> ?', [newOpponent.name, opponentId]], 'Adversário já cadastrado');
+
+    newOpponent.updated_at = 'now';
 
     return app.db('opponent').update(newOpponent).where({ id: opponentId });
   };

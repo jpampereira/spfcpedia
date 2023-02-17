@@ -55,7 +55,7 @@ describe('Não deve inserir um novo adversário...', () => {
     { name: 'São Bernardo' },
   ];
 
-  test('sem o atributo name', () => testTemplate([...newData, { name: '' }], 'Nome é um atributo obrigatório'));
+  test('sem o atributo name', () => testTemplate([...newData, { name: '' }], 'O atributo name é obrigatório'));
   test('se o mesmo já estiver cadastrado', () => testTemplate([...newData, { name: 'Ituano Futebol Clube' }], 'Adversário já cadastrado'));
 });
 
@@ -67,13 +67,18 @@ test('Deve atualizar um adversário com sucesso', () => {
     });
 });
 
-test('Não deve alterar o nome do adversário para um já existente', () => {
-  return request(app).put(`${MAIN_ROUTE}/10002`)
-    .send({ name: 'Sport Club Corinthians Paulista' })
-    .then((res) => {
-      expect(res.status).toBe(400);
-      expect(res.body.error).toBe('Adversário já cadastrado');
-    });
+describe('Não deve atualizar um adversário...', () => {
+  const testTemplate = (id, data, errorMessage) => {
+    return request(app).put(`${MAIN_ROUTE}/${id}`)
+      .send(data)
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe(errorMessage);
+      });
+  };
+
+  test('para um já existente', () => testTemplate(10002, { name: 'Sport Club Corinthians Paulista' }, 'Adversário já cadastrado'));
+  test('com o atributo name em branco', () => testTemplate(10002, { name: '' }, 'O atributo name deve ser preenchido'));
 });
 
 test('Deve remover um adversário com sucesso', () => {

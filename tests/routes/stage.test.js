@@ -70,8 +70,8 @@ describe('Não deve inserir uma fase...', () => {
     { name: 'Semi Final', tournament_id: 10003 },
   ];
 
-  test('sem o atributo name', () => testTemplate([...newData, { tournament_id: 10003 }], 'Nome é um atributo obrigatório'));
-  test('sem o atributo tournament_id', () => testTemplate([...newData, { name: 'Final' }], 'ID do campeonato é um atributo obrigatório'));
+  test('sem o atributo name', () => testTemplate([...newData, { tournament_id: 10003 }], 'O atributo name é obrigatório'));
+  test('sem o atributo tournament_id', () => testTemplate([...newData, { name: 'Final' }], 'O atributo tournament_id é obrigatório'));
   test('de um campeonato não cadastrado', () => testTemplate([...newData, { name: 'Final', tournament_id: 10004 }], 'ID do campeonato inexistente'));
   test('cujo campeonato já possui outra fase com o mesmo nome', () => testTemplate([...newData, { name: 'Playoffs de Oitavas de Final', tournament_id: 10003 }], 'O campeonato já possui uma fase com esse nome'));
 });
@@ -96,6 +96,7 @@ describe('Não deve atualizar a fase...', () => {
 
   test('para um campeonato inexistente', () => testTemplate(11011, { tournament_id: 10004 }, 'ID do campeonato inexistente'));
   test('cujo campeonato já possui outra fase com o mesmo nome', () => testTemplate(11011, { name: 'Semi Final' }, 'O campeonato já possui uma fase com esse nome'));
+  test('com o atributo name em branco', () => testTemplate(11011, { name: '' }, 'O atributo name deve ser preenchido'));
 });
 
 test('Deve remover uma fase com sucesso', () => {

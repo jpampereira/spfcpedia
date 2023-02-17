@@ -17,7 +17,9 @@ module.exports = (app) => {
   }
 
   async function existsInDbOrError(table, filter, msg) {
-    const result = await app.db(table).select().where(filter);
+    const whereFilter = Array.isArray(filter) ? app.db.raw(...filter) : filter;
+    const result = await app.db(table).select().where(whereFilter);
+
     if (result.length === 0) throw new ValidationError(msg);
   }
 

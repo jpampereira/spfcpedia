@@ -12,8 +12,8 @@ module.exports = (app) => {
 
   const create = async (newStages) => {
     for (const stage of newStages) {
-      existsOrError(stage.name, 'Nome é um atributo obrigatório');
-      existsOrError(stage.tournament_id, 'ID do campeonato é um atributo obrigatório');
+      existsOrError(stage.name, 'O atributo name é obrigatório');
+      existsOrError(stage.tournament_id, 'O atributo tournament_id é obrigatório');
       await existsInDbOrError('tournament', { id: stage.tournament_id }, 'ID do campeonato inexistente');
       await notExistsInDbOrError('stage', stage, 'O campeonato já possui uma fase com esse nome');
 
@@ -28,8 +28,9 @@ module.exports = (app) => {
     const newStage = { ...stageInDb, ...updatedStage };
     removeTableControlFields(newStage);
 
+    existsOrError(newStage.name, 'O atributo name deve ser preenchido');
     await existsInDbOrError('tournament', { id: newStage.tournament_id }, 'ID do campeonato inexistente');
-    await notExistsInDbOrError('stage', newStage, 'O campeonato já possui uma fase com esse nome');
+    await notExistsInDbOrError('stage', ['name = ? and tournament_id = ? and id <> ?', [newStage.name, newStage.tournament_id, stageId]], 'O campeonato já possui uma fase com esse nome');
 
     newStage.updated_at = 'now';
 

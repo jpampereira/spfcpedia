@@ -7,7 +7,7 @@ module.exports = (app) => {
 
   const create = async (newReferees) => {
     for (const referee of newReferees) {
-      existsOrError(referee.name, 'Nome é um atributo obrigatório');
+      existsOrError(referee.name, 'O atributo name é obrigatório');
       await notExistsInDbOrError('referee', { name: referee.name }, 'Árbitro já cadastrado');
 
       removeTableControlFields(referee);
@@ -17,10 +17,14 @@ module.exports = (app) => {
   };
 
   const update = async (refereeId, updatedReferee) => {
-    await notExistsInDbOrError('referee', { name: updatedReferee.name }, 'Árbitro já cadastrado');
+    const [refereeInDb] = await read({ id: refereeId });
+    const newReferee = { ...refereeInDb, ...updatedReferee };
+    removeTableControlFields(newReferee);
 
-    removeTableControlFields(updatedReferee);
-    const newReferee = { ...updatedReferee, updated_at: 'now' };
+    existsOrError(newReferee.name, 'O atributo name deve ser preenchido');
+    await notExistsInDbOrError('referee', ['name = ? and id <> ?', [newReferee.name, refereeId]], 'Árbitro já cadastrado');
+
+    newReferee.updated_at = 'now';
 
     return app.db('referee').update(newReferee).where({ id: refereeId });
   };

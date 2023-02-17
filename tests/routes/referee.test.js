@@ -57,7 +57,7 @@ describe('Não deve inserir um novo árbitro...', () => {
     { name: 'Adeli Mara Monteiro' },
   ];
 
-  test('sem o atributo name', () => testTemplate([...newData, { name: '' }], 'Nome é um atributo obrigatório'));
+  test('sem o atributo name', () => testTemplate([...newData, { name: '' }], 'O atributo name é obrigatório'));
   test('se o mesmo já estiver cadastrado', () => testTemplate([...newData, { name: 'Edina Alves Batista' }], 'Árbitro já cadastrado'));
 });
 
@@ -69,13 +69,18 @@ test('Deve atualizar um árbitro com sucesso', () => {
     });
 });
 
-test('Não deve alterar o nome do árbitro para um já existente', () => {
-  return request(app).put(`${MAIN_ROUTE}/10007`)
-    .send({ name: 'Flavio Rodrigues de Souza' })
-    .then((res) => {
-      expect(res.status).toBe(400);
-      expect(res.body.error).toBe('Árbitro já cadastrado');
-    });
+describe('Não deve atualizar um árbitro...', () => {
+  const testTemplate = (id, data, errorMessage) => {
+    return request(app).put(`${MAIN_ROUTE}/${id}`)
+      .send(data)
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe(errorMessage);
+      });
+  };
+
+  test('para um já existente', () => testTemplate(10007, { name: 'Flavio Rodrigues de Souza' }, 'Árbitro já cadastrado'));
+  test('com o atributo name em branco', () => testTemplate(10007, { name: '' }, 'O atributo name deve ser preenchido'));
 });
 
 test('Deve remover um árbitro com sucesso', () => {

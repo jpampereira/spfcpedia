@@ -53,7 +53,7 @@ describe('Não deve inserir um novo país...', () => {
     { name: 'Uruguai' },
   ];
 
-  test('sem o atributo name', () => testTemplate([...newData, { name: '' }], 'Nome é um atributo obrigatório'));
+  test('sem o atributo name', () => testTemplate([...newData, { name: '' }], 'O atributo name é obrigatório'));
   test('se o mesmo já estiver cadastrado', () => testTemplate([...newData, { name: 'Argentina' }], 'País já cadastrado'));
 });
 
@@ -65,13 +65,18 @@ test('Deve atualizar um país com sucesso', () => {
     });
 });
 
-test('Não deve alterar o nome do país para um já existente', () => {
-  return request(app).put(`${MAIN_ROUTE}/10005`)
-    .send({ name: 'Argentina' })
-    .then((res) => {
-      expect(res.status).toBe(400);
-      expect(res.body.error).toBe('País já cadastrado');
-    });
+describe('Não deve atualizar um país...', () => {
+  const testTemplate = (id, data, errorMessage) => {
+    return request(app).put(`${MAIN_ROUTE}/${id}`)
+      .send(data)
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe(errorMessage);
+      });
+  };
+
+  test('para um já existente', () => testTemplate(10005, { name: 'Argentina' }, 'País já cadastrado'));
+  test('com o atributo name em branco', () => testTemplate(10005, { name: '' }, 'O atributo name deve ser preenchido'));
 });
 
 test('Deve remover um país com sucesso', () => {

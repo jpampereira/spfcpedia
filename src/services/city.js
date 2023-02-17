@@ -12,8 +12,8 @@ module.exports = (app) => {
 
   const create = async (newCities) => {
     for (const city of newCities) {
-      existsOrError(city.name, 'Nome é um atributo obrigatório');
-      existsOrError(city.country_id, 'ID do país é um atributo obrigatório');
+      existsOrError(city.name, 'O atributo name é obrigatório');
+      existsOrError(city.country_id, 'O atributo country_id é obrigatório');
       await existsInDbOrError('country', { id: city.country_id }, 'ID do país inexistente');
       await notExistsInDbOrError('city', city, 'O país já possui uma cidade com esse nome');
 
@@ -28,8 +28,9 @@ module.exports = (app) => {
     const newCity = { ...cityInDb, ...updatedCity };
     removeTableControlFields(newCity);
 
+    existsOrError(newCity.name, 'O atributo name deve ser preenchido');
     await existsInDbOrError('country', { id: newCity.country_id }, 'ID do país inexistente');
-    await notExistsInDbOrError('city', newCity, 'O país já possui uma cidade com esse nome');
+    await notExistsInDbOrError('city', ['name = ? and country_id = ? and id <> ?', [newCity.name, newCity.country_id, cityId]], 'O país já possui uma cidade com esse nome');
 
     newCity.updated_at = 'now';
 

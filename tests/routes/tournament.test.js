@@ -52,7 +52,7 @@ describe('Não deve inserir um novo campeonato...', () => {
     { name: 'Mundial de Clubes' },
   ];
 
-  test('sem o atributo name', () => testTemplate([...newData, { name: '' }], 'Nome é um atributo obrigatório'));
+  test('sem o atributo name', () => testTemplate([...newData, { name: '' }], 'O atributo name é obrigatório'));
   test('se o mesmo já estiver cadastrado', () => testTemplate([...newData, { name: 'Campeonato Brasileiro' }], 'Campeonato já cadastrado'));
 });
 
@@ -64,13 +64,18 @@ test('Deve atualizar um campeonato com sucesso', () => {
     });
 });
 
-test('Não deve atualizar o nome campeonato para um já existente', () => {
-  return request(app).put(`${MAIN_ROUTE}/10001`)
-    .send({ name: 'Copa do Brasil' })
-    .then((res) => {
-      expect(res.status).toBe(400);
-      expect(res.body.error).toBe('Campeonato já cadastrado');
-    });
+describe('Não deve atualizar um campeonato...', () => {
+  const testTemplate = (id, data, errorMessage) => {
+    return request(app).put(`${MAIN_ROUTE}/${id}`)
+      .send(data)
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe(errorMessage);
+      });
+  };
+
+  test('para um já existente', () => testTemplate(10001, { name: 'Copa do Brasil' }, 'Campeonato já cadastrado'));
+  test('com o atributo name em branco', () => testTemplate(10001, { name: '' }, 'O atributo name deve ser preenchido'));
 });
 
 test('Deve remover um campeonato com sucesso', () => {

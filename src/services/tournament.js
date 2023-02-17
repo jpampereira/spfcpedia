@@ -7,7 +7,7 @@ module.exports = (app) => {
 
   const create = async (newTournaments) => {
     for (const tournament of newTournaments) {
-      existsOrError(tournament.name, 'Nome é um atributo obrigatório');
+      existsOrError(tournament.name, 'O atributo name é obrigatório');
       await notExistsInDbOrError('tournament', { name: tournament.name }, 'Campeonato já cadastrado');
 
       removeTableControlFields(tournament);
@@ -17,10 +17,14 @@ module.exports = (app) => {
   };
 
   const update = async (tournamentId, updatedTournament) => {
-    await notExistsInDbOrError('tournament', { name: updatedTournament.name }, 'Campeonato já cadastrado');
+    const [tournamentInDb] = await read({ id: tournamentId });
+    const newTournament = { ...tournamentInDb, ...updatedTournament };
+    removeTableControlFields(newTournament);
 
-    removeTableControlFields(updatedTournament);
-    const newTournament = { ...updatedTournament, updated_at: 'now' };
+    existsOrError(newTournament.name, 'O atributo name deve ser preenchido');
+    await notExistsInDbOrError('tournament', ['name = ? and id <> ?', [newTournament.name, tournamentId]], 'Campeonato já cadastrado');
+
+    newTournament.updated_at = 'now';
 
     return app.db('tournament').update(newTournament).where({ id: tournamentId });
   };
