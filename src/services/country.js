@@ -1,6 +1,6 @@
-module.exports = (app) => {
-  const { existsOrError, notExistsInDbOrError, removeTableControlFields } = app.errors.validator;
+const { existsOrError, notExistsInDbOrError, removeTableControlFields } = require('../configs/validator')();
 
+module.exports = (app) => {
   const read = (filter = {}) => {
     return app.db('country').select(['id', 'name']).where(filter).orderBy('id');
   };
@@ -21,7 +21,7 @@ module.exports = (app) => {
     const newCountry = { ...countryInDb, ...updatedCountry };
     removeTableControlFields(newCountry);
 
-    existsOrError(newCountry.name, 'O atributo name deve ser preenchido');
+    existsOrError(newCountry.name, 'O valor de name é inválido');
     await notExistsInDbOrError('country', ['name = ? and id <> ?', [newCountry.name, countryId]], 'País já cadastrado');
 
     newCountry.updated_at = 'now';

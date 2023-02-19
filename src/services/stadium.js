@@ -1,11 +1,11 @@
-module.exports = (app) => {
-  const {
-    existsOrError,
-    existsInDbOrError,
-    notExistsInDbOrError,
-    removeTableControlFields,
-  } = app.errors.validator;
+const {
+  existsOrError,
+  existsInDbOrError,
+  notExistsInDbOrError,
+  removeTableControlFields,
+} = require('../configs/validator')();
 
+module.exports = (app) => {
   const read = (filter = {}) => {
     return app.db('stadium').select(['id', 'name', 'nickname', 'city_id']).where(filter).orderBy('id');
   };
@@ -21,7 +21,7 @@ module.exports = (app) => {
     for (const stadium of newStadiums) {
       existsOrError(stadium.name, 'O atributo name é obrigatório');
       existsOrError(stadium.city_id, 'O atributo city_id é obrigatório');
-      await existsInDbOrError('city', { id: stadium.city_id }, 'ID da cidade inexistente');
+      await existsInDbOrError('city', { id: stadium.city_id }, 'O valor de city_id é inválido');
       await notExistsInDbOrError('stadium', { name: stadium.name }, 'Estádio já cadastrado');
       if (stadium.nickname) await notExistsInDbOrError('stadium', { nickname: stadium.nickname }, 'Apelido já utilizado por outro estádio');
 
@@ -36,8 +36,8 @@ module.exports = (app) => {
     const newStadium = { ...stadiumInDb, ...updatedStadium };
     removeTableControlFields(newStadium);
 
-    existsOrError(newStadium.name, 'O atributo name deve ser preenchido');
-    await existsInDbOrError('city', { id: newStadium.city_id }, 'ID da cidade inexistente');
+    existsOrError(newStadium.name, 'O valor de name é inválido');
+    await existsInDbOrError('city', { id: newStadium.city_id }, 'O valor de city_id é inválido');
     await notExistsInDbOrError('stadium', ['name = ? and id <> ?', [newStadium.name, stadiumId]], 'Estádio já cadastrado');
     if (newStadium.nickname) await notExistsInDbOrError('stadium', ['nickname = ? and id <> ?', [newStadium.nickname, stadiumId]], 'Apelido já utilizado por outro estádio');
 

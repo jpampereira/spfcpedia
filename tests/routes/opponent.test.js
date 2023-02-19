@@ -56,7 +56,7 @@ describe('Não deve inserir um novo adversário...', () => {
   ];
 
   test('sem o atributo name', () => testTemplate([...newData, { name: '' }], 'O atributo name é obrigatório'));
-  test('se o mesmo já estiver cadastrado', () => testTemplate([...newData, { name: 'Ituano Futebol Clube' }], 'Adversário já cadastrado'));
+  test('duplicado', () => testTemplate([...newData, { name: 'Ituano Futebol Clube' }], 'Adversário já cadastrado'));
 });
 
 test('Deve atualizar um adversário com sucesso', () => {
@@ -78,7 +78,7 @@ describe('Não deve atualizar um adversário...', () => {
   };
 
   test('para um já existente', () => testTemplate(10002, { name: 'Sport Club Corinthians Paulista' }, 'Adversário já cadastrado'));
-  test('com o atributo name em branco', () => testTemplate(10002, { name: '' }, 'O atributo name deve ser preenchido'));
+  test('cujo valor de name é inválido', () => testTemplate(10002, { name: '' }, 'O valor de name é inválido'));
 });
 
 test('Deve remover um adversário com sucesso', () => {

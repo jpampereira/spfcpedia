@@ -84,7 +84,7 @@ describe('Não deve inserir um estádio...', () => {
 
   test('sem o atributo name', () => testTemplate([...newData, { city_id: 11002 }], 'O atributo name é obrigatório'));
   test('sem o atributo city_id', () => testTemplate([...newData, { name: 'Estádio Durival Britto e Silva', nickname: 'Vila Capanema' }], 'O atributo city_id é obrigatório'));
-  test('de uma cidade não cadastrada', () => testTemplate([...newData, { name: 'Estádio Durival Britto e Silva', nickname: 'Vila Capanema', city_id: 11011 }], 'ID da cidade inexistente'));
+  test('cujo valor de city_id é inválido', () => testTemplate([...newData, { name: 'Estádio Durival Britto e Silva', nickname: 'Vila Capanema', city_id: 11011 }], 'O valor de city_id é inválido'));
   test('com nome duplicado', () => testTemplate([...newData, { name: 'Estádio Cícero Pompeu de Toledo', city_id: 11000 }], 'Estádio já cadastrado'));
   test('com apelido duplicado', () => testTemplate([...newData, { name: 'Cícero Pompeu de Toledo', nickname: 'Morumbi', city_id: 11000 }], 'Apelido já utilizado por outro estádio'));
 });
@@ -107,10 +107,10 @@ describe('Não deve atualizar um estádio...', () => {
       });
   };
 
-  test('para uma cidade inexistente', () => testTemplate(12000, { city_id: 11012 }, 'ID da cidade inexistente'));
+  test('cujo valor de city_id é inválido', () => testTemplate(12000, { city_id: 11012 }, 'O valor de city_id é inválido'));
   test('para um nome já cadastrado', () => testTemplate(12001, { name: 'Neo Química Arena' }, 'Estádio já cadastrado'));
   test('para um apelido já cadastrado', () => testTemplate(12002, { nickname: 'Morumbi' }, 'Apelido já utilizado por outro estádio'));
-  test('com o atributo name em branco', () => testTemplate(12002, { name: '' }, 'O atributo name deve ser preenchido'));
+  test('cujo valor de name é inválido', () => testTemplate(12002, { name: '' }, 'O valor de name é inválido'));
 });
 
 test('Deve remover um estádio com sucesso', () => {

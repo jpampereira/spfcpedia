@@ -4,7 +4,7 @@ exports.up = (knex) => {
   return knex.schema.createTable('referee', (table) => {
     table.increments('id').primary();
     table.string('name').notNull().unique();
-    table.timestamp('inserted_at').defaultTo(CURRENT_TIMESTAMP);
+    table.timestamp('created_at').defaultTo(CURRENT_TIMESTAMP);
     table.timestamp('updated_at');
   });
 };

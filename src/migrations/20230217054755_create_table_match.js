@@ -13,7 +13,7 @@ exports.up = (knex) => {
     table.integer('opponent').references('id').inTable('opponent').notNull();
     table.integer('opponent_goals').notNull();
     table.string('highlights').notNull();
-    table.timestamp('inserted_at').defaultTo(CURRENT_TIMESTAMP);
+    table.timestamp('created_at').defaultTo(CURRENT_TIMESTAMP);
     table.timestamp('updated_at');
   });
 };

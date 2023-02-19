@@ -54,7 +54,7 @@ describe('Não deve inserir um novo país...', () => {
   ];
 
   test('sem o atributo name', () => testTemplate([...newData, { name: '' }], 'O atributo name é obrigatório'));
-  test('se o mesmo já estiver cadastrado', () => testTemplate([...newData, { name: 'Argentina' }], 'País já cadastrado'));
+  test('duplicado', () => testTemplate([...newData, { name: 'Argentina' }], 'País já cadastrado'));
 });
 
 test('Deve atualizar um país com sucesso', () => {
@@ -76,7 +76,7 @@ describe('Não deve atualizar um país...', () => {
   };
 
   test('para um já existente', () => testTemplate(10005, { name: 'Argentina' }, 'País já cadastrado'));
-  test('com o atributo name em branco', () => testTemplate(10005, { name: '' }, 'O atributo name deve ser preenchido'));
+  test('cujo valor de name é inválido', () => testTemplate(10005, { name: '' }, 'O valor de name é inválido'));
 });
 
 test('Deve remover um país com sucesso', () => {

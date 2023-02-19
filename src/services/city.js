@@ -1,11 +1,11 @@
-module.exports = (app) => {
-  const {
-    existsOrError,
-    existsInDbOrError,
-    notExistsInDbOrError,
-    removeTableControlFields,
-  } = app.errors.validator;
+const {
+  existsOrError,
+  existsInDbOrError,
+  notExistsInDbOrError,
+  removeTableControlFields,
+} = require('../configs/validator')();
 
+module.exports = (app) => {
   const read = (filter = {}) => {
     return app.db('city').select(['id', 'name', 'country_id']).where(filter).orderBy('id');
   };
@@ -14,7 +14,7 @@ module.exports = (app) => {
     for (const city of newCities) {
       existsOrError(city.name, 'O atributo name é obrigatório');
       existsOrError(city.country_id, 'O atributo country_id é obrigatório');
-      await existsInDbOrError('country', { id: city.country_id }, 'ID do país inexistente');
+      await existsInDbOrError('country', { id: city.country_id }, 'O valor de country_id é inválido');
       await notExistsInDbOrError('city', city, 'O país já possui uma cidade com esse nome');
 
       removeTableControlFields(city);
@@ -28,8 +28,8 @@ module.exports = (app) => {
     const newCity = { ...cityInDb, ...updatedCity };
     removeTableControlFields(newCity);
 
-    existsOrError(newCity.name, 'O atributo name deve ser preenchido');
-    await existsInDbOrError('country', { id: newCity.country_id }, 'ID do país inexistente');
+    existsOrError(newCity.name, 'O valor de name é inválido');
+    await existsInDbOrError('country', { id: newCity.country_id }, 'O valor de country_id é inválido');
     await notExistsInDbOrError('city', ['name = ? and country_id = ? and id <> ?', [newCity.name, newCity.country_id, cityId]], 'O país já possui uma cidade com esse nome');
 
     newCity.updated_at = 'now';

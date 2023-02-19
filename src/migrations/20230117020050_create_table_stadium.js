@@ -6,7 +6,7 @@ exports.up = (knex) => {
     table.string('name').notNull().unique();
     table.string('nickname').defaultTo('');
     table.integer('city_id').references('id').inTable('city').notNull();
-    table.timestamp('inserted_at').defaultTo(CURRENT_TIMESTAMP);
+    table.timestamp('created_at').defaultTo(CURRENT_TIMESTAMP);
     table.timestamp('updated_at');
   });
 };

@@ -5,7 +5,7 @@ exports.up = (knex) => {
     table.increments('id').primary();
     table.string('name').notNull();
     table.integer('tournament_id').references('id').inTable('tournament').notNull();
-    table.timestamp('inserted_at').defaultTo(CURRENT_TIMESTAMP);
+    table.timestamp('created_at').defaultTo(CURRENT_TIMESTAMP);
     table.timestamp('updated_at');
   });
 };

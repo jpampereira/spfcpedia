@@ -58,7 +58,7 @@ describe('Não deve inserir um novo árbitro...', () => {
   ];
 
   test('sem o atributo name', () => testTemplate([...newData, { name: '' }], 'O atributo name é obrigatório'));
-  test('se o mesmo já estiver cadastrado', () => testTemplate([...newData, { name: 'Edina Alves Batista' }], 'Árbitro já cadastrado'));
+  test('duplicado', () => testTemplate([...newData, { name: 'Edina Alves Batista' }], 'Árbitro já cadastrado'));
 });
 
 test('Deve atualizar um árbitro com sucesso', () => {
@@ -80,7 +80,7 @@ describe('Não deve atualizar um árbitro...', () => {
   };
 
   test('para um já existente', () => testTemplate(10007, { name: 'Flavio Rodrigues de Souza' }, 'Árbitro já cadastrado'));
-  test('com o atributo name em branco', () => testTemplate(10007, { name: '' }, 'O atributo name deve ser preenchido'));
+  test('cujo valor de name é inválido', () => testTemplate(10007, { name: '' }, 'O valor de name é inválido'));
 });
 
 test('Deve remover um árbitro com sucesso', () => {

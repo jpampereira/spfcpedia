@@ -1,6 +1,7 @@
-const ValidationError = require('./ValidationError');
+const db = require('./db');
+const ValidationError = require('../errors/ValidationError');
 
-module.exports = (app) => {
+module.exports = () => {
   const existsOrError = (value, msg) => {
     if (value === undefined || value === null) throw new ValidationError(msg);
     if (typeof value === 'string' && !value.trim()) throw new ValidationError(msg);
@@ -26,12 +27,12 @@ module.exports = (app) => {
 
       values = Array.isArray(values) ? values : [...new Array(numOfQueryBindings)].fill(values);
 
-      whereFilter = app.db.raw(query, values);
+      whereFilter = db.raw(query, values);
     } else {
       whereFilter = filter;
     }
 
-    const result = await app.db(table).select().where(whereFilter);
+    const result = await db(table).select().where(whereFilter);
 
     if (result.length === 0) throw new ValidationError(msg);
   };
@@ -58,13 +59,13 @@ module.exports = (app) => {
     if (!value.match(/^(https:\/\/)?(www\.)?\S+\.com(\.\S+)?\/.+$/)) throw new ValidationError(msg);
   };
 
-  function removeTableControlFields(object) {
+  const removeTableControlFields = (object) => {
     const newObject = object;
 
     delete newObject.id;
-    delete newObject.inserted_at;
+    delete newObject.created_at;
     delete newObject.updated_at;
-  }
+  };
 
   return {
     existsOrError,

@@ -73,7 +73,7 @@ describe('Não deve inserir uma cidade...', () => {
 
   test('sem o atributo name', () => testTemplate([...newData, { country_id: 10003 }], 'O atributo name é obrigatório'));
   test('sem o atributo country_id', () => testTemplate([...newData, { name: 'Potosí' }], 'O atributo country_id é obrigatório'));
-  test('de um país não cadastrado', () => testTemplate([...newData, { name: 'Potosí', country_id: 10006 }], 'ID do país inexistente'));
+  test('cujo valor de country_id é inválido', () => testTemplate([...newData, { name: 'Potosí', country_id: 10006 }], 'O valor de country_id é inválido'));
   test('cujo país já possui outra cidade com o mesmo nome', () => testTemplate([...newData, { name: 'São Paulo', country_id: 10000 }], 'O país já possui uma cidade com esse nome'));
 });
 
@@ -95,9 +95,9 @@ describe('Não deve atualizar uma cidade...', () => {
       });
   };
 
-  test('para um país inexistente', () => testTemplate(11000, { country_id: 10006 }, 'ID do país inexistente'));
+  test('cujo valor de country_id é inválido', () => testTemplate(11000, { country_id: 10006 }, 'O valor de country_id é inválido'));
   test('cujo país já possui outra cidade com o mesmo nome', () => testTemplate(11000, { name: 'Curitiba' }, 'O país já possui uma cidade com esse nome'));
-  test('com o atributo name em branco', () => testTemplate(11000, { name: '' }, 'O atributo name deve ser preenchido'));
+  test('cujo valor de name é inválido', () => testTemplate(11000, { name: '' }, 'O valor de name é inválido'));
 });
 
 test('Deve remover uma cidade com sucesso', () => {

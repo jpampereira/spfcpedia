@@ -1,14 +1,14 @@
-module.exports = (app) => {
-  const {
-    existsOrError,
-    existsInDbOrError,
-    notExistsInDbOrError,
-    isPositiveOrError,
-    isDateTimeFormatOrError,
-    isUrlFormatOrError,
-    removeTableControlFields,
-  } = app.errors.validator;
+const {
+  existsOrError,
+  existsInDbOrError,
+  notExistsInDbOrError,
+  isPositiveOrError,
+  isDateTimeFormatOrError,
+  isUrlFormatOrError,
+  removeTableControlFields,
+} = require('../configs/validator')();
 
+module.exports = (app) => {
   const read = (filter = {}) => {
     return app.db('match').select(app.db.raw('tournament_stage, to_char(datetime, \'YYYY-MM-DD HH24:MI\') as datetime, local, referee, assistant_referee_1, assistant_referee_2, fourth_official, opponent, opponent_goals, highlights')).where(filter);
   };
