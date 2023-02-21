@@ -6,10 +6,10 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/match';
 
 beforeAll(() => {
-  run('06_match');
+  run('06_match_player');
 });
 
-test('Deve inserir uma partida com sucesso', () => {
+test('Deve inserir novas partidas com sucesso', () => {
   return request(app).post(MAIN_ROUTE)
     .send([
       {

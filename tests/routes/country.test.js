@@ -86,10 +86,19 @@ test('Deve remover um país com sucesso', () => {
     });
 });
 
-test('Não deve remover um país que possui cidades associadas', () => {
-  return request(app).delete(`${MAIN_ROUTE}/10000`)
-    .then((res) => {
-      expect(res.status).toBe(400);
-      expect(res.body.error).toBe('O país possui cidades associadas');
-    });
+describe('Não deve remover um país...', () => {
+  beforeAll(() => {
+    run('06_match_player');
+  });
+
+  const testTemplate = (id, errorMessage) => {
+    return request(app).delete(`${MAIN_ROUTE}/${id}`)
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe(errorMessage);
+      });
+  };
+
+  test('que possui cidades associadas', () => testTemplate(10000, 'O país possui cidades associadas'));
+  test('que possui jogadores associados', () => testTemplate(10001, 'O país possui jogadores associados'));
 });

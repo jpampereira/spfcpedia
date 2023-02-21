@@ -90,7 +90,7 @@ test('Deve remover um adversário com sucesso', () => {
 
 describe('Não deve remover um adversário...', () => {
   beforeAll(() => {
-    run('06_match');
+    run('06_match_player');
   });
 
   test('que possui partidas associadas', () => {

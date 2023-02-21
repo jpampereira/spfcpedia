@@ -52,11 +52,19 @@ module.exports = () => {
   };
 
   const isDateTimeFormatOrError = (value, msg) => {
-    if (!value.match(/^\d+-\d+-\d+\s+\d+:\d+$/)) throw new ValidationError(msg);
+    if (!value.match(/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}$/)) throw new ValidationError(msg);
+  };
+
+  const isDateFormatOrError = (value, msg) => {
+    if (!value.match(/^\d{4}-\d{2}-\d{2}$/)) throw new ValidationError(msg);
   };
 
   const isUrlFormatOrError = (value, msg) => {
-    if (!value.match(/^(https:\/\/)?(www\.)?\S+\.com(\.\S+)?\/.+$/)) throw new ValidationError(msg);
+    if (!value.match(/^(https:\/\/)?(www\.)?\S+\.\S+(\.\S+)?\/.+$/)) throw new ValidationError(msg);
+  };
+
+  const isInArray = (value, array, msg) => {
+    if (!array.includes(value)) throw new ValidationError(msg);
   };
 
   const removeTableControlFields = (object) => {
@@ -74,7 +82,9 @@ module.exports = () => {
     notExistsInDbOrError,
     isPositiveOrError,
     isDateTimeFormatOrError,
+    isDateFormatOrError,
     isUrlFormatOrError,
+    isInArray,
     removeTableControlFields,
   };
 };

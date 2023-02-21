@@ -31,6 +31,7 @@ module.exports = (app) => {
 
   const remove = async (countryId) => {
     await notExistsInDbOrError('city', { country_id: countryId }, 'O país possui cidades associadas');
+    await notExistsInDbOrError('player', { nationality: countryId }, 'O país possui jogadores associados');
 
     return app.db('country').del().where({ id: countryId });
   };

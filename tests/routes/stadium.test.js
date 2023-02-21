@@ -122,7 +122,7 @@ test('Deve remover um estádio com sucesso', () => {
 
 describe('Não deve remover um estádio...', () => {
   beforeAll(() => {
-    run('06_match');
+    run('06_match_player');
   });
 
   test('que possui partidas associadas', () => {

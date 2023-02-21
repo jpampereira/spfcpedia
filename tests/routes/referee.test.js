@@ -92,7 +92,7 @@ test('Deve remover um árbitro com sucesso', () => {
 
 describe('Não deve remover um árbitro...', () => {
   beforeAll(() => {
-    run('06_match');
+    run('06_match_player');
   });
 
   test('que possui partidas associadas', () => {
