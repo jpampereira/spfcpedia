@@ -9,6 +9,22 @@ beforeAll(() => {
   run('06_match_player');
 });
 
+test('Deve listar todos os jogadores', () => {
+  return request(app).get(MAIN_ROUTE)
+    .then((res) => {
+      expect(res.status).toBe(200);
+      expect(res.body.length).toBeGreaterThan(1);
+    });
+});
+
+test('Deve retornar um jogador pelo Id', () => {
+  return request(app).get(`${MAIN_ROUTE}/18010`)
+    .then((res) => {
+      expect(res.status).toBe(200);
+      expect(res.body.name).toBe('Jonathan Calleri');
+    });
+});
+
 test('Deve inserir novos jogadores com sucesso', () => {
   return request(app).post(MAIN_ROUTE)
     .send([

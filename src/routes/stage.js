@@ -15,12 +15,6 @@ module.exports = (app) => {
       .catch((err) => next(err));
   });
 
-  router.get('/byTournament/:id', (req, res, next) => {
-    return app.services.stage.read({ tournament_id: req.params.id })
-      .then((result) => res.status(200).json(result))
-      .catch((err) => next(err));
-  });
-
   router.post('/', (req, res, next) => {
     return app.services.stage.create(req.body)
       .then((result) => res.status(201).json(result))

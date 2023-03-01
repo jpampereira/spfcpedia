@@ -69,5 +69,7 @@ module.exports = (app) => {
     return app.db('match').del().where({ id: matchId });
   };
 
-  return { create, update, remove };
+  return {
+    read, create, update, remove,
+  };
 };

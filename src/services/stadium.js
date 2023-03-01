@@ -10,13 +10,6 @@ module.exports = (app) => {
     return app.db('stadium').select(['id', 'name', 'nickname', 'city_id']).where(filter).orderBy('id');
   };
 
-  const readByCountry = (countryId) => {
-    return app.db('stadium').select(['stadium.id', 'stadium.name', 'stadium.nickname', 'stadium.city_id'])
-      .join('city', 'stadium.city_id', 'city.id')
-      .where({ 'city.country_id': countryId })
-      .orderBy('stadium.id');
-  };
-
   const create = async (newStadiums) => {
     for (const stadium of newStadiums) {
       existsOrError(stadium.name, 'O atributo name é obrigatório');
@@ -53,6 +46,6 @@ module.exports = (app) => {
   };
 
   return {
-    read, readByCountry, create, update, remove,
+    read, create, update, remove,
   };
 };

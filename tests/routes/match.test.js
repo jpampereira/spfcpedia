@@ -9,6 +9,24 @@ beforeAll(() => {
   run('06_match_player');
 });
 
+test('Deve listar todas as partidas', () => {
+  return request(app).get(MAIN_ROUTE)
+    .then((res) => {
+      expect(res.status).toBe(200);
+      expect(res.body.length).toBeGreaterThan(1);
+    });
+});
+
+test('Deve retornar uma partida pelo Id', () => {
+  return request(app).get(`${MAIN_ROUTE}/17000`)
+    .then((res) => {
+      expect(res.status).toBe(200);
+      expect(res.body.datetime).toBe('2023-01-15 18:30');
+      expect(res.body.opponent_goals).toBe(0);
+      expect(res.body.highlights).toBe('https://www.youtube.com/watch?v=RtLunSYQYsY');
+    });
+});
+
 test('Deve inserir novas partidas com sucesso', () => {
   return request(app).post(MAIN_ROUTE)
     .send([

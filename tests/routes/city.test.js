@@ -27,20 +27,6 @@ test('Deve retornar uma cidade por Id', () => {
     });
 });
 
-test('Deve retornar todas as cidades de um país', () => {
-  return request(app).get(`${MAIN_ROUTE}/byCountry/10000`)
-    .then((res) => {
-      const lastPos = res.body.length - 1;
-
-      expect(res.status).toBe(200);
-      expect(res.body.length).toBe(3);
-      expect(res.body[0].id).toBe(11000);
-      expect(res.body[0].name).toBe('São Paulo');
-      expect(res.body[lastPos].id).toBe(11002);
-      expect(res.body[lastPos].name).toBe('Coritiba');
-    });
-});
-
 test('Deve inserir cidades com sucesso', () => {
   return request(app).post(MAIN_ROUTE)
     .send([

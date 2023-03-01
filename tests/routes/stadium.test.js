@@ -28,30 +28,6 @@ test('Deve retornar um estádio por Id', () => {
     });
 });
 
-test('Deve retornar todos os estádios de uma cidade', () => {
-  return request(app).get(`${MAIN_ROUTE}/byCity/11000`)
-    .then((res) => {
-      const lastPos = res.body.length - 1;
-
-      expect(res.status).toBe(200);
-      expect(res.body.length).toBe(4);
-      expect(res.body[0].nickname).toBe('Morumbi');
-      expect(res.body[lastPos].nickname).toBe('Pacaembu');
-    });
-});
-
-test('Deve retornar todos os estádios de um país', () => {
-  return request(app).get(`${MAIN_ROUTE}/byCountry/10000`)
-    .then((res) => {
-      const lastPos = res.body.length - 1;
-
-      expect(res.status).toBe(200);
-      expect(res.body.length).toBe(7);
-      expect(res.body[0].nickname).toBe('Morumbi');
-      expect(res.body[lastPos].nickname).toBe('Arena da Baixada');
-    });
-});
-
 test('Deve inserir estádios com sucesso', () => {
   return request(app).post(MAIN_ROUTE)
     .send([

@@ -15,12 +15,6 @@ module.exports = (app) => {
       .catch((err) => next(err));
   });
 
-  router.get('/byCountry/:id', (req, res, next) => {
-    return app.services.city.read({ country_id: req.params.id })
-      .then((result) => res.status(200).json(result))
-      .catch((err) => next(err));
-  });
-
   router.post('/', (req, res, next) => {
     return app.services.city.create(req.body)
       .then((result) => res.status(201).json(result))

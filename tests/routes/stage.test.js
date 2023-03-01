@@ -26,20 +26,6 @@ test('Deve retornar uma fase por Id', () => {
     });
 });
 
-test('Deve retornar todas as fases de um campeonato', () => {
-  return request(app).get(`${MAIN_ROUTE}/byTournament/10000`)
-    .then((res) => {
-      const lastPos = res.body.length - 1;
-
-      expect(res.status).toBe(200);
-      expect(res.body.length).toBe(4);
-      expect(res.body[0].id).toBe(11000);
-      expect(res.body[0].name).toBe('Primeira Fase');
-      expect(res.body[lastPos].id).toBe(11003);
-      expect(res.body[lastPos].name).toBe('Final');
-    });
-});
-
 test('Deve inserir as fases de um campeonato com sucesso', () => {
   return request(app).post(MAIN_ROUTE)
     .send([
