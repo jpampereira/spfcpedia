@@ -6,7 +6,7 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/match';
 
 beforeAll(() => {
-  run('06_match_player');
+  run('06_match_player_lineup');
 });
 
 test('Deve listar todas as partidas', () => {
@@ -184,4 +184,16 @@ test('Deve remover uma partida com sucesso', () => {
     .then((res) => {
       expect(res.status).toBe(204);
     });
+});
+
+describe('Não deve remover uma partida...', () => {
+  const testTemplate = (id, errorMessage) => {
+    return request(app).delete(`${MAIN_ROUTE}/${id}`)
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe(errorMessage);
+      });
+  };
+
+  test('com uma escalação associada', () => testTemplate(17000, 'A partida possui uma escalação associada'));
 });

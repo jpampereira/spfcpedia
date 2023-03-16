@@ -12,6 +12,7 @@ module.exports = (app) => {
   router.use('/stadium', app.routes.stadium);
   router.use('/match', app.routes.match);
   router.use('/player', app.routes.player);
+  router.use('/lineup', app.routes.lineup);
 
   app.use(router);
 };

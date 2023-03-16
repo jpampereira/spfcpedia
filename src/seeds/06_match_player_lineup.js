@@ -1,5 +1,6 @@
 exports.seed = (knex) => {
-  return knex('player').del()
+  return knex('lineup').del()
+    .then(() => knex('player').del())
     .then(() => knex('match').del())
     .then(() => knex('stage').del())
     .then(() => knex('tournament').del())
@@ -197,6 +198,41 @@ exports.seed = (knex) => {
       },
       {
         id: 18021, name: 'Lucas Lopes Beraldo', position: 'D', birth: '2003-11-24', nationality: 10000, image: 'https://www.arqtricolor.com/wp-content/uploads/2021/07/210103152_797403657640580_7710886127371056561_n.jpg',
+      },
+    ]))
+    .then(() => knex('lineup').insert([
+      {
+        id: 19000, match_id: 17000, player_id: 18000, shirt_number: 23,
+      },
+      {
+        id: 19001, match_id: 17000, player_id: 18001, shirt_number: 13,
+      },
+      {
+        id: 19002, match_id: 17000, player_id: 18002, shirt_number: 5,
+      },
+      {
+        id: 19003, match_id: 17000, player_id: 18003, shirt_number: 3,
+      },
+      {
+        id: 19004, match_id: 17000, player_id: 18004, shirt_number: 6,
+      },
+      {
+        id: 19005, match_id: 17000, player_id: 18005, shirt_number: 29,
+      },
+      {
+        id: 19006, match_id: 17000, player_id: 18006, shirt_number: 27,
+      },
+      {
+        id: 19007, match_id: 17000, player_id: 18007, shirt_number: 11,
+      },
+      {
+        id: 19008, match_id: 17000, player_id: 18008, shirt_number: 10,
+      },
+      {
+        id: 19009, match_id: 17000, player_id: 18009, shirt_number: 12,
+      },
+      {
+        id: 19010, match_id: 17000, player_id: 18012, shirt_number: 14,
       },
     ]));
 };

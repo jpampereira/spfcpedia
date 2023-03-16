@@ -65,7 +65,9 @@ module.exports = (app) => {
     return app.db('match').update(updatedMatch).where({ id: matchId });
   };
 
-  const remove = (matchId) => {
+  const remove = async (matchId) => {
+    await notExistsInDbOrError('lineup', { match_id: matchId }, 'A partida possui uma escalação associada');
+
     return app.db('match').del().where({ id: matchId });
   };
 

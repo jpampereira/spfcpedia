@@ -6,7 +6,7 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/player';
 
 beforeAll(() => {
-  run('06_match_player');
+  run('06_match_player_lineup');
 });
 
 test('Deve listar todos os jogadores', () => {
@@ -133,8 +133,20 @@ describe('Não deve alterar um jogador...', () => {
 });
 
 test('Deve remover um jogador com sucesso', () => {
-  return request(app).delete(`${MAIN_ROUTE}/18000`)
+  return request(app).delete(`${MAIN_ROUTE}/18021`)
     .then((res) => {
       expect(res.status).toBe(204);
     });
+});
+
+describe('Não deve remover um jogador...', () => {
+  const testTemplate = (id, errorMessage) => {
+    return request(app).delete(`${MAIN_ROUTE}/${id}`)
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe(errorMessage);
+      });
+  };
+
+  test('com escalações associada', () => testTemplate(18000, 'O jogador possui escalações associadas'));
 });

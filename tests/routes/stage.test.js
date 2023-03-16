@@ -94,7 +94,7 @@ test('Deve remover uma fase com sucesso', () => {
 
 describe('Não deve remover uma fase...', () => {
   beforeAll(() => {
-    run('06_match_player');
+    run('06_match_player_lineup');
   });
 
   test('que possui partidas associadas', () => {

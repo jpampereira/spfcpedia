@@ -50,7 +50,9 @@ module.exports = (app) => {
     return app.db('player').update(newPlayer).where({ id: playerId });
   };
 
-  const remove = (playerId) => {
+  const remove = async (playerId) => {
+    await notExistsInDbOrError('lineup', { player_id: playerId }, 'O jogador possui escalações associadas');
+
     return app.db('player').del().where({ id: playerId });
   };
 

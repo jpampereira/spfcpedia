@@ -67,6 +67,37 @@ module.exports = () => {
     if (!array.includes(value)) throw new ValidationError(msg);
   };
 
+  const isEqualOrError = (value1, value2, msg) => {
+    if (value1 !== value2) throw new ValidationError(msg);
+  };
+
+  const notDuplicateValuesOrError = (array, attr, msg = attr) => {
+    let newArray = array;
+
+    if (attr !== msg) {
+      newArray = newArray.map((elem) => elem[attr]);
+    }
+
+    const checkIfValueIsDuplicated = (elem, i, arr) => arr.indexOf(elem) !== i;
+    const foundDuplicateValues = newArray.some(checkIfValueIsDuplicated);
+
+    if (foundDuplicateValues) throw new ValidationError(msg);
+  };
+
+  const singleValueInArrayOrError = (array, attr, msg = attr) => {
+    let newArray = array;
+
+    if (attr !== msg) {
+      newArray = newArray.map((elem) => elem[attr]);
+    }
+
+    const firstValue = newArray[0];
+    const compareWithFirstValue = (elem) => elem === firstValue;
+    const foundDifferentValues = !newArray.every(compareWithFirstValue);
+
+    if (foundDifferentValues) throw new ValidationError(msg);
+  };
+
   const removeTableControlFields = (object) => {
     const newObject = object;
 
@@ -85,6 +116,9 @@ module.exports = () => {
     isDateFormatOrError,
     isUrlFormatOrError,
     isInArray,
+    isEqualOrError,
+    notDuplicateValuesOrError,
+    singleValueInArrayOrError,
     removeTableControlFields,
   };
 };
