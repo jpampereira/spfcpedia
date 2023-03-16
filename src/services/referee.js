@@ -1,36 +1,41 @@
-const { existsOrError, notExistsInDbOrError, removeTableControlFields } = require('../configs/validator')();
+const validator = require('../configs/validator')();
+const Referee = require('../entities/Referee');
 
 module.exports = (app) => {
   const read = (filter = {}) => {
     return app.db('referee').select(['id', 'name']).where(filter).orderBy('id');
   };
 
-  const create = async (newReferees) => {
-    for (const referee of newReferees) {
-      existsOrError(referee.name, 'O atributo name é obrigatório');
-      await notExistsInDbOrError('referee', { name: referee.name }, 'Árbitro já cadastrado');
+  const create = async (referees) => {
+    const newReferees = [];
 
-      removeTableControlFields(referee);
+    for (const referee of referees) {
+      let newReferee = new Referee(referee);
+
+      newReferee.allRequiredFieldsAreFilled();
+      await validator.notExistsInDbOrError('referee', { name: newReferee.name.value }, 'Árbitro já cadastrado');
+
+      newReferees.push(newReferee.getObject());
     }
 
     return app.db('referee').insert(newReferees, ['id', 'name']);
   };
 
   const update = async (refereeId, updatedReferee) => {
-    const [refereeInDb] = await read({ id: refereeId });
-    const newReferee = { ...refereeInDb, ...updatedReferee };
-    removeTableControlFields(newReferee);
-
-    existsOrError(newReferee.name, 'O valor de name é inválido');
-    await notExistsInDbOrError('referee', ['name = ? and id <> ?', [newReferee.name, refereeId]], 'Árbitro já cadastrado');
-
+    const [currentReferee] = await read({ id: refereeId });
+    let newReferee = new Referee({ ...currentReferee, ...updatedReferee });
+    
+    validator.existsOrError(newReferee.name.value, 'O valor de name é inválido');
+    await validator.notExistsInDbOrError('referee', ['name = ? and id <> ?', [newReferee.name.value, refereeId]], 'Árbitro já cadastrado');
+    
+    newReferee = newReferee.getObject();
     newReferee.updated_at = 'now';
 
     return app.db('referee').update(newReferee).where({ id: refereeId });
   };
 
   const remove = async (refereeId) => {
-    await notExistsInDbOrError('match', ['referee = ? or assistant_referee_1 = ? or assistant_referee_2 = ? or fourth_official = ?', refereeId], 'O árbitro possui partidas associadas');
+    await validator.notExistsInDbOrError('match', ['referee = ? or assistant_referee_1 = ? or assistant_referee_2 = ? or fourth_official = ?', refereeId], 'O árbitro possui partidas associadas');
 
     return app.db('referee').del().where({ id: refereeId });
   };

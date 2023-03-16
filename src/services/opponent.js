@@ -1,36 +1,41 @@
-const { existsOrError, notExistsInDbOrError, removeTableControlFields } = require('../configs/validator')();
+const validator = require('../configs/validator')();
+const Opponent = require('../entities/Opponent');
 
 module.exports = (app) => {
   const read = (filter = {}) => {
     return app.db('opponent').select(['id', 'name']).where(filter).orderBy('id');
   };
 
-  const create = async (newOpponents) => {
-    for (const opponent of newOpponents) {
-      existsOrError(opponent.name, 'O atributo name é obrigatório');
-      await notExistsInDbOrError('opponent', { name: opponent.name }, 'Adversário já cadastrado');
+  const create = async (opponents) => {
+    const newOpponents = [];
 
-      removeTableControlFields(opponent);
+    for (const opponent of opponents) {
+      let newOpponent = new Opponent(opponent);
+
+      newOpponent.allRequiredFieldsAreFilled();
+      await validator.notExistsInDbOrError('opponent', { name: newOpponent.name.value }, 'Adversário já cadastrado');
+
+      newOpponents.push(newOpponent.getObject());
     }
 
     return app.db('opponent').insert(newOpponents, ['id', 'name']);
   };
 
   const update = async (opponentId, updatedOpponent) => {
-    const [opponentInDb] = await read({ id: opponentId });
-    const newOpponent = { ...opponentInDb, ...updatedOpponent };
-    removeTableControlFields(newOpponent);
-
-    existsOrError(newOpponent.name, 'O valor de name é inválido');
-    await notExistsInDbOrError('opponent', ['name = ? and id <> ?', [newOpponent.name, opponentId]], 'Adversário já cadastrado');
-
+    const [currentOpponent] = await read({ id: opponentId });
+    let newOpponent = new Opponent({ ...currentOpponent, ...updatedOpponent });
+    
+    validator.existsOrError(newOpponent.name.value, 'O valor de name é inválido');
+    await validator.notExistsInDbOrError('opponent', ['name = ? and id <> ?', [newOpponent.name.value, opponentId]], 'Adversário já cadastrado');
+    
+    newOpponent = newOpponent.getObject();
     newOpponent.updated_at = 'now';
 
     return app.db('opponent').update(newOpponent).where({ id: opponentId });
   };
 
   const remove = async (opponentId) => {
-    await notExistsInDbOrError('match', { opponent: opponentId }, 'O adversário possui partidas associadas');
+    await validator.notExistsInDbOrError('match', { opponent: opponentId }, 'O adversário possui partidas associadas');
 
     return app.db('opponent').del().where({ id: opponentId });
   };

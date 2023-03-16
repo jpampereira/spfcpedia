@@ -1,46 +1,45 @@
-const {
-  existsOrError,
-  existsInDbOrError,
-  notExistsInDbOrError,
-  removeTableControlFields,
-} = require('../configs/validator')();
+const validator = require('../configs/validator')();
+const Stadium = require('../entities/Stadium');
 
 module.exports = (app) => {
   const read = (filter = {}) => {
     return app.db('stadium').select(['id', 'name', 'nickname', 'city_id']).where(filter).orderBy('id');
   };
 
-  const create = async (newStadiums) => {
-    for (const stadium of newStadiums) {
-      existsOrError(stadium.name, 'O atributo name é obrigatório');
-      existsOrError(stadium.city_id, 'O atributo city_id é obrigatório');
-      await existsInDbOrError('city', { id: stadium.city_id }, 'O valor de city_id é inválido');
-      await notExistsInDbOrError('stadium', { name: stadium.name }, 'Estádio já cadastrado');
-      if (stadium.nickname) await notExistsInDbOrError('stadium', { nickname: stadium.nickname }, 'Apelido já utilizado por outro estádio');
+  const create = async (stadiums) => {
+    const newStadiums = [];
 
-      removeTableControlFields(stadium);
+    for (const stadium of stadiums) {
+      let newStadium = new Stadium(stadium);
+
+      newStadium.allRequiredFieldsAreFilled();
+      await validator.existsInDbOrError('city', { id: newStadium.city_id.value }, 'O valor de city_id é inválido');
+      await validator.notExistsInDbOrError('stadium', { name: newStadium.name.value }, 'Estádio já cadastrado');
+      if (newStadium.nickname.value) await validator.notExistsInDbOrError('stadium', { nickname: newStadium.nickname.value }, 'Apelido já utilizado por outro estádio');
+
+      newStadiums.push(newStadium.getObject());
     }
 
     return app.db('stadium').insert(newStadiums, ['id', 'name', 'nickname', 'city_id']);
   };
 
   const update = async (stadiumId, updatedStadium) => {
-    const [stadiumInDb] = await read({ id: stadiumId });
-    const newStadium = { ...stadiumInDb, ...updatedStadium };
-    removeTableControlFields(newStadium);
-
-    existsOrError(newStadium.name, 'O valor de name é inválido');
-    await existsInDbOrError('city', { id: newStadium.city_id }, 'O valor de city_id é inválido');
-    await notExistsInDbOrError('stadium', ['name = ? and id <> ?', [newStadium.name, stadiumId]], 'Estádio já cadastrado');
-    if (newStadium.nickname) await notExistsInDbOrError('stadium', ['nickname = ? and id <> ?', [newStadium.nickname, stadiumId]], 'Apelido já utilizado por outro estádio');
-
+    const [currentStadium] = await read({ id: stadiumId });
+    let newStadium = new Stadium({ ...currentStadium, ...updatedStadium });
+    
+    validator.existsOrError(newStadium.name.value, 'O valor de name é inválido');
+    await validator.existsInDbOrError('city', { id: newStadium.city_id.value }, 'O valor de city_id é inválido');
+    await validator.notExistsInDbOrError('stadium', ['name = ? and id <> ?', [newStadium.name.value, stadiumId]], 'Estádio já cadastrado');
+    if (newStadium.nickname.value) await validator.notExistsInDbOrError('stadium', ['nickname = ? and id <> ?', [newStadium.nickname.value, stadiumId]], 'Apelido já utilizado por outro estádio');
+    
+    newStadium = newStadium.getObject();
     newStadium.updated_at = 'now';
 
     return app.db('stadium').update(newStadium).where({ id: stadiumId });
   };
 
   const remove = async (stadiumId) => {
-    await notExistsInDbOrError('match', { local: stadiumId }, 'O estádio possui partidas associadas');
+    await validator.notExistsInDbOrError('match', { local: stadiumId }, 'O estádio possui partidas associadas');
 
     return app.db('stadium').del().where({ id: stadiumId });
   };

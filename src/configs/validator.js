@@ -98,14 +98,6 @@ module.exports = () => {
     if (foundDifferentValues) throw new ValidationError(msg);
   };
 
-  const removeTableControlFields = (object) => {
-    const newObject = object;
-
-    delete newObject.id;
-    delete newObject.created_at;
-    delete newObject.updated_at;
-  };
-
   return {
     existsOrError,
     notExistsOrError,
@@ -119,6 +111,5 @@ module.exports = () => {
     isEqualOrError,
     notDuplicateValuesOrError,
     singleValueInArrayOrError,
-    removeTableControlFields,
   };
 };

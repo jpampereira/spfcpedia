@@ -1,36 +1,41 @@
-const { existsOrError, notExistsInDbOrError, removeTableControlFields } = require('../configs/validator')();
+const validator = require('../configs/validator')();
+const Tournament = require('../entities/Tournament');
 
 module.exports = (app) => {
   const read = (filter = {}) => {
     return app.db('tournament').select(['id', 'name']).where(filter).orderBy('id');
   };
 
-  const create = async (newTournaments) => {
-    for (const tournament of newTournaments) {
-      existsOrError(tournament.name, 'O atributo name é obrigatório');
-      await notExistsInDbOrError('tournament', { name: tournament.name }, 'Campeonato já cadastrado');
+  const create = async (tournaments) => {
+    const newTournaments = [];
 
-      removeTableControlFields(tournament);
+    for (const tournament of tournaments) {
+      let newTournament = new Tournament(tournament);
+
+      newTournament.allRequiredFieldsAreFilled();
+      await validator.notExistsInDbOrError('tournament', { name: newTournament.name.value }, 'Campeonato já cadastrado');
+
+      newTournaments.push(newTournament.getObject());
     }
 
     return app.db('tournament').insert(newTournaments, ['id', 'name']);
   };
 
   const update = async (tournamentId, updatedTournament) => {
-    const [tournamentInDb] = await read({ id: tournamentId });
-    const newTournament = { ...tournamentInDb, ...updatedTournament };
-    removeTableControlFields(newTournament);
-
-    existsOrError(newTournament.name, 'O valor de name é inválido');
-    await notExistsInDbOrError('tournament', ['name = ? and id <> ?', [newTournament.name, tournamentId]], 'Campeonato já cadastrado');
-
+    const [currentTournament] = await read({ id: tournamentId });
+    let newTournament = new Tournament({ ...currentTournament, ...updatedTournament });
+    
+    validator.existsOrError(newTournament.name.value, 'O valor de name é inválido');
+    await validator.notExistsInDbOrError('tournament', ['name = ? and id <> ?', [newTournament.name.value, tournamentId]], 'Campeonato já cadastrado');
+    
+    newTournament = newTournament.getObject();
     newTournament.updated_at = 'now';
 
     return app.db('tournament').update(newTournament).where({ id: tournamentId });
   };
 
   const remove = async (tournamentId) => {
-    await notExistsInDbOrError('stage', { tournament_id: tournamentId }, 'O campeonato possui fases associadas');
+    await validator.notExistsInDbOrError('stage', { tournament_id: tournamentId }, 'O campeonato possui fases associadas');
 
     return app.db('tournament').del().where({ id: tournamentId });
   };

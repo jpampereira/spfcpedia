@@ -4,7 +4,7 @@ exports.up = (knex) => {
   return knex.schema.createTable('player', (table) => {
     table.increments('id').primary();
     table.string('name').unique().notNull();
-    table.string('nickname').defaultTo('').notNull();
+    table.string('nickname').defaultTo('');
     table.enu('position', ['G', 'D', 'M', 'F']).notNull();
     table.date('birth').notNull();
     table.integer('nationality').references('id').inTable('country').notNull();
