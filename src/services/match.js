@@ -1,5 +1,5 @@
-const validator = require('../configs/validator')();
 const Match = require('../entities/Match');
+const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
@@ -10,19 +10,10 @@ module.exports = (app) => {
     const newMatches = [];
 
     for (const match of matches) {
-      let newMatch = new Match(match);
+      const newMatch = new Match(match);
 
-      newMatch.allRequiredFieldsAreFilled();
-      validator.isDateTimeFormatOrError(newMatch.datetime.value, 'O valor de datetime é inválido');
-      validator.isPositiveOrError(newMatch.opponent_goals.value, 'O valor de opponent_goals é inválido');
-      validator.isUrlFormatOrError(newMatch.highlights.value, 'O valor de highlights é inválido');
-      await validator.existsInDbOrError('stage', { id: newMatch.tournament_stage.value }, 'O valor de tournament_stage é inválido');
-      await validator.existsInDbOrError('stadium', { id: newMatch.local.value }, 'O valor de local é inválido');
-      await validator.existsInDbOrError('referee', { id: newMatch.referee.value }, 'O valor de referee é inválido');
-      await validator.existsInDbOrError('referee', { id: newMatch.assistant_referee_1.value }, 'O valor de assistant_referee_1 é inválido');
-      await validator.existsInDbOrError('referee', { id: newMatch.assistant_referee_2.value }, 'O valor de assistant_referee_2 é inválido');
-      await validator.existsInDbOrError('referee', { id: newMatch.fourth_official.value }, 'O valor de fourth_official é inválido');
-      await validator.existsInDbOrError('opponent', { id: newMatch.opponent.value }, 'O valor de opponent é inválido');
+      newMatch.allRequiredAttributesAreFilled();
+      await newMatch.attributesValidation();
       await validator.notExistsInDbOrError('match', newMatch.getObject(), 'Partida já cadastrada');
 
       newMatches.push(newMatch.getObject());
@@ -34,17 +25,8 @@ module.exports = (app) => {
   const update = async (matchId, updatedMatch) => {
     const [currentMatch] = await read({ id: matchId });
     let newMatch = new Match({ ...currentMatch, ...updatedMatch });
-    
-    validator.isDateTimeFormatOrError(newMatch.datetime.value, 'O valor de datetime é inválido');
-    validator.isPositiveOrError(newMatch.opponent_goals.value, 'O valor de opponent_goals é inválido');
-    validator.isUrlFormatOrError(newMatch.highlights.value, 'O valor de highlights é inválido');
-    await validator.existsInDbOrError('stage', { id: newMatch.tournament_stage.value }, 'O valor de tournament_stage é inválido');
-    await validator.existsInDbOrError('stadium', { id: newMatch.local.value }, 'O valor de local é inválido');
-    await validator.existsInDbOrError('referee', { id: newMatch.referee.value }, 'O valor de referee é inválido');
-    await validator.existsInDbOrError('referee', { id: newMatch.assistant_referee_1.value }, 'O valor de assistant_referee_1 é inválido');
-    await validator.existsInDbOrError('referee', { id: newMatch.assistant_referee_2.value }, 'O valor de assistant_referee_2 é inválido');
-    await validator.existsInDbOrError('referee', { id: newMatch.fourth_official.value }, 'O valor de fourth_official é inválido');
-    await validator.existsInDbOrError('opponent', { id: newMatch.opponent.value }, 'O valor de opponent é inválido');
+
+    await newMatch.attributesValidation();
     await validator.notExistsInDbOrError('match', newMatch.getObject(), 'Partida já cadastrada');
     
     newMatch = newMatch.getObject();
@@ -59,7 +41,5 @@ module.exports = (app) => {
     return app.db('match').del().where({ id: matchId });
   };
 
-  return {
-    read, create, update, remove,
-  };
+  return { read, create, update, remove };
 };

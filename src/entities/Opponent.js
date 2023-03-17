@@ -1,10 +1,20 @@
 const General = require('./General');
+const validator = require('../utils/validator')();
 
 module.exports = class Opponent extends General {
   name = { value: null, required: true };
 
   constructor(obj) {
     super();
-    this.setFields(obj);
+    this.setAttributes(obj);
+  }
+
+  async attributesValidation() {
+    try {
+      validator.existsOrError(this.name.value, 'O valor de name é inválido');
+
+    } catch (error) {
+      throw error;
+    }
   }
 };

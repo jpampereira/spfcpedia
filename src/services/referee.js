@@ -1,5 +1,5 @@
-const validator = require('../configs/validator')();
 const Referee = require('../entities/Referee');
+const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
@@ -10,9 +10,9 @@ module.exports = (app) => {
     const newReferees = [];
 
     for (const referee of referees) {
-      let newReferee = new Referee(referee);
+      const newReferee = new Referee(referee);
 
-      newReferee.allRequiredFieldsAreFilled();
+      newReferee.allRequiredAttributesAreFilled();
       await validator.notExistsInDbOrError('referee', { name: newReferee.name.value }, 'Árbitro já cadastrado');
 
       newReferees.push(newReferee.getObject());
@@ -25,7 +25,7 @@ module.exports = (app) => {
     const [currentReferee] = await read({ id: refereeId });
     let newReferee = new Referee({ ...currentReferee, ...updatedReferee });
     
-    validator.existsOrError(newReferee.name.value, 'O valor de name é inválido');
+    await newReferee.attributesValidation();
     await validator.notExistsInDbOrError('referee', ['name = ? and id <> ?', [newReferee.name.value, refereeId]], 'Árbitro já cadastrado');
     
     newReferee = newReferee.getObject();
@@ -40,7 +40,5 @@ module.exports = (app) => {
     return app.db('referee').del().where({ id: refereeId });
   };
 
-  return {
-    read, create, update, remove,
-  };
+  return { read, create, update, remove };
 };

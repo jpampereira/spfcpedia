@@ -1,12 +1,12 @@
-const validator = require('../configs/validator')();
+const validator = require('../utils/validator')();
 
 module.exports = class General {
-  setFields(obj) {
-    const arrayOfEntityFields = Object.entries(obj);
+  setAttributes(obj) {
+    const listOfAttributes = Object.entries(obj);
 
-    arrayOfEntityFields.forEach((entityField) => {
-      const name = entityField[0];
-      const value = entityField[1];
+    listOfAttributes.forEach((attribute) => {
+      const name = attribute[0];
+      const value = attribute[1];
 
       if (this[name] !== undefined) {
         this[name].value = value;
@@ -17,30 +17,31 @@ module.exports = class General {
   getObject() {
     const obj = {};
 
-    const arrayOfEntityFields = Object.entries(this);
+    const listOfAttributes = Object.entries(this);
 
-    arrayOfEntityFields.forEach((entityField) => {
-      const name = entityField[0];
-      const configs = entityField[1];
+    listOfAttributes.forEach((attribute) => {
+      const name = attribute[0];
+      const value = attribute[1].value;
 
-      obj[name] = configs.value;
+      obj[name] = value;
     });
 
     return obj;
   }
 
-  allRequiredFieldsAreFilled() {
-    const arrayOfEntityFields = Object.entries(this);
+  allRequiredAttributesAreFilled() {
+    const listOfAttributes = Object.entries(this);
 
-    for (const entityField of arrayOfEntityFields) {
-      const name = entityField[0];
-      const configs = entityField[1];
+    for (const attribute of listOfAttributes) {
+      const name = attribute[0];
+      const configs = attribute[1];
 
       if (configs.required) {
         try {
           validator.existsOrError(configs.value, `O atributo ${name} é obrigatório`);
-        } catch (e) {
-          throw e;
+
+        } catch (error) {
+          throw error;
         }
       }
     }

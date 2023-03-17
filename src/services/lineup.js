@@ -1,5 +1,5 @@
-const validator = require('../configs/validator')();
 const Lineup = require('../entities/Lineup');
+const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
@@ -15,12 +15,10 @@ module.exports = (app) => {
     const newLineup = [];
 
     for (const chosePlayer of lineup) {
-      let newChosePlayer = new Lineup(chosePlayer);
+      const newChosePlayer = new Lineup(chosePlayer);
 
-      newChosePlayer.allRequiredFieldsAreFilled();
-      validator.isPositiveOrError(newChosePlayer.shirt_number.value, 'O valor de shirt_number é inválido');
-      await validator.existsInDbOrError('match', { id: newChosePlayer.match_id.value }, 'O valor de match_id é inválido');
-      await validator.existsInDbOrError('player', { id: newChosePlayer.player_id.value }, 'O valor de player_id é inválido');
+      newChosePlayer.allRequiredAttributesAreFilled();
+      await newChosePlayer.attributesValidation();
       await validator.notExistsInDbOrError('lineup', { match_id: newChosePlayer.match_id.value }, 'Escalação da partida já cadastrada');
 
       newLineup.push(newChosePlayer.getObject());
@@ -43,7 +41,5 @@ module.exports = (app) => {
     return app.db('lineup').del().where({ match_id: matchId });
   };
 
-  return {
-    read, create, update, remove,
-  };
+  return { read, create, update, remove };
 };

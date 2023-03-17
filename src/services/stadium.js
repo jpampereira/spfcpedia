@@ -1,5 +1,5 @@
-const validator = require('../configs/validator')();
 const Stadium = require('../entities/Stadium');
+const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
@@ -10,10 +10,10 @@ module.exports = (app) => {
     const newStadiums = [];
 
     for (const stadium of stadiums) {
-      let newStadium = new Stadium(stadium);
+      const newStadium = new Stadium(stadium);
 
-      newStadium.allRequiredFieldsAreFilled();
-      await validator.existsInDbOrError('city', { id: newStadium.city_id.value }, 'O valor de city_id é inválido');
+      newStadium.allRequiredAttributesAreFilled();
+      await newStadium.attributesValidation();
       await validator.notExistsInDbOrError('stadium', { name: newStadium.name.value }, 'Estádio já cadastrado');
       if (newStadium.nickname.value) await validator.notExistsInDbOrError('stadium', { nickname: newStadium.nickname.value }, 'Apelido já utilizado por outro estádio');
 
@@ -27,8 +27,7 @@ module.exports = (app) => {
     const [currentStadium] = await read({ id: stadiumId });
     let newStadium = new Stadium({ ...currentStadium, ...updatedStadium });
     
-    validator.existsOrError(newStadium.name.value, 'O valor de name é inválido');
-    await validator.existsInDbOrError('city', { id: newStadium.city_id.value }, 'O valor de city_id é inválido');
+    await newStadium.attributesValidation();
     await validator.notExistsInDbOrError('stadium', ['name = ? and id <> ?', [newStadium.name.value, stadiumId]], 'Estádio já cadastrado');
     if (newStadium.nickname.value) await validator.notExistsInDbOrError('stadium', ['nickname = ? and id <> ?', [newStadium.nickname.value, stadiumId]], 'Apelido já utilizado por outro estádio');
     
@@ -44,7 +43,5 @@ module.exports = (app) => {
     return app.db('stadium').del().where({ id: stadiumId });
   };
 
-  return {
-    read, create, update, remove,
-  };
+  return { read, create, update, remove };
 };

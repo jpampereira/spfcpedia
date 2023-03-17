@@ -1,5 +1,5 @@
-const validator = require('../configs/validator')();
 const Tournament = require('../entities/Tournament');
+const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
@@ -10,9 +10,9 @@ module.exports = (app) => {
     const newTournaments = [];
 
     for (const tournament of tournaments) {
-      let newTournament = new Tournament(tournament);
+      const newTournament = new Tournament(tournament);
 
-      newTournament.allRequiredFieldsAreFilled();
+      newTournament.allRequiredAttributesAreFilled();
       await validator.notExistsInDbOrError('tournament', { name: newTournament.name.value }, 'Campeonato já cadastrado');
 
       newTournaments.push(newTournament.getObject());
@@ -25,7 +25,7 @@ module.exports = (app) => {
     const [currentTournament] = await read({ id: tournamentId });
     let newTournament = new Tournament({ ...currentTournament, ...updatedTournament });
     
-    validator.existsOrError(newTournament.name.value, 'O valor de name é inválido');
+    await newTournament.attributesValidation();
     await validator.notExistsInDbOrError('tournament', ['name = ? and id <> ?', [newTournament.name.value, tournamentId]], 'Campeonato já cadastrado');
     
     newTournament = newTournament.getObject();
@@ -40,7 +40,5 @@ module.exports = (app) => {
     return app.db('tournament').del().where({ id: tournamentId });
   };
 
-  return {
-    read, create, update, remove,
-  };
+  return { read, create, update, remove };
 };

@@ -1,5 +1,5 @@
-const validator = require('../configs/validator')();
 const Player = require('../entities/Player');
+const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
@@ -10,19 +10,16 @@ module.exports = (app) => {
     const newPlayers = [];
 
     for (const player of players) {
-      let newPlayer = new Player(player);
+      const newPlayer = new Player(player);
 
-      newPlayer.allRequiredFieldsAreFilled();
-      validator.isDateFormatOrError(newPlayer.birth.value, 'O valor de birth é inválido');
-      validator.isUrlFormatOrError(newPlayer.image.value, 'O valor de image é inválido');
-      validator.isInArray(newPlayer.position.value, ['G', 'D', 'M', 'F'], 'O valor de position é inválido');
-      await validator.existsInDbOrError('country', { id: newPlayer.nationality.value }, 'O valor de nationality é inválido');
+      newPlayer.allRequiredAttributesAreFilled();
+      await newPlayer.attributesValidation();
       await validator.notExistsInDbOrError('player', { name: newPlayer.name.value }, 'Jogador já cadastrado');
       if (newPlayer.nickname.value) await validator.notExistsInDbOrError('player', { nickname: newPlayer.nickname.value }, 'Apelido já utilizado por outro jogador');
 
       newPlayers.push(newPlayer.getObject());
     }
-
+    
     return app.db('player').insert(newPlayers, ['id', 'name', 'nickname', 'position', 'birth', 'image']);
   };
 
@@ -30,10 +27,7 @@ module.exports = (app) => {
     const [currentPlayer] = await read({ id: playerId });
     let newPlayer = new Player({ ...currentPlayer, ...updatedPlayer });
     
-    validator.isDateFormatOrError(newPlayer.birth.value, 'O valor de birth é inválido');
-    validator.isUrlFormatOrError(newPlayer.image.value, 'O valor de image é inválido');
-    validator.isInArray(newPlayer.position.value, ['G', 'D', 'M', 'F'], 'O valor de position é inválido');
-    await validator.existsInDbOrError('country', { id: newPlayer.nationality.value }, 'O valor de nationality é inválido');
+    await newPlayer.attributesValidation();
     await validator.notExistsInDbOrError('player', ['name = ? and id <> ?', [newPlayer.name.value, playerId]], 'Jogador já cadastrado');
     if (newPlayer.nickname.value) await validator.notExistsInDbOrError('player', ['nickname = ? and id <> ?', [newPlayer.nickname.value, playerId]], 'Apelido já utilizado por outro jogador');
     
@@ -49,7 +43,5 @@ module.exports = (app) => {
     return app.db('player').del().where({ id: playerId });
   };
 
-  return {
-    read, create, update, remove,
-  };
+  return { read, create, update, remove };
 };

@@ -1,5 +1,5 @@
-const validator = require('../configs/validator')();
 const Country = require('../entities/Country');
+const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
@@ -10,9 +10,9 @@ module.exports = (app) => {
     const newCountries = [];
 
     for (const country of countries) {
-      let newCountry = new Country(country);
+      const newCountry = new Country(country);
       
-      newCountry.allRequiredFieldsAreFilled();
+      newCountry.allRequiredAttributesAreFilled();
       await validator.notExistsInDbOrError('country', { name: newCountry.name.value }, 'País já cadastrado');
 
       newCountries.push(newCountry.getObject());
@@ -25,7 +25,7 @@ module.exports = (app) => {
     const [currentCountry] = await read({ id: countryId });
     let newCountry = new Country({ ...currentCountry, ...updatedCountry });
 
-    validator.existsOrError(newCountry.name.value, 'O valor de name é inválido');
+    await newCountry.attributesValidation();
     await validator.notExistsInDbOrError('country', ['name = ? and id <> ?', [newCountry.name.value, countryId]], 'País já cadastrado');
 
     newCountry = newCountry.getObject();
@@ -41,7 +41,5 @@ module.exports = (app) => {
     return app.db('country').del().where({ id: countryId });
   };
 
-  return {
-    read, create, update, remove,
-  };
+  return { read, create, update, remove };
 };

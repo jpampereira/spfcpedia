@@ -1,5 +1,5 @@
-const validator = require('../configs/validator')();
 const Opponent = require('../entities/Opponent');
+const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
@@ -10,9 +10,9 @@ module.exports = (app) => {
     const newOpponents = [];
 
     for (const opponent of opponents) {
-      let newOpponent = new Opponent(opponent);
+      const newOpponent = new Opponent(opponent);
 
-      newOpponent.allRequiredFieldsAreFilled();
+      newOpponent.allRequiredAttributesAreFilled();
       await validator.notExistsInDbOrError('opponent', { name: newOpponent.name.value }, 'Adversário já cadastrado');
 
       newOpponents.push(newOpponent.getObject());
@@ -25,7 +25,7 @@ module.exports = (app) => {
     const [currentOpponent] = await read({ id: opponentId });
     let newOpponent = new Opponent({ ...currentOpponent, ...updatedOpponent });
     
-    validator.existsOrError(newOpponent.name.value, 'O valor de name é inválido');
+    await newOpponent.attributesValidation();
     await validator.notExistsInDbOrError('opponent', ['name = ? and id <> ?', [newOpponent.name.value, opponentId]], 'Adversário já cadastrado');
     
     newOpponent = newOpponent.getObject();
@@ -40,7 +40,5 @@ module.exports = (app) => {
     return app.db('opponent').del().where({ id: opponentId });
   };
 
-  return {
-    read, create, update, remove,
-  };
+  return { read, create, update, remove };
 };

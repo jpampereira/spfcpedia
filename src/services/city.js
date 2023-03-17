@@ -1,5 +1,5 @@
-const validator = require('../configs/validator')();
 const City = require('../entities/City');
+const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
@@ -10,10 +10,10 @@ module.exports = (app) => {
     const newCities = [];
 
     for (const city of cities) {
-      let newCity = new City(city);
+      const newCity = new City(city);
 
-      newCity.allRequiredFieldsAreFilled();
-      await validator.existsInDbOrError('country', { id: newCity.country_id.value }, 'O valor de country_id é inválido');
+      newCity.allRequiredAttributesAreFilled();
+      await newCity.attributesValidation();
       await validator.notExistsInDbOrError('city', newCity.getObject(), 'O país já possui uma cidade com esse nome');
 
       newCities.push(newCity.getObject());
@@ -26,8 +26,7 @@ module.exports = (app) => {
     const [currentCity] = await read({ id: cityId });
     let newCity = new City({ ...currentCity, ...updatedCity });
     
-    validator.existsOrError(newCity.name.value, 'O valor de name é inválido');
-    await validator.existsInDbOrError('country', { id: newCity.country_id.value }, 'O valor de country_id é inválido');
+    await newCity.attributesValidation();
     await validator.notExistsInDbOrError('city', ['name = ? and country_id = ? and id <> ?', [newCity.name.value, newCity.country_id.value, cityId]], 'O país já possui uma cidade com esse nome');
     
     newCity = newCity.getObject();
@@ -42,7 +41,5 @@ module.exports = (app) => {
     return app.db('city').del().where({ id: cityId });
   };
 
-  return {
-    read, create, update, remove,
-  };
+  return { read, create, update, remove };
 };
