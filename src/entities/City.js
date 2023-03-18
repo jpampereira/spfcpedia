@@ -1,11 +1,13 @@
 const General = require('./General');
+const exits = require('../configs/exits');
 const validator = require('../utils/validator')();
 
 module.exports = class City extends General {
   entityName = 'city';
+
   attributes = {
     name: { value: null, required: true, unique: false },
-    country_id: { value: null, required: true, unique: false }
+    country_id: { value: null, required: true, unique: false },
   };
 
   constructor(obj) {
@@ -14,12 +16,9 @@ module.exports = class City extends General {
   }
 
   async validAttributesOrError() {
-    try {
-      validator.existsOrError(this.attributes.name.value, 'O valor de name é inválido');
-      await validator.existsInDbOrError('country', { id: this.attributes.country_id.value }, 'O valor de country_id é inválido');
+    const errorMessage = exits.INVALID_ATTRIBUTE_ERROR;
 
-    } catch (error) {
-      throw error;
-    }
+    validator.existsOrError(this.attributes.name.value, errorMessage.replace(/<ATTR_NAME>/, 'name'));
+    await validator.existsInDbOrError('country', { id: this.attributes.country_id.value }, errorMessage.replace(/<ATTR_NAME>/, 'country_id'));
   }
 };

@@ -1,5 +1,4 @@
 const Lineup = require('../entities/Lineup');
-const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
@@ -20,10 +19,10 @@ module.exports = (app) => {
   const update = async (chosePlayerId, updatedChosePlayer) => {
     const [currentChosePlayer] = await read({ id: chosePlayerId });
     let newChosePlayer = new Lineup({ ...currentChosePlayer, ...updatedChosePlayer });
-    
+
     newChosePlayer = newChosePlayer.getObject();
     newChosePlayer.updated_at = 'now';
-    
+
     return app.db('lineup').update(newChosePlayer).where({ id: chosePlayerId });
   };
 
@@ -31,5 +30,7 @@ module.exports = (app) => {
     return app.db('lineup').del().where({ match_id: matchId });
   };
 
-  return { read, create, update, remove };
+  return {
+    read, create, update, remove,
+  };
 };

@@ -56,7 +56,7 @@ describe('Não deve inserir um novo adversário...', () => {
   ];
 
   test('sem o atributo name', () => testTemplate([...newData, { name: '' }], 'O atributo name é obrigatório'));
-  test('duplicado', () => testTemplate([...newData, { name: 'Ituano Futebol Clube' }], 'Já existe uma instância com esse name'));
+  test('duplicado', () => testTemplate([...newData, { name: 'Ituano Futebol Clube' }], 'Já existe um registro com esse name'));
 });
 
 test('Deve atualizar um adversário com sucesso', () => {
@@ -78,7 +78,7 @@ describe('Não deve atualizar um adversário...', () => {
   };
 
   test('cujo valor de name é inválido', () => testTemplate(10002, { name: '' }, 'O valor de name é inválido'));
-  test('para um já existente', () => testTemplate(10002, { name: 'Sport Club Corinthians Paulista' }, 'Já existe uma instância com esse name'));
+  test('para um já existente', () => testTemplate(10002, { name: 'Sport Club Corinthians Paulista' }, 'Já existe um registro com esse name'));
 });
 
 test('Deve remover um adversário com sucesso', () => {

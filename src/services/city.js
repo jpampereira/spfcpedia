@@ -14,7 +14,7 @@ module.exports = (app) => {
 
       await newCity.allRequiredAttributesAreFilledOrError();
       await newCity.validAttributesOrError();
-      await newCity.uniqueAttributesValuesOrError();
+      await newCity.uniqueConstraintInviolatedOrError();
       await newCity.instanceDoesntExistOrError();
 
       newCities.push(newCity.getObject());
@@ -26,12 +26,12 @@ module.exports = (app) => {
   const update = async (cityId, updatedCity) => {
     const [currentCity] = await read({ id: cityId });
     let newCity = new City({ ...currentCity, ...updatedCity });
-    
+
     await newCity.validAttributesOrError();
     await newCity.allRequiredAttributesAreFilledOrError();
-    await newCity.uniqueAttributesValuesOrError(cityId);
+    await newCity.uniqueConstraintInviolatedOrError(cityId);
     await newCity.instanceDoesntExistOrError(cityId);
-    
+
     newCity = newCity.getObject();
     newCity.updated_at = 'now';
 
@@ -44,5 +44,7 @@ module.exports = (app) => {
     return app.db('city').del().where({ id: cityId });
   };
 
-  return { read, create, update, remove };
+  return {
+    read, create, update, remove,
+  };
 };

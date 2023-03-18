@@ -132,7 +132,7 @@ describe('Não deve inserir uma partida...', () => {
   test('cujo valor de opponent é inválido', () => testTemplate([...newData, { ...wrongData, opponent: 13009 }], 'O valor de opponent é inválido'));
   test('cujo valor de opponent_goals é inválido', () => testTemplate([...newData, { ...wrongData, opponent_goals: -2 }], 'O valor de opponent_goals é inválido'));
   test('cujo valor de highlights é inválido', () => testTemplate([...newData, { ...wrongData, highlights: 'google.com.br' }], 'O valor de highlights é inválido'));
-  test('duplicada', () => testTemplate([...newData, wrongData], 'A instância de match já existe'));
+  test('duplicada', () => testTemplate([...newData, wrongData], 'Registro já cadastrado'));
 });
 
 test('Deve alterar uma partida com sucesso', () => {
@@ -176,7 +176,7 @@ describe('Não deve alterar uma partida...', () => {
   test('cujo valor de opponent é inválido', () => testTemplate(17000, { ...data, opponent: 13009 }, 'O valor de opponent é inválido'));
   test('cujo valor de opponent_goals é inválido', () => testTemplate(17000, { ...data, opponent_goals: -2 }, 'O valor de opponent_goals é inválido'));
   test('cujo valor de highlights é inválido', () => testTemplate(17000, { ...data, highlights: 'google.com.br' }, 'O valor de highlights é inválido'));
-  test('duplicada', () => testTemplate(17000, data, 'A instância de match já existe'));
+  test('duplicada', () => testTemplate(17000, data, 'Registro já cadastrado'));
 });
 
 test('Deve remover uma partida com sucesso', () => {

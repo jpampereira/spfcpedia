@@ -11,10 +11,10 @@ module.exports = (app) => {
 
     for (const country of countries) {
       const newCountry = new Country(country);
-      
+
       await newCountry.allRequiredAttributesAreFilledOrError();
       await newCountry.validAttributesOrError();
-      await newCountry.uniqueAttributesValuesOrError();
+      await newCountry.uniqueConstraintInviolatedOrError();
       await newCountry.instanceDoesntExistOrError();
 
       newCountries.push(newCountry.getObject());
@@ -29,7 +29,7 @@ module.exports = (app) => {
 
     await newCountry.validAttributesOrError();
     await newCountry.allRequiredAttributesAreFilledOrError();
-    await newCountry.uniqueAttributesValuesOrError(countryId);
+    await newCountry.uniqueConstraintInviolatedOrError(countryId);
     await newCountry.instanceDoesntExistOrError(countryId);
 
     newCountry = newCountry.getObject();
@@ -45,5 +45,7 @@ module.exports = (app) => {
     return app.db('country').del().where({ id: countryId });
   };
 
-  return { read, create, update, remove };
+  return {
+    read, create, update, remove,
+  };
 };

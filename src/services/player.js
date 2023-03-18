@@ -14,24 +14,24 @@ module.exports = (app) => {
 
       await newPlayer.allRequiredAttributesAreFilledOrError();
       await newPlayer.validAttributesOrError();
-      await newPlayer.uniqueAttributesValuesOrError();
+      await newPlayer.uniqueConstraintInviolatedOrError();
       await newPlayer.instanceDoesntExistOrError();
 
       newPlayers.push(newPlayer.getObject());
     }
-    
+
     return app.db('player').insert(newPlayers, ['id', 'name', 'nickname', 'position', 'birth', 'image']);
   };
 
   const update = async (playerId, updatedPlayer) => {
     const [currentPlayer] = await read({ id: playerId });
     let newPlayer = new Player({ ...currentPlayer, ...updatedPlayer });
-    
+
     await newPlayer.validAttributesOrError();
     await newPlayer.allRequiredAttributesAreFilledOrError();
-    await newPlayer.uniqueAttributesValuesOrError(playerId);
+    await newPlayer.uniqueConstraintInviolatedOrError(playerId);
     await newPlayer.instanceDoesntExistOrError(playerId);
-    
+
     newPlayer = newPlayer.getObject();
     newPlayer.updated_at = 'now';
 
@@ -44,5 +44,7 @@ module.exports = (app) => {
     return app.db('player').del().where({ id: playerId });
   };
 
-  return { read, create, update, remove };
+  return {
+    read, create, update, remove,
+  };
 };

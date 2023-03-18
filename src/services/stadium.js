@@ -14,24 +14,24 @@ module.exports = (app) => {
 
       await newStadium.allRequiredAttributesAreFilledOrError();
       await newStadium.validAttributesOrError();
-      await newStadium.uniqueAttributesValuesOrError();
+      await newStadium.uniqueConstraintInviolatedOrError();
       await newStadium.instanceDoesntExistOrError();
-      
+
       newStadiums.push(newStadium.getObject());
     }
-    
+
     return app.db('stadium').insert(newStadiums, ['id', 'name', 'nickname', 'city_id']);
   };
-  
+
   const update = async (stadiumId, updatedStadium) => {
     const [currentStadium] = await read({ id: stadiumId });
     let newStadium = new Stadium({ ...currentStadium, ...updatedStadium });
-    
+
     await newStadium.validAttributesOrError();
     await newStadium.allRequiredAttributesAreFilledOrError();
-    await newStadium.uniqueAttributesValuesOrError(stadiumId);
+    await newStadium.uniqueConstraintInviolatedOrError(stadiumId);
     await newStadium.instanceDoesntExistOrError(stadiumId);
-    
+
     newStadium = newStadium.getObject();
     newStadium.updated_at = 'now';
 
@@ -44,5 +44,7 @@ module.exports = (app) => {
     return app.db('stadium').del().where({ id: stadiumId });
   };
 
-  return { read, create, update, remove };
+  return {
+    read, create, update, remove,
+  };
 };

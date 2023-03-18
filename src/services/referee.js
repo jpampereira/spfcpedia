@@ -14,7 +14,7 @@ module.exports = (app) => {
 
       await newReferee.allRequiredAttributesAreFilledOrError();
       await newReferee.validAttributesOrError();
-      await newReferee.uniqueAttributesValuesOrError();
+      await newReferee.uniqueConstraintInviolatedOrError();
       await newReferee.instanceDoesntExistOrError();
 
       newReferees.push(newReferee.getObject());
@@ -26,12 +26,12 @@ module.exports = (app) => {
   const update = async (refereeId, updatedReferee) => {
     const [currentReferee] = await read({ id: refereeId });
     let newReferee = new Referee({ ...currentReferee, ...updatedReferee });
-    
+
     await newReferee.validAttributesOrError();
     await newReferee.allRequiredAttributesAreFilledOrError();
-    await newReferee.uniqueAttributesValuesOrError(refereeId);
+    await newReferee.uniqueConstraintInviolatedOrError(refereeId);
     await newReferee.instanceDoesntExistOrError(refereeId);
-    
+
     newReferee = newReferee.getObject();
     newReferee.updated_at = 'now';
 
@@ -44,5 +44,7 @@ module.exports = (app) => {
     return app.db('referee').del().where({ id: refereeId });
   };
 
-  return { read, create, update, remove };
+  return {
+    read, create, update, remove,
+  };
 };

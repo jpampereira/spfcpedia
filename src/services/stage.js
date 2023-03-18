@@ -14,7 +14,7 @@ module.exports = (app) => {
 
       await newStage.allRequiredAttributesAreFilledOrError();
       await newStage.validAttributesOrError();
-      await newStage.uniqueAttributesValuesOrError();
+      await newStage.uniqueConstraintInviolatedOrError();
       await newStage.instanceDoesntExistOrError();
 
       newStages.push(newStage.getObject());
@@ -26,12 +26,12 @@ module.exports = (app) => {
   const update = async (stageId, updatedStage) => {
     const [currentStage] = await read({ id: stageId });
     let newStage = new Stage({ ...currentStage, ...updatedStage });
-    
+
     await newStage.validAttributesOrError();
     await newStage.allRequiredAttributesAreFilledOrError();
-    await newStage.uniqueAttributesValuesOrError(stageId);
+    await newStage.uniqueConstraintInviolatedOrError(stageId);
     await newStage.instanceDoesntExistOrError(stageId);
-    
+
     newStage = newStage.getObject();
     newStage.updated_at = 'now';
 
@@ -44,5 +44,7 @@ module.exports = (app) => {
     return app.db('stage').del().where({ id: stageId });
   };
 
-  return { read, create, update, remove };
+  return {
+    read, create, update, remove,
+  };
 };

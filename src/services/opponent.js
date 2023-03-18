@@ -14,7 +14,7 @@ module.exports = (app) => {
 
       await newOpponent.allRequiredAttributesAreFilledOrError();
       await newOpponent.validAttributesOrError();
-      await newOpponent.uniqueAttributesValuesOrError();
+      await newOpponent.uniqueConstraintInviolatedOrError();
       await newOpponent.instanceDoesntExistOrError();
 
       newOpponents.push(newOpponent.getObject());
@@ -26,12 +26,12 @@ module.exports = (app) => {
   const update = async (opponentId, updatedOpponent) => {
     const [currentOpponent] = await read({ id: opponentId });
     let newOpponent = new Opponent({ ...currentOpponent, ...updatedOpponent });
-    
+
     await newOpponent.validAttributesOrError();
     await newOpponent.allRequiredAttributesAreFilledOrError();
-    await newOpponent.uniqueAttributesValuesOrError(opponentId);
+    await newOpponent.uniqueConstraintInviolatedOrError(opponentId);
     await newOpponent.instanceDoesntExistOrError(opponentId);
-    
+
     newOpponent = newOpponent.getObject();
     newOpponent.updated_at = 'now';
 
@@ -44,5 +44,7 @@ module.exports = (app) => {
     return app.db('opponent').del().where({ id: opponentId });
   };
 
-  return { read, create, update, remove };
+  return {
+    read, create, update, remove,
+  };
 };

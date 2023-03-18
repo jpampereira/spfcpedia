@@ -61,8 +61,8 @@ describe('Não deve inserir um estádio...', () => {
   test('sem o atributo name', () => testTemplate([...newData, { city_id: 11002 }], 'O atributo name é obrigatório'));
   test('sem o atributo city_id', () => testTemplate([...newData, { name: 'Estádio Durival Britto e Silva', nickname: 'Vila Capanema' }], 'O atributo city_id é obrigatório'));
   test('cujo valor de city_id é inválido', () => testTemplate([...newData, { name: 'Estádio Durival Britto e Silva', nickname: 'Vila Capanema', city_id: 11011 }], 'O valor de city_id é inválido'));
-  test('com nome duplicado', () => testTemplate([...newData, { name: 'Estádio Cícero Pompeu de Toledo', city_id: 11000 }], 'Já existe uma instância com esse name'));
-  test('com apelido duplicado', () => testTemplate([...newData, { name: 'Cícero Pompeu de Toledo', nickname: 'Morumbi', city_id: 11000 }], 'Já existe uma instância com esse nickname'));
+  test('com nome duplicado', () => testTemplate([...newData, { name: 'Estádio Cícero Pompeu de Toledo', city_id: 11000 }], 'Já existe um registro com esse name'));
+  test('com apelido duplicado', () => testTemplate([...newData, { name: 'Cícero Pompeu de Toledo', nickname: 'Morumbi', city_id: 11000 }], 'Já existe um registro com esse nickname'));
 });
 
 test('Deve atualizar um estádio com sucesso', () => {
@@ -85,8 +85,8 @@ describe('Não deve atualizar um estádio...', () => {
 
   test('cujo valor de name é inválido', () => testTemplate(12002, { name: '' }, 'O valor de name é inválido'));
   test('cujo valor de city_id é inválido', () => testTemplate(12000, { city_id: 11012 }, 'O valor de city_id é inválido'));
-  test('para um nome já cadastrado', () => testTemplate(12001, { name: 'Neo Química Arena' }, 'Já existe uma instância com esse name'));
-  test('para um apelido já cadastrado', () => testTemplate(12002, { nickname: 'Morumbi' }, 'Já existe uma instância com esse nickname'));
+  test('para um nome já cadastrado', () => testTemplate(12001, { name: 'Neo Química Arena' }, 'Já existe um registro com esse name'));
+  test('para um apelido já cadastrado', () => testTemplate(12002, { nickname: 'Morumbi' }, 'Já existe um registro com esse nickname'));
 });
 
 test('Deve remover um estádio com sucesso', () => {

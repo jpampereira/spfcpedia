@@ -15,7 +15,6 @@
         "arrow-body-style": "off",
         "import/extensions": "off",
         "no-restricted-syntax": "off",
-        "no-await-in-loop": "off",
-        "lines-between-class-members": "off",
+        "no-await-in-loop": "off"
     }
 }

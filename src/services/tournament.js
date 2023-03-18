@@ -14,7 +14,7 @@ module.exports = (app) => {
 
       await newTournament.allRequiredAttributesAreFilledOrError();
       await newTournament.validAttributesOrError();
-      await newTournament.uniqueAttributesValuesOrError();
+      await newTournament.uniqueConstraintInviolatedOrError();
       await newTournament.instanceDoesntExistOrError();
 
       newTournaments.push(newTournament.getObject());
@@ -26,12 +26,12 @@ module.exports = (app) => {
   const update = async (tournamentId, updatedTournament) => {
     const [currentTournament] = await read({ id: tournamentId });
     let newTournament = new Tournament({ ...currentTournament, ...updatedTournament });
-    
+
     await newTournament.validAttributesOrError();
     await newTournament.allRequiredAttributesAreFilledOrError();
-    await newTournament.uniqueAttributesValuesOrError(tournamentId);
+    await newTournament.uniqueConstraintInviolatedOrError(tournamentId);
     await newTournament.instanceDoesntExistOrError(tournamentId);
-    
+
     newTournament = newTournament.getObject();
     newTournament.updated_at = 'now';
 
@@ -44,5 +44,7 @@ module.exports = (app) => {
     return app.db('tournament').del().where({ id: tournamentId });
   };
 
-  return { read, create, update, remove };
+  return {
+    read, create, update, remove,
+  };
 };

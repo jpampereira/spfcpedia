@@ -14,7 +14,7 @@ module.exports = (app) => {
 
       await newMatch.allRequiredAttributesAreFilledOrError();
       await newMatch.validAttributesOrError();
-      await newMatch.uniqueAttributesValuesOrError();
+      await newMatch.uniqueConstraintInviolatedOrError();
       await newMatch.instanceDoesntExistOrError();
 
       newMatches.push(newMatch.getObject());
@@ -29,9 +29,9 @@ module.exports = (app) => {
 
     await newMatch.validAttributesOrError();
     await newMatch.allRequiredAttributesAreFilledOrError();
-    await newMatch.uniqueAttributesValuesOrError(matchId);
+    await newMatch.uniqueConstraintInviolatedOrError(matchId);
     await newMatch.instanceDoesntExistOrError(matchId);
-    
+
     newMatch = newMatch.getObject();
     newMatch.updated_at = 'now';
 
@@ -44,5 +44,7 @@ module.exports = (app) => {
     return app.db('match').del().where({ id: matchId });
   };
 
-  return { read, create, update, remove };
+  return {
+    read, create, update, remove,
+  };
 };

@@ -1,8 +1,10 @@
 const General = require('./General');
+const exits = require('../configs/exits');
 const validator = require('../utils/validator')();
 
 module.exports = class Match extends General {
   entityName = 'match';
+
   attributes = {
     tournament_stage: { value: null, required: true, unique: false },
     datetime: { value: null, required: true, unique: false },
@@ -13,7 +15,7 @@ module.exports = class Match extends General {
     fourth_official: { value: null, required: true, unique: false },
     opponent: { value: null, required: true, unique: false },
     opponent_goals: { value: null, required: true, unique: false },
-    highlights: { value: null, required: true, unique: false }
+    highlights: { value: null, required: true, unique: false },
   };
 
   constructor(obj) {
@@ -22,20 +24,17 @@ module.exports = class Match extends General {
   }
 
   async validAttributesOrError() {
-    try {
-      validator.isDateTimeFormatOrError(this.attributes.datetime.value, 'O valor de datetime é inválido');
-      validator.isPositiveOrError(this.attributes.opponent_goals.value, 'O valor de opponent_goals é inválido');
-      validator.isUrlFormatOrError(this.attributes.highlights.value, 'O valor de highlights é inválido');
-      await validator.existsInDbOrError('stage', { id: this.attributes.tournament_stage.value }, 'O valor de tournament_stage é inválido');
-      await validator.existsInDbOrError('stadium', { id: this.attributes.local.value }, 'O valor de local é inválido');
-      await validator.existsInDbOrError('referee', { id: this.attributes.referee.value }, 'O valor de referee é inválido');
-      await validator.existsInDbOrError('referee', { id: this.attributes.assistant_referee_1.value }, 'O valor de assistant_referee_1 é inválido');
-      await validator.existsInDbOrError('referee', { id: this.attributes.assistant_referee_2.value }, 'O valor de assistant_referee_2 é inválido');
-      await validator.existsInDbOrError('referee', { id: this.attributes.fourth_official.value }, 'O valor de fourth_official é inválido');
-      await validator.existsInDbOrError('opponent', { id: this.attributes.opponent.value }, 'O valor de opponent é inválido');
+    const errorMessage = exits.INVALID_ATTRIBUTE_ERROR;
 
-    } catch (error) {
-      throw error;
-    }
+    validator.isDateTimeFormatOrError(this.attributes.datetime.value, errorMessage.replace(/<ATTR_NAME>/, 'datetime'));
+    validator.isPositiveOrError(this.attributes.opponent_goals.value, errorMessage.replace(/<ATTR_NAME>/, 'opponent_goals'));
+    validator.isUrlFormatOrError(this.attributes.highlights.value, errorMessage.replace(/<ATTR_NAME>/, 'highlights'));
+    await validator.existsInDbOrError('stage', { id: this.attributes.tournament_stage.value }, errorMessage.replace(/<ATTR_NAME>/, 'tournament_stage'));
+    await validator.existsInDbOrError('stadium', { id: this.attributes.local.value }, errorMessage.replace(/<ATTR_NAME>/, 'local'));
+    await validator.existsInDbOrError('referee', { id: this.attributes.referee.value }, errorMessage.replace(/<ATTR_NAME>/, 'referee'));
+    await validator.existsInDbOrError('referee', { id: this.attributes.assistant_referee_1.value }, errorMessage.replace(/<ATTR_NAME>/, 'assistant_referee_1'));
+    await validator.existsInDbOrError('referee', { id: this.attributes.assistant_referee_2.value }, errorMessage.replace(/<ATTR_NAME>/, 'assistant_referee_2'));
+    await validator.existsInDbOrError('referee', { id: this.attributes.fourth_official.value }, errorMessage.replace(/<ATTR_NAME>/, 'fourth_official'));
+    await validator.existsInDbOrError('opponent', { id: this.attributes.opponent.value }, errorMessage.replace(/<ATTR_NAME>/, 'opponent'));
   }
 };

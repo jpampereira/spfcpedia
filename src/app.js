@@ -2,6 +2,7 @@ const app = require('express')();
 const consign = require('consign');
 
 const db = require('./configs/db');
+const exits = require('./configs/exits');
 
 app.db = db;
 
@@ -19,8 +20,8 @@ app.get('/', (req, res) => {
 app.use((err, req, res, next) => {
   const { name, message } = err;
 
-  if (name === 'ValidationError') res.status(400).json({ error: message });
-  else res.status(500).json({ error: message });
+  if (name === 'ValidationError') res.status(exits.HTTP_BAD_REQUEST).json({ error: message });
+  else res.status(exits.HTTP_SERVER_ERROR).json({ error: message });
 
   next(err);
 });

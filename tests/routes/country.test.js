@@ -54,7 +54,7 @@ describe('Não deve inserir um novo país...', () => {
   ];
 
   test('sem o atributo name', () => testTemplate([...newData, { name: '' }], 'O atributo name é obrigatório'));
-  test('duplicado', () => testTemplate([...newData, { name: 'Argentina' }], 'Já existe uma instância com esse name'));
+  test('duplicado', () => testTemplate([...newData, { name: 'Argentina' }], 'Já existe um registro com esse name'));
 });
 
 test('Deve atualizar um país com sucesso', () => {
@@ -76,7 +76,7 @@ describe('Não deve atualizar um país...', () => {
   };
 
   test('cujo valor de name é inválido', () => testTemplate(10005, { name: '' }, 'O valor de name é inválido'));
-  test('para um já existente', () => testTemplate(10005, { name: 'Argentina' }, 'Já existe uma instância com esse name'));
+  test('para um já existente', () => testTemplate(10005, { name: 'Argentina' }, 'Já existe um registro com esse name'));
 });
 
 test('Deve remover um país com sucesso', () => {
