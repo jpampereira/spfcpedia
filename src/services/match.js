@@ -12,9 +12,10 @@ module.exports = (app) => {
     for (const match of matches) {
       const newMatch = new Match(match);
 
-      newMatch.allRequiredAttributesAreFilled();
-      await newMatch.attributesValidation();
-      await validator.notExistsInDbOrError('match', newMatch.getObject(), 'Partida já cadastrada');
+      await newMatch.allRequiredAttributesAreFilledOrError();
+      await newMatch.validAttributesOrError();
+      await newMatch.uniqueAttributesValuesOrError();
+      await newMatch.instanceDoesntExistOrError();
 
       newMatches.push(newMatch.getObject());
     }
@@ -26,8 +27,10 @@ module.exports = (app) => {
     const [currentMatch] = await read({ id: matchId });
     let newMatch = new Match({ ...currentMatch, ...updatedMatch });
 
-    await newMatch.attributesValidation();
-    await validator.notExistsInDbOrError('match', newMatch.getObject(), 'Partida já cadastrada');
+    await newMatch.validAttributesOrError();
+    await newMatch.allRequiredAttributesAreFilledOrError();
+    await newMatch.uniqueAttributesValuesOrError(matchId);
+    await newMatch.instanceDoesntExistOrError(matchId);
     
     newMatch = newMatch.getObject();
     newMatch.updated_at = 'now';

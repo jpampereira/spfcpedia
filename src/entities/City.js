@@ -2,19 +2,21 @@ const General = require('./General');
 const validator = require('../utils/validator')();
 
 module.exports = class City extends General {
-  name = { value: null, required: true };
-  country_id = { value: null, required: true };
+  entityName = 'city';
+  attributes = {
+    name: { value: null, required: true, unique: false },
+    country_id: { value: null, required: true, unique: false }
+  };
 
   constructor(obj) {
     super();
     this.setAttributes(obj);
   }
 
-  async attributesValidation() {
+  async validAttributesOrError() {
     try {
-      validator.existsOrError(this.name.value, 'O valor de name é inválido');
-      validator.existsOrError(this.country_id.value, 'O valor de country_id é inválido');
-      await validator.existsInDbOrError('country', { id: this.country_id.value }, 'O valor de country_id é inválido');
+      validator.existsOrError(this.attributes.name.value, 'O valor de name é inválido');
+      await validator.existsInDbOrError('country', { id: this.attributes.country_id.value }, 'O valor de country_id é inválido');
 
     } catch (error) {
       throw error;

@@ -53,7 +53,7 @@ describe('Não deve inserir um novo campeonato...', () => {
   ];
 
   test('sem o atributo name', () => testTemplate([...newData, { name: '' }], 'O atributo name é obrigatório'));
-  test('duplicado', () => testTemplate([...newData, { name: 'Campeonato Brasileiro' }], 'Campeonato já cadastrado'));
+  test('duplicado', () => testTemplate([...newData, { name: 'Campeonato Brasileiro' }], 'Já existe uma instância com esse name'));
 });
 
 test('Deve atualizar um campeonato com sucesso', () => {
@@ -74,8 +74,8 @@ describe('Não deve atualizar um campeonato...', () => {
       });
   };
 
-  test('para um já existente', () => testTemplate(10001, { name: 'Copa do Brasil' }, 'Campeonato já cadastrado'));
   test('cujo valor de name é inválido', () => testTemplate(10001, { name: '' }, 'O valor de name é inválido'));
+  test('para um já existente', () => testTemplate(10001, { name: 'Copa do Brasil' }, 'Já existe uma instância com esse name'));
 });
 
 test('Deve remover um campeonato com sucesso', () => {

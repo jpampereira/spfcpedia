@@ -12,8 +12,10 @@ module.exports = (app) => {
     for (const referee of referees) {
       const newReferee = new Referee(referee);
 
-      newReferee.allRequiredAttributesAreFilled();
-      await validator.notExistsInDbOrError('referee', { name: newReferee.name.value }, 'Árbitro já cadastrado');
+      await newReferee.allRequiredAttributesAreFilledOrError();
+      await newReferee.validAttributesOrError();
+      await newReferee.uniqueAttributesValuesOrError();
+      await newReferee.instanceDoesntExistOrError();
 
       newReferees.push(newReferee.getObject());
     }
@@ -25,8 +27,10 @@ module.exports = (app) => {
     const [currentReferee] = await read({ id: refereeId });
     let newReferee = new Referee({ ...currentReferee, ...updatedReferee });
     
-    await newReferee.attributesValidation();
-    await validator.notExistsInDbOrError('referee', ['name = ? and id <> ?', [newReferee.name.value, refereeId]], 'Árbitro já cadastrado');
+    await newReferee.validAttributesOrError();
+    await newReferee.allRequiredAttributesAreFilledOrError();
+    await newReferee.uniqueAttributesValuesOrError(refereeId);
+    await newReferee.instanceDoesntExistOrError(refereeId);
     
     newReferee = newReferee.getObject();
     newReferee.updated_at = 'now';

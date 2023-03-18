@@ -8,8 +8,8 @@ module.exports = class General {
       const name = attribute[0];
       const value = attribute[1];
 
-      if (this[name] !== undefined) {
-        this[name].value = value;
+      if (this.attributes[name] !== undefined) {
+        this.attributes[name].value = value;
       }
     });
   }
@@ -17,7 +17,7 @@ module.exports = class General {
   getObject() {
     const obj = {};
 
-    const listOfAttributes = Object.entries(this);
+    const listOfAttributes = Object.entries(this.attributes);
 
     listOfAttributes.forEach((attribute) => {
       const name = attribute[0];
@@ -29,8 +29,8 @@ module.exports = class General {
     return obj;
   }
 
-  allRequiredAttributesAreFilled() {
-    const listOfAttributes = Object.entries(this);
+  async allRequiredAttributesAreFilledOrError() {
+    const listOfAttributes = Object.entries(this.attributes);
 
     for (const attribute of listOfAttributes) {
       const name = attribute[0];
@@ -44,6 +44,45 @@ module.exports = class General {
           throw error;
         }
       }
+    }
+  }
+
+  async uniqueAttributesValuesOrError(instanceId) {
+    try {
+      const uniqueAttributes = Object.entries(this.attributes).filter((attr) => attr[1].value && attr[1].unique);
+
+      for (const attribute of uniqueAttributes) {
+        const name = attribute[0];
+        let query = `${name} = ?`;
+        const values = [attribute[1].value];
+  
+        if (instanceId !== undefined) {
+          query += ' and id <> ?';
+          values.push(instanceId); 
+        }
+  
+        await validator.notExistsInDbOrError(this.entityName, [query, values], `Já existe uma instância com esse ${name}`);
+      }
+
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async instanceDoesntExistOrError(instanceId) {
+    try {
+      let query = Object.keys(this.attributes).map((attrName) => `${attrName} = ?`).join(' and ');
+      const values = Object.values(this.attributes).map((attr) => attr.value);
+
+      if (instanceId !== undefined) {
+        query += ' and id <> ?';
+        values.push(instanceId); 
+      }
+
+      await validator.notExistsInDbOrError(this.entityName, [query, values], `A instância de ${this.entityName} já existe`);
+
+    } catch (error) {
+      throw error;
     }
   }
 };

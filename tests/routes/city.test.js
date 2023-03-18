@@ -60,7 +60,7 @@ describe('Não deve inserir uma cidade...', () => {
   test('sem o atributo name', () => testTemplate([...newData, { country_id: 10003 }], 'O atributo name é obrigatório'));
   test('sem o atributo country_id', () => testTemplate([...newData, { name: 'Potosí' }], 'O atributo country_id é obrigatório'));
   test('cujo valor de country_id é inválido', () => testTemplate([...newData, { name: 'Potosí', country_id: 10006 }], 'O valor de country_id é inválido'));
-  test('cujo país já possui outra cidade com o mesmo nome', () => testTemplate([...newData, { name: 'São Paulo', country_id: 10000 }], 'O país já possui uma cidade com esse nome'));
+  test('cujo país já possui outra cidade com o mesmo nome', () => testTemplate([...newData, { name: 'São Paulo', country_id: 10000 }], 'A instância de city já existe'));
 });
 
 test('Deve atualizar uma cidade com sucesso', () => {
@@ -81,9 +81,9 @@ describe('Não deve atualizar uma cidade...', () => {
       });
   };
 
-  test('cujo valor de country_id é inválido', () => testTemplate(11000, { country_id: 10006 }, 'O valor de country_id é inválido'));
-  test('cujo país já possui outra cidade com o mesmo nome', () => testTemplate(11000, { name: 'Curitiba' }, 'O país já possui uma cidade com esse nome'));
   test('cujo valor de name é inválido', () => testTemplate(11000, { name: '' }, 'O valor de name é inválido'));
+  test('cujo valor de country_id é inválido', () => testTemplate(11000, { country_id: 10006 }, 'O valor de country_id é inválido'));
+  test('cujo país já possui outra cidade com o mesmo nome', () => testTemplate(11000, { name: 'Curitiba' }, 'A instância de city já existe'));
 });
 
 test('Deve remover uma cidade com sucesso', () => {

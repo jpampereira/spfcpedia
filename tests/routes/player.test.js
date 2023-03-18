@@ -102,8 +102,8 @@ describe('Não deve inserir um jogador...', () => {
   test('cujo valor de birth é inválido', () => testTemplate([...newData, { ...wrongData, birth: '21-07-1999' }], 'O valor de birth é inválido'));
   test('cujo valor de nationality é inválido', () => testTemplate([...newData, { ...wrongData, nationality: 10007 }], 'O valor de nationality é inválido'));
   test('cujo valor de image é inválido', () => testTemplate([...newData, { ...wrongData, image: 'google.com.br' }], 'O valor de image é inválido'));
-  test('com nome duplicado', () => testTemplate([...newData, { ...wrongData, name: 'Jonathan Calleri' }], 'Jogador já cadastrado'));
-  test('com apelido duplicado', () => testTemplate([...newData, { ...wrongData, nickname: 'Wellington Rato' }], 'Apelido já utilizado por outro jogador'));
+  test('com nome duplicado', () => testTemplate([...newData, { ...wrongData, name: 'Jonathan Calleri' }], 'Já existe uma instância com esse name'));
+  test('com apelido duplicado', () => testTemplate([...newData, { ...wrongData, nickname: 'Wellington Rato' }], 'Já existe uma instância com esse nickname'));
 });
 
 test('Deve alterar um jogador com sucesso', () => {
@@ -124,12 +124,13 @@ describe('Não deve alterar um jogador...', () => {
       });
   };
 
+  test('cujo valor de name é inválido', () => testTemplate(18000, { name: '' }, 'O valor de name é inválido'));
   test('cujo valor de position é inválido', () => testTemplate(18000, { position: 'H' }, 'O valor de position é inválido'));
   test('cujo valor de birth é inválido', () => testTemplate(18000, { birth: '21-07-1999' }, 'O valor de birth é inválido'));
   test('cujo valor de nationality é inválido', () => testTemplate(18000, { nationality: 10007 }, 'O valor de nationality é inválido'));
   test('cujo valor de image é inválido', () => testTemplate(18000, { image: 'google.com.br' }, 'O valor de image é inválido'));
-  test('para um nome já cadastrado', () => testTemplate(18000, { name: 'Jonathan Calleri' }, 'Jogador já cadastrado'));
-  test('para um apelido já cadastrado', () => testTemplate(18000, { nickname: 'Wellington Rato' }, 'Apelido já utilizado por outro jogador'));
+  test('para um nome já cadastrado', () => testTemplate(18000, { name: 'Jonathan Calleri' }, 'Já existe uma instância com esse name'));
+  test('para um apelido já cadastrado', () => testTemplate(18000, { nickname: 'Wellington Rato' }, 'Já existe uma instância com esse nickname'));
 });
 
 test('Deve remover um jogador com sucesso', () => {

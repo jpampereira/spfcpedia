@@ -12,8 +12,10 @@ module.exports = (app) => {
     for (const country of countries) {
       const newCountry = new Country(country);
       
-      newCountry.allRequiredAttributesAreFilled();
-      await validator.notExistsInDbOrError('country', { name: newCountry.name.value }, 'País já cadastrado');
+      await newCountry.allRequiredAttributesAreFilledOrError();
+      await newCountry.validAttributesOrError();
+      await newCountry.uniqueAttributesValuesOrError();
+      await newCountry.instanceDoesntExistOrError();
 
       newCountries.push(newCountry.getObject());
     }
@@ -25,8 +27,10 @@ module.exports = (app) => {
     const [currentCountry] = await read({ id: countryId });
     let newCountry = new Country({ ...currentCountry, ...updatedCountry });
 
-    await newCountry.attributesValidation();
-    await validator.notExistsInDbOrError('country', ['name = ? and id <> ?', [newCountry.name.value, countryId]], 'País já cadastrado');
+    await newCountry.validAttributesOrError();
+    await newCountry.allRequiredAttributesAreFilledOrError();
+    await newCountry.uniqueAttributesValuesOrError(countryId);
+    await newCountry.instanceDoesntExistOrError(countryId);
 
     newCountry = newCountry.getObject();
     newCountry.updated_at = 'now';

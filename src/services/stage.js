@@ -12,9 +12,10 @@ module.exports = (app) => {
     for (const stage of stages) {
       const newStage = new Stage(stage);
 
-      newStage.allRequiredAttributesAreFilled();
-      await newStage.attributesValidation();
-      await validator.notExistsInDbOrError('stage', newStage.getObject(), 'O campeonato já possui uma fase com esse nome');
+      await newStage.allRequiredAttributesAreFilledOrError();
+      await newStage.validAttributesOrError();
+      await newStage.uniqueAttributesValuesOrError();
+      await newStage.instanceDoesntExistOrError();
 
       newStages.push(newStage.getObject());
     }
@@ -26,8 +27,10 @@ module.exports = (app) => {
     const [currentStage] = await read({ id: stageId });
     let newStage = new Stage({ ...currentStage, ...updatedStage });
     
-    await newStage.attributesValidation();
-    await validator.notExistsInDbOrError('stage', ['name = ? and tournament_id = ? and id <> ?', [newStage.name.value, newStage.tournament_id.value, stageId]], 'O campeonato já possui uma fase com esse nome');
+    await newStage.validAttributesOrError();
+    await newStage.allRequiredAttributesAreFilledOrError();
+    await newStage.uniqueAttributesValuesOrError(stageId);
+    await newStage.instanceDoesntExistOrError(stageId);
     
     newStage = newStage.getObject();
     newStage.updated_at = 'now';

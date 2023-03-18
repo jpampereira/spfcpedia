@@ -12,8 +12,10 @@ module.exports = (app) => {
     for (const opponent of opponents) {
       const newOpponent = new Opponent(opponent);
 
-      newOpponent.allRequiredAttributesAreFilled();
-      await validator.notExistsInDbOrError('opponent', { name: newOpponent.name.value }, 'Adversário já cadastrado');
+      await newOpponent.allRequiredAttributesAreFilledOrError();
+      await newOpponent.validAttributesOrError();
+      await newOpponent.uniqueAttributesValuesOrError();
+      await newOpponent.instanceDoesntExistOrError();
 
       newOpponents.push(newOpponent.getObject());
     }
@@ -25,8 +27,10 @@ module.exports = (app) => {
     const [currentOpponent] = await read({ id: opponentId });
     let newOpponent = new Opponent({ ...currentOpponent, ...updatedOpponent });
     
-    await newOpponent.attributesValidation();
-    await validator.notExistsInDbOrError('opponent', ['name = ? and id <> ?', [newOpponent.name.value, opponentId]], 'Adversário já cadastrado');
+    await newOpponent.validAttributesOrError();
+    await newOpponent.allRequiredAttributesAreFilledOrError();
+    await newOpponent.uniqueAttributesValuesOrError(opponentId);
+    await newOpponent.instanceDoesntExistOrError(opponentId);
     
     newOpponent = newOpponent.getObject();
     newOpponent.updated_at = 'now';

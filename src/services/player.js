@@ -12,10 +12,10 @@ module.exports = (app) => {
     for (const player of players) {
       const newPlayer = new Player(player);
 
-      newPlayer.allRequiredAttributesAreFilled();
-      await newPlayer.attributesValidation();
-      await validator.notExistsInDbOrError('player', { name: newPlayer.name.value }, 'Jogador já cadastrado');
-      if (newPlayer.nickname.value) await validator.notExistsInDbOrError('player', { nickname: newPlayer.nickname.value }, 'Apelido já utilizado por outro jogador');
+      await newPlayer.allRequiredAttributesAreFilledOrError();
+      await newPlayer.validAttributesOrError();
+      await newPlayer.uniqueAttributesValuesOrError();
+      await newPlayer.instanceDoesntExistOrError();
 
       newPlayers.push(newPlayer.getObject());
     }
@@ -27,9 +27,10 @@ module.exports = (app) => {
     const [currentPlayer] = await read({ id: playerId });
     let newPlayer = new Player({ ...currentPlayer, ...updatedPlayer });
     
-    await newPlayer.attributesValidation();
-    await validator.notExistsInDbOrError('player', ['name = ? and id <> ?', [newPlayer.name.value, playerId]], 'Jogador já cadastrado');
-    if (newPlayer.nickname.value) await validator.notExistsInDbOrError('player', ['nickname = ? and id <> ?', [newPlayer.nickname.value, playerId]], 'Apelido já utilizado por outro jogador');
+    await newPlayer.validAttributesOrError();
+    await newPlayer.allRequiredAttributesAreFilledOrError();
+    await newPlayer.uniqueAttributesValuesOrError(playerId);
+    await newPlayer.instanceDoesntExistOrError(playerId);
     
     newPlayer = newPlayer.getObject();
     newPlayer.updated_at = 'now';

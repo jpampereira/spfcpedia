@@ -2,24 +2,28 @@ const General = require('./General');
 const validator = require('../utils/validator')();
 
 module.exports = class Player extends General {
-  name = { value: null, required: true };
-  nickname = { value: null, required: false };
-  position = { value: null, required: true };
-  birth = { value: null, required: true };
-  nationality = { value: null, required: true };
-  image = { value: null, required: true };
+  entityName = 'player';
+  attributes = {
+    name: { value: null, required: true, unique: true },
+    nickname: { value: null, required: false, unique: true },
+    position: { value: null, required: true, unique: false },
+    birth: { value: null, required: true, unique: false },
+    nationality: { value: null, required: true, unique: false },
+    image: { value: null, required: true, unique: false }
+  };
 
   constructor(obj) {
     super();
     this.setAttributes(obj);
   }
 
-  async attributesValidation() {
+  async validAttributesOrError() {
     try {
-      validator.isDateFormatOrError(this.birth.value, 'O valor de birth é inválido');
-      validator.isUrlFormatOrError(this.image.value, 'O valor de image é inválido');
-      validator.isInArray(this.position.value, ['G', 'D', 'M', 'F'], 'O valor de position é inválido');
-      await validator.existsInDbOrError('country', { id: this.nationality.value }, 'O valor de nationality é inválido');
+      validator.existsOrError(this.attributes.name.value, 'O valor de name é inválido');
+      validator.isDateFormatOrError(this.attributes.birth.value, 'O valor de birth é inválido');
+      validator.isUrlFormatOrError(this.attributes.image.value, 'O valor de image é inválido');
+      validator.isInArray(this.attributes.position.value, ['G', 'D', 'M', 'F'], 'O valor de position é inválido');
+      await validator.existsInDbOrError('country', { id: this.attributes.nationality.value }, 'O valor de nationality é inválido');
 
     } catch (error) {
       throw error;

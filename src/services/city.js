@@ -12,9 +12,10 @@ module.exports = (app) => {
     for (const city of cities) {
       const newCity = new City(city);
 
-      newCity.allRequiredAttributesAreFilled();
-      await newCity.attributesValidation();
-      await validator.notExistsInDbOrError('city', newCity.getObject(), 'O país já possui uma cidade com esse nome');
+      await newCity.allRequiredAttributesAreFilledOrError();
+      await newCity.validAttributesOrError();
+      await newCity.uniqueAttributesValuesOrError();
+      await newCity.instanceDoesntExistOrError();
 
       newCities.push(newCity.getObject());
     }
@@ -26,8 +27,10 @@ module.exports = (app) => {
     const [currentCity] = await read({ id: cityId });
     let newCity = new City({ ...currentCity, ...updatedCity });
     
-    await newCity.attributesValidation();
-    await validator.notExistsInDbOrError('city', ['name = ? and country_id = ? and id <> ?', [newCity.name.value, newCity.country_id.value, cityId]], 'O país já possui uma cidade com esse nome');
+    await newCity.validAttributesOrError();
+    await newCity.allRequiredAttributesAreFilledOrError();
+    await newCity.uniqueAttributesValuesOrError(cityId);
+    await newCity.instanceDoesntExistOrError(cityId);
     
     newCity = newCity.getObject();
     newCity.updated_at = 'now';

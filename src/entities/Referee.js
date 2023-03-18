@@ -2,16 +2,19 @@ const General = require('./General');
 const validator = require('../utils/validator')();
 
 module.exports = class Referee extends General {
-  name = { value: null, required: true };
+  entityName = 'referee';
+  attributes = {
+    name: { value: null, required: true, unique: true }
+  };
 
   constructor(obj) {
     super();
     this.setAttributes(obj);
   }
 
-  async attributesValidation() {
+  async validAttributesOrError() {
     try {
-      validator.existsOrError(this.name.value, 'O valor de name é inválido');
+      validator.existsOrError(this.attributes.name.value, 'O valor de name é inválido');
       
     } catch (error) {
       throw error;

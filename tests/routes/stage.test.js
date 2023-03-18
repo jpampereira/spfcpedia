@@ -59,7 +59,7 @@ describe('Não deve inserir uma fase...', () => {
   test('sem o atributo name', () => testTemplate([...newData, { tournament_id: 10003 }], 'O atributo name é obrigatório'));
   test('sem o atributo tournament_id', () => testTemplate([...newData, { name: 'Final' }], 'O atributo tournament_id é obrigatório'));
   test('cujo valor de tournament_id é inválido', () => testTemplate([...newData, { name: 'Final', tournament_id: 10004 }], 'O valor de tournament_id é inválido'));
-  test('cujo campeonato já possui outra fase com o mesmo nome', () => testTemplate([...newData, { name: 'Playoffs de Oitavas de Final', tournament_id: 10003 }], 'O campeonato já possui uma fase com esse nome'));
+  test('cujo campeonato já possui outra fase com o mesmo nome', () => testTemplate([...newData, { name: 'Playoffs de Oitavas de Final', tournament_id: 10003 }], 'A instância de stage já existe'));
 });
 
 test('Deve atualizar uma fase com sucesso', () => {
@@ -80,9 +80,9 @@ describe('Não deve atualizar a fase...', () => {
       });
   };
 
-  test('cujo valor de tournament_id é inválido', () => testTemplate(11011, { tournament_id: 10004 }, 'O valor de tournament_id é inválido'));
-  test('cujo campeonato já possui outra fase com o mesmo nome', () => testTemplate(11011, { name: 'Semi Final' }, 'O campeonato já possui uma fase com esse nome'));
   test('cujo valor de name é inválido', () => testTemplate(11011, { name: '' }, 'O valor de name é inválido'));
+  test('cujo valor de tournament_id é inválido', () => testTemplate(11011, { tournament_id: 10004 }, 'O valor de tournament_id é inválido'));
+  test('cujo campeonato já possui outra fase com o mesmo nome', () => testTemplate(11011, { name: 'Semi Final' }, 'A instância de stage já existe'));
 });
 
 test('Deve remover uma fase com sucesso', () => {

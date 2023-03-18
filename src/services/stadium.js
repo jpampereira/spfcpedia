@@ -12,24 +12,25 @@ module.exports = (app) => {
     for (const stadium of stadiums) {
       const newStadium = new Stadium(stadium);
 
-      newStadium.allRequiredAttributesAreFilled();
-      await newStadium.attributesValidation();
-      await validator.notExistsInDbOrError('stadium', { name: newStadium.name.value }, 'Estádio já cadastrado');
-      if (newStadium.nickname.value) await validator.notExistsInDbOrError('stadium', { nickname: newStadium.nickname.value }, 'Apelido já utilizado por outro estádio');
-
+      await newStadium.allRequiredAttributesAreFilledOrError();
+      await newStadium.validAttributesOrError();
+      await newStadium.uniqueAttributesValuesOrError();
+      await newStadium.instanceDoesntExistOrError();
+      
       newStadiums.push(newStadium.getObject());
     }
-
+    
     return app.db('stadium').insert(newStadiums, ['id', 'name', 'nickname', 'city_id']);
   };
-
+  
   const update = async (stadiumId, updatedStadium) => {
     const [currentStadium] = await read({ id: stadiumId });
     let newStadium = new Stadium({ ...currentStadium, ...updatedStadium });
     
-    await newStadium.attributesValidation();
-    await validator.notExistsInDbOrError('stadium', ['name = ? and id <> ?', [newStadium.name.value, stadiumId]], 'Estádio já cadastrado');
-    if (newStadium.nickname.value) await validator.notExistsInDbOrError('stadium', ['nickname = ? and id <> ?', [newStadium.nickname.value, stadiumId]], 'Apelido já utilizado por outro estádio');
+    await newStadium.validAttributesOrError();
+    await newStadium.allRequiredAttributesAreFilledOrError();
+    await newStadium.uniqueAttributesValuesOrError(stadiumId);
+    await newStadium.instanceDoesntExistOrError(stadiumId);
     
     newStadium = newStadium.getObject();
     newStadium.updated_at = 'now';

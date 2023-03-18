@@ -12,8 +12,10 @@ module.exports = (app) => {
     for (const tournament of tournaments) {
       const newTournament = new Tournament(tournament);
 
-      newTournament.allRequiredAttributesAreFilled();
-      await validator.notExistsInDbOrError('tournament', { name: newTournament.name.value }, 'Campeonato já cadastrado');
+      await newTournament.allRequiredAttributesAreFilledOrError();
+      await newTournament.validAttributesOrError();
+      await newTournament.uniqueAttributesValuesOrError();
+      await newTournament.instanceDoesntExistOrError();
 
       newTournaments.push(newTournament.getObject());
     }
@@ -25,8 +27,10 @@ module.exports = (app) => {
     const [currentTournament] = await read({ id: tournamentId });
     let newTournament = new Tournament({ ...currentTournament, ...updatedTournament });
     
-    await newTournament.attributesValidation();
-    await validator.notExistsInDbOrError('tournament', ['name = ? and id <> ?', [newTournament.name.value, tournamentId]], 'Campeonato já cadastrado');
+    await newTournament.validAttributesOrError();
+    await newTournament.allRequiredAttributesAreFilledOrError();
+    await newTournament.uniqueAttributesValuesOrError(tournamentId);
+    await newTournament.instanceDoesntExistOrError(tournamentId);
     
     newTournament = newTournament.getObject();
     newTournament.updated_at = 'now';
