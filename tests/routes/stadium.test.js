@@ -6,7 +6,7 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/stadium';
 
 beforeAll(() => {
-  run('05_country_city_stadium');
+  run('04_country_city_stadium');
 });
 
 test('Deve listar todos os estádios', () => {
@@ -98,7 +98,7 @@ test('Deve remover um estádio com sucesso', () => {
 
 describe('Não deve remover um estádio...', () => {
   beforeAll(() => {
-    run('06_match_player_lineup');
+    run('05_match_player_lineup');
   });
 
   test('que possui partidas associadas', () => {

@@ -6,7 +6,7 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/referee';
 
 beforeAll(() => {
-  run('04_referee');
+  run('03_referee');
 });
 
 test('Deve retornar todos os árbitros', () => {
@@ -92,7 +92,7 @@ test('Deve remover um árbitro com sucesso', () => {
 
 describe('Não deve remover um árbitro...', () => {
   beforeAll(() => {
-    run('06_match_player_lineup');
+    run('05_match_player_lineup');
   });
 
   test('que possui partidas associadas', () => {

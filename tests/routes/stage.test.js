@@ -6,7 +6,7 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/stage';
 
 beforeAll(() => {
-  run('02_stage');
+  run('01_tournament_stage');
 });
 
 test('Deve listar todas as fases', () => {
@@ -94,7 +94,7 @@ test('Deve remover uma fase com sucesso', () => {
 
 describe('Não deve remover uma fase...', () => {
   beforeAll(() => {
-    run('06_match_player_lineup');
+    run('05_match_player_lineup');
   });
 
   test('que possui partidas associadas', () => {

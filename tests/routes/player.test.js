@@ -6,7 +6,7 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/player';
 
 beforeAll(() => {
-  run('06_match_player_lineup');
+  run('05_match_player_lineup');
 });
 
 test('Deve listar todos os jogadores', () => {

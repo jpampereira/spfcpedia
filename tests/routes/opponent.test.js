@@ -6,7 +6,7 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/opponent';
 
 beforeAll(() => {
-  run('03_opponent');
+  run('02_opponent');
 });
 
 test('Deve retornar todos os adversários', () => {
@@ -90,7 +90,7 @@ test('Deve remover um adversário com sucesso', () => {
 
 describe('Não deve remover um adversário...', () => {
   beforeAll(() => {
-    run('06_match_player_lineup');
+    run('05_match_player_lineup');
   });
 
   test('que possui partidas associadas', () => {

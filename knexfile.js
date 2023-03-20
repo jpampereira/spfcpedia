@@ -13,6 +13,6 @@ module.exports = {
     tableName: 'knex_migrations',
   },
   seeds: {
-    directory: 'src/seeds',
+    directory: 'tests/seeds',
   },
 };

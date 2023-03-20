@@ -6,7 +6,7 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/city';
 
 beforeAll(() => {
-  run('05_country_city_stadium');
+  run('04_country_city_stadium');
 });
 
 test('Deve listar todas as cidades', () => {

@@ -6,7 +6,7 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/country';
 
 beforeAll(() => {
-  run('05_country_city_stadium');
+  run('04_country_city_stadium');
 });
 
 test('Deve retornar todos os países', () => {
@@ -88,7 +88,7 @@ test('Deve remover um país com sucesso', () => {
 
 describe('Não deve remover um país...', () => {
   beforeAll(() => {
-    run('06_match_player_lineup');
+    run('05_match_player_lineup');
   });
 
   const testTemplate = (id, errorMessage) => {

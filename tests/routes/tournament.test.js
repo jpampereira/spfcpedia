@@ -6,7 +6,7 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/tournament';
 
 beforeAll(() => {
-  run('01_tournament');
+  run('01_tournament_stage');
 });
 
 test('Deve listar todos os campeonatos', () => {
@@ -28,8 +28,8 @@ test('Deve retornar um campeonato pelo Id', () => {
 test('Deve inserir novos campeonatos com sucesso', () => {
   return request(app).post(MAIN_ROUTE)
     .send([
-      { name: 'Copa Sul-Americana' },
       { name: 'Copa Libertadores da América' },
+      { name: 'Mundial de Clubes' },
     ])
     .then((res) => {
       expect(res.status).toBe(201);
@@ -49,7 +49,7 @@ describe('Não deve inserir um novo campeonato...', () => {
   };
 
   const newData = [
-    { name: 'Mundial de Clubes' },
+    { name: 'Supercopa do Brasil' },
   ];
 
   test('sem o atributo name', () => testTemplate([...newData, { name: '' }], 'O atributo name é obrigatório'));
@@ -79,14 +79,14 @@ describe('Não deve atualizar um campeonato...', () => {
 });
 
 test('Deve remover um campeonato com sucesso', () => {
-  return request(app).delete(`${MAIN_ROUTE}/10000`)
+  return request(app).delete(`${MAIN_ROUTE}/10003`)
     .then((res) => {
       expect(res.status).toBe(204);
     });
 });
 
 test('Não deve remover um campeonato que possui fases associadas', () => {
-  return request(app).delete(`${MAIN_ROUTE}/10001`)
+  return request(app).delete(`${MAIN_ROUTE}/10000`)
     .then((res) => {
       expect(res.status).toBe(400);
       expect(res.body.error).toBe('O campeonato possui fases associadas');
