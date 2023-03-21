@@ -57,12 +57,22 @@ describe('Não deve inserir um novo país...', () => {
   test('duplicado', () => testTemplate([...newData, { name: 'Argentina' }], 'Já existe um registro com esse name'));
 });
 
-test('Deve atualizar um país com sucesso', () => {
-  return request(app).put(`${MAIN_ROUTE}/10000`)
-    .send({ name: 'Brasil' })
-    .then((res) => {
-      expect(res.status).toBe(204);
-    });
+describe('Deve atualizar um país com sucesso', () => {
+  test('Atualizando o país', () => {
+    return request(app).put(`${MAIN_ROUTE}/10000`)
+      .send({ name: 'Brasil' })
+      .then((res) => {
+        expect(res.status).toBe(204);
+      });
+  });
+
+  test('Atestando que a atualização foi realizada', () => {
+    return request(app).get(`${MAIN_ROUTE}/10000`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body.name).toBe('Brasil');
+      });
+  });
 });
 
 describe('Não deve atualizar um país...', () => {
@@ -79,11 +89,21 @@ describe('Não deve atualizar um país...', () => {
   test('para um já existente', () => testTemplate(10005, { name: 'Argentina' }, 'Já existe um registro com esse name'));
 });
 
-test('Deve remover um país com sucesso', () => {
-  return request(app).delete(`${MAIN_ROUTE}/10003`)
-    .then((res) => {
-      expect(res.status).toBe(204);
-    });
+describe('Deve remover um país com sucesso', () => {
+  test('Removendo o país', () => {
+    return request(app).delete(`${MAIN_ROUTE}/10003`)
+      .then((res) => {
+        expect(res.status).toBe(204);
+      });
+  });
+
+  test('Atestando que a remoção foi realizada', () => {
+    return request(app).get(`${MAIN_ROUTE}/10003`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body).toStrictEqual({});
+      });
+  });
 });
 
 describe('Não deve remover um país...', () => {

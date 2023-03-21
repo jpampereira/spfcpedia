@@ -56,12 +56,22 @@ describe('Não deve inserir um novo campeonato...', () => {
   test('duplicado', () => testTemplate([...newData, { name: 'Campeonato Brasileiro' }], 'Já existe um registro com esse name'));
 });
 
-test('Deve atualizar um campeonato com sucesso', () => {
-  return request(app).put(`${MAIN_ROUTE}/10000`)
-    .send({ name: 'Campeonato Paulista' })
-    .then((res) => {
-      expect(res.status).toBe(204);
-    });
+describe('Deve atualizar um campeonato com sucesso', () => {
+  test('Atualizando o campeonato', () => {
+    return request(app).put(`${MAIN_ROUTE}/10000`)
+      .send({ name: 'Campeonato Paulista' })
+      .then((res) => {
+        expect(res.status).toBe(204);
+      });
+  });
+
+  test('Atestando que a atualização foi realizada', () => {
+    return request(app).get(`${MAIN_ROUTE}/10000`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body.name).toBe('Campeonato Paulista');
+      });
+  });
 });
 
 describe('Não deve atualizar um campeonato...', () => {
@@ -78,11 +88,21 @@ describe('Não deve atualizar um campeonato...', () => {
   test('para um já existente', () => testTemplate(10001, { name: 'Copa do Brasil' }, 'Já existe um registro com esse name'));
 });
 
-test('Deve remover um campeonato com sucesso', () => {
-  return request(app).delete(`${MAIN_ROUTE}/10003`)
-    .then((res) => {
-      expect(res.status).toBe(204);
-    });
+describe('Deve remover um campeonato com sucesso', () => {
+  test('Removendo o campeonato', () => {
+    return request(app).delete(`${MAIN_ROUTE}/10003`)
+      .then((res) => {
+        expect(res.status).toBe(204);
+      });
+  });
+
+  test('Atestando que a remoção foi realizada', () => {
+    return request(app).get(`${MAIN_ROUTE}/10003`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body).toStrictEqual({});
+      });
+  });
 });
 
 test('Não deve remover um campeonato que possui fases associadas', () => {

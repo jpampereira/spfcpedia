@@ -62,12 +62,22 @@ describe('Não deve inserir uma fase...', () => {
   test('cujo campeonato já possui outra fase com o mesmo nome', () => testTemplate([...newData, { name: 'Playoffs de Oitavas de Final', tournament_id: 10003 }], 'Registro já cadastrado'));
 });
 
-test('Deve atualizar uma fase com sucesso', () => {
-  return request(app).put(`${MAIN_ROUTE}/11000`)
-    .send({ name: 'Fase de Grupos' })
-    .then((res) => {
-      expect(res.status).toBe(204);
-    });
+describe('Deve atualizar uma fase com sucesso', () => {
+  test('Atualizando a fase', () => {
+    return request(app).put(`${MAIN_ROUTE}/11000`)
+      .send({ name: 'Fase de Grupos' })
+      .then((res) => {
+        expect(res.status).toBe(204);
+      });
+  });
+
+  test('Atestando que a atualização foi realizada', () => {
+    return request(app).get(`${MAIN_ROUTE}/11000`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body.name).toBe('Fase de Grupos');
+      });
+  });
 });
 
 describe('Não deve atualizar a fase...', () => {
@@ -85,11 +95,21 @@ describe('Não deve atualizar a fase...', () => {
   test('cujo campeonato já possui outra fase com o mesmo nome', () => testTemplate(11011, { name: 'Semi Final' }, 'Registro já cadastrado'));
 });
 
-test('Deve remover uma fase com sucesso', () => {
-  return request(app).delete(`${MAIN_ROUTE}/11000`)
-    .then((res) => {
-      expect(res.status).toBe(204);
-    });
+describe('Deve remover uma fase com sucesso', () => {
+  test('Removendo a fase', () => {
+    return request(app).delete(`${MAIN_ROUTE}/11000`)
+      .then((res) => {
+        expect(res.status).toBe(204);
+      });
+  });
+
+  test('Atestando que a remoção foi realizada', () => {
+    return request(app).get(`${MAIN_ROUTE}/11000`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body).toStrictEqual({});
+      });
+  });
 });
 
 describe('Não deve remover uma fase...', () => {

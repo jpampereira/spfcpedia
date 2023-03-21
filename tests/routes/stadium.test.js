@@ -65,12 +65,22 @@ describe('Não deve inserir um estádio...', () => {
   test('com apelido duplicado', () => testTemplate([...newData, { name: 'Cícero Pompeu de Toledo', nickname: 'Morumbi', city_id: 11000 }], 'Já existe um registro com esse nickname'));
 });
 
-test('Deve atualizar um estádio com sucesso', () => {
-  return request(app).put(`${MAIN_ROUTE}/12002`)
-    .send({ name: 'Neo Química Arena' })
-    .then((res) => {
-      expect(res.status).toBe(204);
-    });
+describe('Deve atualizar um estádio com sucesso', () => {
+  test('Atualizando o estádio', () => {
+    return request(app).put(`${MAIN_ROUTE}/12002`)
+      .send({ name: 'Neo Química Arena' })
+      .then((res) => {
+        expect(res.status).toBe(204);
+      });
+  });
+
+  test('Atestando que a atualização foi realizada', () => {
+    return request(app).get(`${MAIN_ROUTE}/12002`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body.name).toBe('Neo Química Arena');
+      });
+  });
 });
 
 describe('Não deve atualizar um estádio...', () => {
@@ -89,11 +99,21 @@ describe('Não deve atualizar um estádio...', () => {
   test('para um apelido já cadastrado', () => testTemplate(12002, { nickname: 'Morumbi' }, 'Já existe um registro com esse nickname'));
 });
 
-test('Deve remover um estádio com sucesso', () => {
-  return request(app).delete(`${MAIN_ROUTE}/12007`)
-    .then((res) => {
-      expect(res.status).toBe(204);
-    });
+describe('Deve remover um estádio com sucesso', () => {
+  test('Removendo o estádio', () => {
+    return request(app).delete(`${MAIN_ROUTE}/12007`)
+      .then((res) => {
+        expect(res.status).toBe(204);
+      });
+  });
+
+  test('Atestando que a remoção foi realizada', () => {
+    return request(app).get(`${MAIN_ROUTE}/12007`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body).toStrictEqual({});
+      });
+  });
 });
 
 describe('Não deve remover um estádio...', () => {

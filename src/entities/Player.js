@@ -1,8 +1,8 @@
-const General = require('./General');
+const DbEntity = require('./DbEntity');
 const exits = require('../configs/exits');
 const validator = require('../utils/validator')();
 
-module.exports = class Player extends General {
+module.exports = class Player extends DbEntity {
   entityName = 'player';
 
   attributes = {

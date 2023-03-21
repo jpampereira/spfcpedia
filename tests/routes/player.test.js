@@ -106,12 +106,23 @@ describe('Não deve inserir um jogador...', () => {
   test('com apelido duplicado', () => testTemplate([...newData, { ...wrongData, nickname: 'Wellington Rato' }], 'Já existe um registro com esse nickname'));
 });
 
-test('Deve alterar um jogador com sucesso', () => {
-  return request(app).put(`${MAIN_ROUTE}/18003`)
-    .send({ position: 'D', nationality: 10005 })
-    .then((res) => {
-      expect(res.status).toBe(204);
-    });
+describe('Deve alterar um jogador com sucesso', () => {
+  test('Atualizando o jogador', () => {
+    return request(app).put(`${MAIN_ROUTE}/18003`)
+      .send({ position: 'D', nationality: 10005 })
+      .then((res) => {
+        expect(res.status).toBe(204);
+      });
+  });
+
+  test('Atestando que a atualização foi realizada', () => {
+    return request(app).get(`${MAIN_ROUTE}/18003`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body.position).toBe('D');
+        expect(res.body.nationality).toBe(10005);
+      });
+  });
 });
 
 describe('Não deve alterar um jogador...', () => {
@@ -133,11 +144,21 @@ describe('Não deve alterar um jogador...', () => {
   test('para um apelido já cadastrado', () => testTemplate(18000, { nickname: 'Wellington Rato' }, 'Já existe um registro com esse nickname'));
 });
 
-test('Deve remover um jogador com sucesso', () => {
-  return request(app).delete(`${MAIN_ROUTE}/18021`)
-    .then((res) => {
-      expect(res.status).toBe(204);
-    });
+describe('Deve remover um jogador com sucesso', () => {
+  test('Removendo o jogador', () => {
+    return request(app).delete(`${MAIN_ROUTE}/18021`)
+      .then((res) => {
+        expect(res.status).toBe(204);
+      });
+  });
+
+  test('Atestando que a remoção foi realizada', () => {
+    return request(app).get(`${MAIN_ROUTE}/18021`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body).toStrictEqual({});
+      });
+  });
 });
 
 describe('Não deve remover um jogador...', () => {

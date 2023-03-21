@@ -63,12 +63,22 @@ describe('Não deve inserir uma cidade...', () => {
   test('cujo país já possui outra cidade com o mesmo nome', () => testTemplate([...newData, { name: 'São Paulo', country_id: 10000 }], 'Registro já cadastrado'));
 });
 
-test('Deve atualizar uma cidade com sucesso', () => {
-  return request(app).put(`${MAIN_ROUTE}/11002`)
-    .send({ name: 'Curitiba' })
-    .then((res) => {
-      expect(res.status).toBe(204);
-    });
+describe('Deve atualizar uma cidade com sucesso', () => {
+  test('Atualizando a cidade', () => {
+    return request(app).put(`${MAIN_ROUTE}/11002`)
+      .send({ name: 'Curitiba' })
+      .then((res) => {
+        expect(res.status).toBe(204);
+      });
+  });
+
+  test('Atestando que a atualização foi realizada', () => {
+    return request(app).get(`${MAIN_ROUTE}/11002`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body.name).toBe('Curitiba');
+      });
+  });
 });
 
 describe('Não deve atualizar uma cidade...', () => {
@@ -86,11 +96,21 @@ describe('Não deve atualizar uma cidade...', () => {
   test('cujo país já possui outra cidade com o mesmo nome', () => testTemplate(11000, { name: 'Curitiba' }, 'Registro já cadastrado'));
 });
 
-test('Deve remover uma cidade com sucesso', () => {
-  return request(app).delete(`${MAIN_ROUTE}/11008`)
-    .then((res) => {
-      expect(res.status).toBe(204);
-    });
+describe('Deve remover uma cidade com sucesso', () => {
+  test('Removendo a cidade', () => {
+    return request(app).delete(`${MAIN_ROUTE}/11008`)
+      .then((res) => {
+        expect(res.status).toBe(204);
+      });
+  });
+
+  test('Atestando que a remoção foi realizada', () => {
+    return request(app).get(`${MAIN_ROUTE}/11008`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body).toStrictEqual({});
+      });
+  });
 });
 
 test('Não deve remover uma cidade que possui estádios associados', () => {

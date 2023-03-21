@@ -1,6 +1,6 @@
-const General = require('./General');
+const DbEntity = require('./DbEntity');
 
-module.exports = class Lineup extends General {
+module.exports = class Lineup extends DbEntity {
   entityName = 'lineup';
 
   attributes = {

@@ -135,12 +135,23 @@ describe('Não deve inserir uma partida...', () => {
   test('duplicada', () => testTemplate([...newData, wrongData], 'Registro já cadastrado'));
 });
 
-test('Deve alterar uma partida com sucesso', () => {
-  return request(app).put(`${MAIN_ROUTE}/17001`)
-    .send({ opponent_goals: 1, highlights: 'https://www.youtube.com/watch?v=8X4TVhN8T88&t=13s' })
-    .then((res) => {
-      expect(res.status).toBe(204);
-    });
+describe('Deve alterar uma partida com sucesso', () => {
+  test('Atualizando a partida', () => {
+    return request(app).put(`${MAIN_ROUTE}/17001`)
+      .send({ opponent_goals: 1, highlights: 'https://www.youtube.com/watch?v=8X4TVhN8T88&t=13s' })
+      .then((res) => {
+        expect(res.status).toBe(204);
+      });
+  });
+
+  test('Atestando que a atualização foi realizada', () => {
+    return request(app).get(`${MAIN_ROUTE}/17001`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body.opponent_goals).toBe(1);
+        expect(res.body.highlights).toBe('https://www.youtube.com/watch?v=8X4TVhN8T88&t=13s');
+      });
+  });
 });
 
 describe('Não deve alterar uma partida...', () => {
@@ -179,11 +190,21 @@ describe('Não deve alterar uma partida...', () => {
   test('duplicada', () => testTemplate(17000, data, 'Registro já cadastrado'));
 });
 
-test('Deve remover uma partida com sucesso', () => {
-  return request(app).delete(`${MAIN_ROUTE}/17002`)
-    .then((res) => {
-      expect(res.status).toBe(204);
-    });
+describe('Deve remover uma partida com sucesso', () => {
+  test('Removendo a partida', () => {
+    return request(app).delete(`${MAIN_ROUTE}/17002`)
+      .then((res) => {
+        expect(res.status).toBe(204);
+      });
+  });
+
+  test('Atestando que a remoção foi realizada', () => {
+    return request(app).get(`${MAIN_ROUTE}/17002`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body).toStrictEqual({});
+      });
+  });
 });
 
 describe('Não deve remover uma partida...', () => {

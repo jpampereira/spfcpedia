@@ -59,12 +59,22 @@ describe('Não deve inserir um novo adversário...', () => {
   test('duplicado', () => testTemplate([...newData, { name: 'Ituano Futebol Clube' }], 'Já existe um registro com esse name'));
 });
 
-test('Deve atualizar um adversário com sucesso', () => {
-  return request(app).put(`${MAIN_ROUTE}/10002`)
-    .send({ name: 'Sociedade Esportiva Palmeiras' })
-    .then((res) => {
-      expect(res.status).toBe(204);
-    });
+describe('Deve atualizar um adversário com sucesso...', () => {
+  test('Atualizando o adversário', () => {
+    return request(app).put(`${MAIN_ROUTE}/10002`)
+      .send({ name: 'Sociedade Esportiva Palmeiras' })
+      .then(async (res) => {
+        expect(res.status).toBe(204);
+      });
+  });
+
+  test('Atestando que a atualização foi realizada', () => {
+    return request(app).get(`${MAIN_ROUTE}/10002`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body.name).toBe('Sociedade Esportiva Palmeiras');
+      });
+  });
 });
 
 describe('Não deve atualizar um adversário...', () => {
@@ -81,11 +91,21 @@ describe('Não deve atualizar um adversário...', () => {
   test('para um já existente', () => testTemplate(10002, { name: 'Sport Club Corinthians Paulista' }, 'Já existe um registro com esse name'));
 });
 
-test('Deve remover um adversário com sucesso', () => {
-  return request(app).delete(`${MAIN_ROUTE}/10004`)
-    .then((res) => {
-      expect(res.status).toBe(204);
-    });
+describe('Deve remover um adversário com sucesso...', () => {
+  test('Removendo o adversário', () => {
+    return request(app).delete(`${MAIN_ROUTE}/10004`)
+      .then((res) => {
+        expect(res.status).toBe(204);
+      });
+  });
+
+  test('Atestando que a remoção foi realizada', () => {
+    return request(app).get(`${MAIN_ROUTE}/10004`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body).toStrictEqual({});
+      });
+  });
 });
 
 describe('Não deve remover um adversário...', () => {

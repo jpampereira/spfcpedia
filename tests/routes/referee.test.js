@@ -61,12 +61,22 @@ describe('Não deve inserir um novo árbitro...', () => {
   test('duplicado', () => testTemplate([...newData, { name: 'Edina Alves Batista' }], 'Já existe um registro com esse name'));
 });
 
-test('Deve atualizar um árbitro com sucesso', () => {
-  return request(app).put(`${MAIN_ROUTE}/10001`)
-    .send({ name: 'Danilo Ricardo Simon Manis' })
-    .then((res) => {
-      expect(res.status).toBe(204);
-    });
+describe('Deve atualizar um árbitro com sucesso', () => {
+  test('Atualizando o árbitro', () => {
+    return request(app).put(`${MAIN_ROUTE}/10001`)
+      .send({ name: 'Danilo Ricardo Simon Manis' })
+      .then((res) => {
+        expect(res.status).toBe(204);
+      });
+  });
+
+  test('Atestando que a atualização foi realizada', () => {
+    return request(app).get(`${MAIN_ROUTE}/10001`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body.name).toBe('Danilo Ricardo Simon Manis');
+      });
+  });
 });
 
 describe('Não deve atualizar um árbitro...', () => {
@@ -83,11 +93,21 @@ describe('Não deve atualizar um árbitro...', () => {
   test('para um já existente', () => testTemplate(10007, { name: 'Flavio Rodrigues de Souza' }, 'Já existe um registro com esse name'));
 });
 
-test('Deve remover um árbitro com sucesso', () => {
-  return request(app).delete(`${MAIN_ROUTE}/10005`)
-    .then((res) => {
-      expect(res.status).toBe(204);
-    });
+describe('Deve remover um árbitro com sucesso', () => {
+  test('Removendo o árbitro', () => {
+    return request(app).delete(`${MAIN_ROUTE}/10005`)
+      .then((res) => {
+        expect(res.status).toBe(204);
+      });
+  });
+
+  test('Atestando que a remoção foi realizada', () => {
+    return request(app).get(`${MAIN_ROUTE}/10005`)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.body).toStrictEqual({});
+      });
+  });
 });
 
 describe('Não deve remover um árbitro...', () => {
