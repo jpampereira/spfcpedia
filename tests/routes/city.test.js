@@ -113,10 +113,14 @@ describe('Deve remover uma cidade com sucesso', () => {
   });
 });
 
-test('Não deve remover uma cidade que possui estádios associados', () => {
-  return request(app).delete(`${MAIN_ROUTE}/11000`)
-    .then((res) => {
-      expect(res.status).toBe(400);
-      expect(res.body.error).toBe('A cidade possuí estádios associados');
-    });
+describe('Não deve remover uma cidade...', () => {
+  const testTemplate = (id, errorMessage) => {
+    return request(app).delete(`${MAIN_ROUTE}/${id}`)
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe(errorMessage);
+      });
+  };
+
+  test('que possui estádios associados', () => testTemplate(11000, 'A cidade possuí estádios associados'));
 });

@@ -110,7 +110,7 @@ describe('Deve remover um adversário com sucesso...', () => {
 
 describe('Não deve remover um adversário...', () => {
   beforeAll(() => {
-    run('05_match_player_lineup');
+    run('06_match_lineup');
   });
 
   test('que possui partidas associadas', () => {

@@ -118,14 +118,16 @@ describe('Deve remover um estádio com sucesso', () => {
 
 describe('Não deve remover um estádio...', () => {
   beforeAll(() => {
-    run('05_match_player_lineup');
+    run('06_match_lineup');
   });
 
-  test('que possui partidas associadas', () => {
-    return request(app).delete(`${MAIN_ROUTE}/12000`)
+  const testTemplate = (id, errorMessage) => {
+    return request(app).delete(`${MAIN_ROUTE}/${id}`)
       .then((res) => {
         expect(res.status).toBe(400);
-        expect(res.body.error).toBe('O estádio possui partidas associadas');
+        expect(res.body.error).toBe(errorMessage);
       });
-  });
+  };
+
+  test('que possui partidas associadas', () => testTemplate(12000, 'O estádio possui partidas associadas'));
 });

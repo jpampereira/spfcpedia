@@ -59,45 +59,6 @@ module.exports = () => {
     if (!value.match(/^\d{4}-\d{2}-\d{2}$/)) throw new ValidationError(msg);
   };
 
-  const isUrlFormatOrError = (value, msg) => {
-    if (!value.match(/^(https:\/\/)?(www\.)?\S+\.\S+(\.\S+)?\/.+$/)) throw new ValidationError(msg);
-  };
-
-  const isInArray = (value, array, msg) => {
-    if (!array.includes(value)) throw new ValidationError(msg);
-  };
-
-  const isEqualOrError = (value1, value2, msg) => {
-    if (value1 !== value2) throw new ValidationError(msg);
-  };
-
-  const notDuplicateValuesOrError = (array, attr, msg = attr) => {
-    let newArray = array;
-
-    if (attr !== msg) {
-      newArray = newArray.map((elem) => elem[attr]);
-    }
-
-    const checkIfValueIsDuplicated = (elem, i, arr) => arr.indexOf(elem) !== i;
-    const foundDuplicateValues = newArray.some(checkIfValueIsDuplicated);
-
-    if (foundDuplicateValues) throw new ValidationError(msg);
-  };
-
-  const singleValueInArrayOrError = (array, attr, msg = attr) => {
-    let newArray = array;
-
-    if (attr !== msg) {
-      newArray = newArray.map((elem) => elem[attr]);
-    }
-
-    const firstValue = newArray[0];
-    const compareWithFirstValue = (elem) => elem === firstValue;
-    const foundDifferentValues = !newArray.every(compareWithFirstValue);
-
-    if (foundDifferentValues) throw new ValidationError(msg);
-  };
-
   return {
     existsOrError,
     notExistsOrError,
@@ -106,10 +67,5 @@ module.exports = () => {
     isPositiveOrError,
     isDateTimeFormatOrError,
     isDateFormatOrError,
-    isUrlFormatOrError,
-    isInArray,
-    isEqualOrError,
-    notDuplicateValuesOrError,
-    singleValueInArrayOrError,
   };
 };

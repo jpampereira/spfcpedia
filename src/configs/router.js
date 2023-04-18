@@ -10,8 +10,9 @@ module.exports = (app) => {
   router.use('/country', app.routes.country);
   router.use('/city', app.routes.city);
   router.use('/stadium', app.routes.stadium);
-  router.use('/match', app.routes.match);
+  router.use('/position', app.routes.position);
   router.use('/player', app.routes.player);
+  router.use('/match', app.routes.match);
   router.use('/lineup', app.routes.lineup);
 
   app.use(router);

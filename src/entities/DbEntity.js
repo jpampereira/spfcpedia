@@ -4,7 +4,7 @@ const exits = require('../configs/exits');
 module.exports = class DbEntity {
   // Attributes:
   // entityName = '...'
-  // attributes = { attribute: { value, required, unique }, ... }
+  // attributes = { attribute: { value, required, unique, validations, relatedTable }, ... }
 
   setAttributes(obj) {
     const listOfAttributes = Object.entries(obj);
@@ -71,5 +71,22 @@ module.exports = class DbEntity {
     }
 
     await validator.notExistsInDbOrError(this.entityName, [query, values], errorMessage);
+  }
+
+  async validAttributesOrError() {
+    const errorMessage = exits.INVALID_ATTRIBUTE_ERROR;
+    const listOfAttributes = Object.entries(this.attributes);
+
+    for (const attribute of listOfAttributes) {
+      const [name, { value, validations, relatedTable }] = attribute;
+
+      for (const validation of validations) {
+        if (validation === 'exists') validator.existsOrError(value, errorMessage.replace(/<ATTR_NAME>/, name));
+        if (validation === 'inDb') await validator.existsInDbOrError(relatedTable, { id: value }, errorMessage.replace(/<ATTR_NAME>/, name));
+        if (validation === 'isPositive') validator.isPositiveOrError(value, errorMessage.replace(/<ATTR_NAME>/, name));
+        if (validation === 'datetime') validator.isDateTimeFormatOrError(value, errorMessage.replace(/<ATTR_NAME>/, name));
+        if (validation === 'date') validator.isDateFormatOrError(value, errorMessage.replace(/<ATTR_NAME>/, name));
+      }
+    }
   }
 };

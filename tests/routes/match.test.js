@@ -6,7 +6,7 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/match';
 
 beforeAll(() => {
-  run('05_match_player_lineup');
+  run('06_match_lineup');
 });
 
 test('Deve listar todas as partidas', () => {
@@ -131,7 +131,6 @@ describe('Não deve inserir uma partida...', () => {
   test('cujo valor de fourth_official é inválido', () => testTemplate([...newData, { ...wrongData, fourth_official: 14029 }], 'O valor de fourth_official é inválido'));
   test('cujo valor de opponent é inválido', () => testTemplate([...newData, { ...wrongData, opponent: 13009 }], 'O valor de opponent é inválido'));
   test('cujo valor de opponent_goals é inválido', () => testTemplate([...newData, { ...wrongData, opponent_goals: -2 }], 'O valor de opponent_goals é inválido'));
-  test('cujo valor de highlights é inválido', () => testTemplate([...newData, { ...wrongData, highlights: 'google.com.br' }], 'O valor de highlights é inválido'));
   test('duplicada', () => testTemplate([...newData, wrongData], 'Registro já cadastrado'));
 });
 
@@ -186,7 +185,6 @@ describe('Não deve alterar uma partida...', () => {
   test('cujo valor de fourth_official é inválido', () => testTemplate(17000, { ...data, fourth_official: 14029 }, 'O valor de fourth_official é inválido'));
   test('cujo valor de opponent é inválido', () => testTemplate(17000, { ...data, opponent: 13009 }, 'O valor de opponent é inválido'));
   test('cujo valor de opponent_goals é inválido', () => testTemplate(17000, { ...data, opponent_goals: -2 }, 'O valor de opponent_goals é inválido'));
-  test('cujo valor de highlights é inválido', () => testTemplate(17000, { ...data, highlights: 'google.com.br' }, 'O valor de highlights é inválido'));
   test('duplicada', () => testTemplate(17000, data, 'Registro já cadastrado'));
 });
 

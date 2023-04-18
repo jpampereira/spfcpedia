@@ -5,7 +5,6 @@ exports.up = (knex) => {
     table.increments('id').primary();
     table.string('name').unique().notNull();
     table.string('nickname').defaultTo('');
-    table.enu('position', ['G', 'D', 'M', 'F']).notNull();
     table.date('birth').notNull();
     table.integer('nationality').references('id').inTable('country').notNull();
     table.string('image').notNull();

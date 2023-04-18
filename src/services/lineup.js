@@ -8,9 +8,15 @@ module.exports = (app) => {
   const create = async (lineup) => {
     const newLineup = [];
 
-    for (const chosePlayer of lineup) {
-      const newChosePlayer = new Lineup(chosePlayer);
-      newLineup.push(newChosePlayer.getObject());
+    for (const player of lineup) {
+      const chosePlayer = new Lineup(player);
+
+      await chosePlayer.allRequiredAttributesAreFilledOrError();
+      await chosePlayer.validAttributesOrError();
+      await chosePlayer.uniqueConstraintInviolatedOrError();
+      await chosePlayer.instanceDoesntExistOrError();
+
+      newLineup.push(chosePlayer.getObject());
     }
 
     return app.db('lineup').insert(newLineup, ['id', 'match_id', 'player_id', 'shirt_number']);
@@ -19,6 +25,11 @@ module.exports = (app) => {
   const update = async (chosePlayerId, updatedChosePlayer) => {
     const [currentChosePlayer] = await read({ id: chosePlayerId });
     let newChosePlayer = new Lineup({ ...currentChosePlayer, ...updatedChosePlayer });
+
+    await newChosePlayer.validAttributesOrError();
+    await newChosePlayer.allRequiredAttributesAreFilledOrError();
+    await newChosePlayer.uniqueConstraintInviolatedOrError(chosePlayerId);
+    await newChosePlayer.instanceDoesntExistOrError(chosePlayerId);
 
     newChosePlayer = newChosePlayer.getObject();
     newChosePlayer.updated_at = 'now';

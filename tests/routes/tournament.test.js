@@ -105,10 +105,14 @@ describe('Deve remover um campeonato com sucesso', () => {
   });
 });
 
-test('Não deve remover um campeonato que possui fases associadas', () => {
-  return request(app).delete(`${MAIN_ROUTE}/10000`)
-    .then((res) => {
-      expect(res.status).toBe(400);
-      expect(res.body.error).toBe('O campeonato possui fases associadas');
-    });
+describe('Não deve remover um campeonato...', () => {
+  const testTemplate = (id, errorMessage) => {
+    return request(app).delete(`${MAIN_ROUTE}/${id}`)
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe(errorMessage);
+      });
+  };
+
+  test('que possui fases associadas', () => testTemplate(10000, 'O campeonato possui fases associadas'));
 });

@@ -108,7 +108,7 @@ describe('Deve remover um país com sucesso', () => {
 
 describe('Não deve remover um país...', () => {
   beforeAll(() => {
-    run('05_match_player_lineup');
+    run('05_position_player');
   });
 
   const testTemplate = (id, errorMessage) => {

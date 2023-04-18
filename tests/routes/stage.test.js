@@ -114,14 +114,16 @@ describe('Deve remover uma fase com sucesso', () => {
 
 describe('Não deve remover uma fase...', () => {
   beforeAll(() => {
-    run('05_match_player_lineup');
+    run('06_match_lineup');
   });
 
-  test('que possui partidas associadas', () => {
-    return request(app).delete(`${MAIN_ROUTE}/16000`)
+  const testTemplate = (id, errorMessage) => {
+    return request(app).delete(`${MAIN_ROUTE}/${id}`)
       .then((res) => {
         expect(res.status).toBe(400);
-        expect(res.body.error).toBe('A fase possui partidas associadas');
+        expect(res.body.error).toBe(errorMessage);
       });
-  });
+  };
+
+  test('que possui partidas associadas', () => testTemplate(16000, 'A fase possui partidas associadas'));
 });
