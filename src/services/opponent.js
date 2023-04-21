@@ -39,6 +39,10 @@ module.exports = (app) => {
   };
 
   const remove = async (opponentId) => {
+    let [currentOpponent] = await read({ id: opponentId });
+    currentOpponent = new Opponent(currentOpponent);
+
+    await currentOpponent.dependentEntitiesDoesntHaveDataOrError(opponentId);
     await validator.notExistsInDbOrError('match', { opponent: opponentId }, 'O adversário possui partidas associadas');
 
     return app.db('opponent').del().where({ id: opponentId });

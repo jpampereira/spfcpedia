@@ -10,13 +10,15 @@ module.exports = class SelectedPlayer extends IndividualEntity {
     player_id: {
       value: null, required: true, unique: false, validations: ['inDb'], relatedEntity: 'player',
     },
-    position: {
+    position_id: {
       value: null, required: true, unique: false, validations: ['inDb'], relatedEntity: 'position',
     },
     shirt_number: {
       value: null, required: true, unique: false, validations: ['isPositive'], relatedEntity: null,
     },
   };
+
+  dependentEntities = [];
 
   constructor(obj) {
     super();

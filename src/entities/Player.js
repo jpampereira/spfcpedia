@@ -13,13 +13,15 @@ module.exports = class Player extends IndividualEntity {
     birth: {
       value: null, required: true, unique: false, validations: ['date'], relatedEntity: null,
     },
-    nationality: {
+    country_id: {
       value: null, required: true, unique: false, validations: ['inDb'], relatedEntity: 'country',
     },
     image: {
       value: null, required: true, unique: false, validations: [], relatedEntity: null,
     },
   };
+
+  dependentEntities = ['lineup'];
 
   constructor(obj) {
     super();

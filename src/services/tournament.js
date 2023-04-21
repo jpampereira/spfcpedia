@@ -1,5 +1,4 @@
 const Tournament = require('../entities/Tournament');
-const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
@@ -39,7 +38,10 @@ module.exports = (app) => {
   };
 
   const remove = async (tournamentId) => {
-    await validator.notExistsInDbOrError('stage', { tournament_id: tournamentId }, 'O campeonato possui fases associadas');
+    let [currentTournament] = await read({ id: tournamentId });
+    currentTournament = new Tournament(currentTournament);
+
+    await currentTournament.dependentEntitiesDoesntHaveDataOrError(tournamentId);
 
     return app.db('tournament').del().where({ id: tournamentId });
   };

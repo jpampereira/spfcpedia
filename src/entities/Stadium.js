@@ -15,6 +15,8 @@ module.exports = class Stadium extends IndividualEntity {
     },
   };
 
+  dependentEntities = [];
+
   constructor(obj) {
     super();
     this.setAttributes(obj);

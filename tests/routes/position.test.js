@@ -122,5 +122,5 @@ describe('Não deve remover uma posição...', () => {
       });
   };
 
-  test('com jogadores associados', () => testTemplate(18000, 'A posição possui escalações associadas'));
+  test('com escalações associadas', () => testTemplate(18000, 'Existem dados em lineup associados a esse registro'));
 });

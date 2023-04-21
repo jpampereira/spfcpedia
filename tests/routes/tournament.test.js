@@ -114,5 +114,5 @@ describe('Não deve remover um campeonato...', () => {
       });
   };
 
-  test('que possui fases associadas', () => testTemplate(10000, 'O campeonato possui fases associadas'));
+  test('que possui fases associadas', () => testTemplate(10000, 'Existem dados em stage associados a esse registro'));
 });

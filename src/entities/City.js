@@ -12,6 +12,8 @@ module.exports = class City extends IndividualEntity {
     },
   };
 
+  dependentEntities = ['stadium'];
+
   constructor(obj) {
     super();
     this.setAttributes(obj);

@@ -1,5 +1,4 @@
 const Position = require('../entities/Position');
-const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
@@ -39,7 +38,10 @@ module.exports = (app) => {
   };
 
   const remove = async (positionId) => {
-    await validator.notExistsInDbOrError('lineup', { position: positionId }, 'A posição possui escalações associadas');
+    let [currentPosition] = await read({ id: positionId });
+    currentPosition = new Position(currentPosition);
+
+    await currentPosition.dependentEntitiesDoesntHaveDataOrError(positionId);
 
     return app.db('position').del().where({ id: positionId });
   };

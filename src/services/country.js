@@ -1,5 +1,4 @@
 const Country = require('../entities/Country');
-const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
@@ -39,8 +38,10 @@ module.exports = (app) => {
   };
 
   const remove = async (countryId) => {
-    await validator.notExistsInDbOrError('city', { country_id: countryId }, 'O país possui cidades associadas');
-    await validator.notExistsInDbOrError('player', { nationality: countryId }, 'O país possui jogadores associados');
+    let [currentCountry] = await read({ id: countryId });
+    currentCountry = new Country(currentCountry);
+
+    await currentCountry.dependentEntitiesDoesntHaveDataOrError(countryId);
 
     return app.db('country').del().where({ id: countryId });
   };

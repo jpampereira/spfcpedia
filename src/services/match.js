@@ -1,5 +1,4 @@
 const Match = require('../entities/Match');
-const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
@@ -39,7 +38,10 @@ module.exports = (app) => {
   };
 
   const remove = async (matchId) => {
-    await validator.notExistsInDbOrError('lineup', { match_id: matchId }, 'A partida possui uma escalação associada');
+    let [currentMatch] = await read({ id: matchId });
+    currentMatch = new Match(currentMatch);
+
+    await currentMatch.dependentEntitiesDoesntHaveDataOrError(matchId);
 
     return app.db('match').del().where({ id: matchId });
   };

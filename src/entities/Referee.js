@@ -9,6 +9,8 @@ module.exports = class Referee extends IndividualEntity {
     },
   };
 
+  dependentEntities = [];
+
   constructor(obj) {
     super();
     this.setAttributes(obj);

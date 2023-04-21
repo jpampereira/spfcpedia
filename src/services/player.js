@@ -1,9 +1,8 @@
 const Player = require('../entities/Player');
-const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
-    return app.db('player').select(app.db.raw('id, name, nickname, to_char(birth, \'YYYY-MM-DD\') as birth, nationality, image')).where(filter);
+    return app.db('player').select(app.db.raw('id, name, nickname, to_char(birth, \'YYYY-MM-DD\') as birth, country_id, image')).where(filter);
   };
 
   const create = async (players) => {
@@ -20,7 +19,7 @@ module.exports = (app) => {
       newPlayers.push(newPlayer.getAttributes());
     }
 
-    return app.db('player').insert(newPlayers, ['id', 'name', 'nickname', 'birth', 'image']);
+    return app.db('player').insert(newPlayers, ['id', 'name', 'nickname', 'birth', 'country_id', 'image']);
   };
 
   const update = async (playerId, updatedPlayer) => {
@@ -39,7 +38,10 @@ module.exports = (app) => {
   };
 
   const remove = async (playerId) => {
-    await validator.notExistsInDbOrError('lineup', { player_id: playerId }, 'O jogador possui escalações associadas');
+    let [currentPlayer] = await read({ id: playerId });
+    currentPlayer = new Player(currentPlayer);
+
+    await currentPlayer.dependentEntitiesDoesntHaveDataOrError(playerId);
 
     return app.db('player').del().where({ id: playerId });
   };

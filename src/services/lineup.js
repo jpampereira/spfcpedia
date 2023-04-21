@@ -3,7 +3,7 @@ const Lineup = require('../entities/Lineup');
 
 module.exports = (app) => {
   const read = (filter = {}) => {
-    return app.db('lineup').select(['id', 'match_id', 'player_id', 'position', 'shirt_number']).where(filter);
+    return app.db('lineup').select(['id', 'match_id', 'player_id', 'position_id', 'shirt_number']).where(filter);
   };
 
   const create = async (lineup) => {
@@ -29,7 +29,7 @@ module.exports = (app) => {
 
     newLineup = newLineup.getCollection();
 
-    return app.db('lineup').insert(newLineup, ['id', 'match_id', 'player_id', 'position', 'shirt_number']);
+    return app.db('lineup').insert(newLineup, ['id', 'match_id', 'player_id', 'position_id', 'shirt_number']);
   };
 
   const update = async (selectedPlayerId, updatedSelectedPlayer) => {

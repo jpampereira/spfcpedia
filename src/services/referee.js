@@ -39,6 +39,10 @@ module.exports = (app) => {
   };
 
   const remove = async (refereeId) => {
+    let [currentReferee] = await read({ id: refereeId });
+    currentReferee = new Referee(currentReferee);
+
+    await currentReferee.dependentEntitiesDoesntHaveDataOrError(refereeId);
     await validator.notExistsInDbOrError('match', ['referee = ? or assistant_referee_1 = ? or assistant_referee_2 = ? or fourth_official = ?', refereeId], 'O árbitro possui partidas associadas');
 
     return app.db('referee').del().where({ id: refereeId });

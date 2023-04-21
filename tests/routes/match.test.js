@@ -32,15 +32,15 @@ test('Deve inserir novas partidas com sucesso', () => {
     .send([
       {
         tournament_stage: 16000,
-        datetime: '2023-01-26 21:30',
+        datetime: '2023-02-12 19:00',
         local: 12000,
-        referee: 14011,
+        referee: 14003,
         assistant_referee_1: 14012,
-        assistant_referee_2: 14013,
-        fourth_official: 14014,
-        opponent: 13003,
+        assistant_referee_2: 14024,
+        fourth_official: 14010,
+        opponent: 13007,
         opponent_goals: 1,
-        highlights: 'https://www.youtube.com/watch?v=kjq4MP_gimw',
+        highlights: 'https://www.youtube.com/watch?v=xiD75Xq6Vxs',
       },
       {
         tournament_stage: 16000,
@@ -214,5 +214,5 @@ describe('Não deve remover uma partida...', () => {
       });
   };
 
-  test('com uma escalação associada', () => testTemplate(17000, 'A partida possui uma escalação associada'));
+  test('com uma escalação associada', () => testTemplate(17000, 'Existem dados em lineup associados a esse registro'));
 });

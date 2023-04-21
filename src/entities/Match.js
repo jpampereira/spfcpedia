@@ -36,6 +36,8 @@ module.exports = class Match extends IndividualEntity {
     },
   };
 
+  dependentEntities = ['lineup'];
+
   constructor(obj) {
     super();
     this.setAttributes(obj);

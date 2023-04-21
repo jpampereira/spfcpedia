@@ -122,5 +122,5 @@ describe('Não deve remover uma cidade...', () => {
       });
   };
 
-  test('que possui estádios associados', () => testTemplate(11000, 'A cidade possuí estádios associados'));
+  test('que possui estádios associados', () => testTemplate(11000, 'Existem dados em stadium associados a esse registro'));
 });

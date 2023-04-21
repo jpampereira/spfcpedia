@@ -39,6 +39,10 @@ module.exports = (app) => {
   };
 
   const remove = async (stageId) => {
+    let [currentStage] = await read({ id: stageId });
+    currentStage = new Stage(currentStage);
+
+    await currentStage.dependentEntitiesDoesntHaveDataOrError(stageId);
     await validator.notExistsInDbOrError('match', { tournament_stage: stageId }, 'A fase possui partidas associadas');
 
     return app.db('stage').del().where({ id: stageId });

@@ -9,6 +9,8 @@ module.exports = class Country extends IndividualEntity {
     },
   };
 
+  dependentEntities = ['city', 'player'];
+
   constructor(obj) {
     super();
     this.setAttributes(obj);

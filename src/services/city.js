@@ -1,5 +1,4 @@
 const City = require('../entities/City');
-const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
@@ -39,7 +38,10 @@ module.exports = (app) => {
   };
 
   const remove = async (cityId) => {
-    await validator.notExistsInDbOrError('stadium', { city_id: cityId }, 'A cidade possuí estádios associados');
+    let [currentCity] = await read({ id: cityId });
+    currentCity = new City(currentCity);
+
+    await currentCity.dependentEntitiesDoesntHaveDataOrError(cityId);
 
     return app.db('city').del().where({ id: cityId });
   };

@@ -5,8 +5,12 @@ module.exports = class IndividualEntity {
   // Attributes:
   // entityName = '...'
   // attributes = { attribute: { value, required, unique, validations, relatedEntity }, ... }
+  // dependentEntities = []
 
   setAttributes(obj) {
+    const errorMsg = exits.DATA_DOESNT_EXIST_ERROR;
+    validator.existsOrError(obj, errorMsg);
+
     const listOfAttributes = Object.entries(obj);
 
     listOfAttributes.forEach((attribute) => {
@@ -108,5 +112,18 @@ module.exports = class IndividualEntity {
     }
 
     await validator.notExistsInDbOrError(this.entityName, [query, values], errorMsg);
+  }
+
+  async dependentEntitiesDoesntHaveDataOrError(instanceId) {
+    const errorMsgTemplate = exits.DATA_DEPENDENCY_ERROR;
+
+    for (const dependent of this.dependentEntities) {
+      const errorMsg = errorMsgTemplate.replace(/<ENTITY_NAME>/, dependent);
+
+      const query = {};
+      query[`${this.entityName}_id`] = instanceId;
+
+      await validator.notExistsInDbOrError(dependent, query, errorMsg);
+    }
   }
 };

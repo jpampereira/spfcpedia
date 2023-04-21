@@ -39,6 +39,10 @@ module.exports = (app) => {
   };
 
   const remove = async (stadiumId) => {
+    let [currentStadium] = await read({ id: stadiumId });
+    currentStadium = new Stadium(currentStadium);
+
+    await currentStadium.dependentEntitiesDoesntHaveDataOrError(stadiumId);
     await validator.notExistsInDbOrError('match', { local: stadiumId }, 'O estádio possui partidas associadas');
 
     return app.db('stadium').del().where({ id: stadiumId });

@@ -11,4 +11,6 @@ module.exports = {
   LIST_SIZE_ERROR: 'O número de itens em <ENTITY_NAME> é inválido',
   DOUBLED_LIST_ITEM_ERROR: 'Todos os <ATTR_NAME> de um mesmo <ENTITY_NAME> devem possuir valores diferentes',
   SINGLED_LIST_ITEM_ERROR: 'Todos os <ATTR_NAME> de um mesmo <ENTITY_NAME> devem possuir o mesmo valor',
+  DATA_DEPENDENCY_ERROR: 'Existem dados em <ENTITY_NAME> associados a esse registro',
+  DATA_DOESNT_EXIST_ERROR: 'Registro não encontrado',
 };

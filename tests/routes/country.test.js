@@ -117,6 +117,6 @@ describe('Não deve remover um país...', () => {
       });
   };
 
-  test('que possui cidades associadas', () => testTemplate('04_country_city_stadium', 10000, 'O país possui cidades associadas'));
-  test('que possui jogadores associados', () => testTemplate('05_player', 10001, 'O país possui jogadores associados'));
+  test('que possui cidades associadas', () => testTemplate('04_country_city_stadium', 10000, 'Existem dados em city associados a esse registro'));
+  test('que possui jogadores associados', () => testTemplate('05_player', 10001, 'Existem dados em player associados a esse registro'));
 });

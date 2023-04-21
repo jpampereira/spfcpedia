@@ -9,6 +9,8 @@ module.exports = class Stage extends IndividualEntity {
     },
   };
 
+  dependentEntities = ['stage'];
+
   constructor(obj) {
     super();
     this.setAttributes(obj);
