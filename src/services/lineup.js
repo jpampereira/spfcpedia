@@ -1,3 +1,4 @@
+const SelectedPlayer = require('../entities/SelectedPlayer');
 const Lineup = require('../entities/Lineup');
 
 module.exports = (app) => {
@@ -6,35 +7,44 @@ module.exports = (app) => {
   };
 
   const create = async (lineup) => {
-    const newLineup = [];
+    let newLineup = [];
 
     for (const player of lineup) {
-      const chosePlayer = new Lineup(player);
+      const selectedPlayer = new SelectedPlayer(player);
 
-      await chosePlayer.requiredAttributesAreFilledOrError();
-      await chosePlayer.attributesValueAreValidOrError();
-      await chosePlayer.uniqueConstraintInviolatedOrError();
-      await chosePlayer.instanceDoesntExistInDbOrError();
+      await selectedPlayer.requiredAttributesAreFilledOrError();
+      await selectedPlayer.attributesValueAreValidOrError();
+      await selectedPlayer.uniqueConstraintInviolatedOrError();
+      await selectedPlayer.instanceDoesntExistInDbOrError();
 
-      newLineup.push(chosePlayer.getAttributes());
+      newLineup.push(selectedPlayer.getAttributes());
     }
+
+    newLineup = new Lineup(newLineup);
+
+    await newLineup.collectionSizeIntoBoundaryOrError();
+    await newLineup.sharedAttributesConstraintOrError();
+    await newLineup.uniqueAttributesConstraintOrError();
+    await newLineup.instanceIsNotInDbOrError();
+
+    newLineup = newLineup.getCollection();
 
     return app.db('lineup').insert(newLineup, ['id', 'match_id', 'player_id', 'position', 'shirt_number']);
   };
 
-  const update = async (chosePlayerId, updatedChosePlayer) => {
-    const [currentChosePlayer] = await read({ id: chosePlayerId });
-    let newChosePlayer = new Lineup({ ...currentChosePlayer, ...updatedChosePlayer });
+  const update = async (selectedPlayerId, updatedSelectedPlayer) => {
+    const [currentselectedPlayer] = await read({ id: selectedPlayerId });
+    let selectedPlayer = new SelectedPlayer({ ...currentselectedPlayer, ...updatedSelectedPlayer });
 
-    await newChosePlayer.attributesValueAreValidOrError();
-    await newChosePlayer.requiredAttributesAreFilledOrError();
-    await newChosePlayer.uniqueConstraintInviolatedOrError(chosePlayerId);
-    await newChosePlayer.instanceDoesntExistInDbOrError(chosePlayerId);
+    await selectedPlayer.attributesValueAreValidOrError();
+    await selectedPlayer.requiredAttributesAreFilledOrError();
+    await selectedPlayer.uniqueConstraintInviolatedOrError(selectedPlayerId);
+    await selectedPlayer.instanceDoesntExistInDbOrError(selectedPlayerId);
 
-    newChosePlayer = newChosePlayer.getAttributes();
-    newChosePlayer.updated_at = 'now';
+    selectedPlayer = selectedPlayer.getAttributes();
+    selectedPlayer.updated_at = 'now';
 
-    return app.db('lineup').update(newChosePlayer).where({ id: chosePlayerId });
+    return app.db('lineup').update(selectedPlayer).where({ id: selectedPlayerId });
   };
 
   const remove = (matchId) => {

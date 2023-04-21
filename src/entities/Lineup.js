@@ -1,25 +1,19 @@
-const DbEntity = require('./DbEntity');
+const CompositeEntity = require('./CompositeEntity');
 
-module.exports = class Lineup extends DbEntity {
+module.exports = class Lineup extends CompositeEntity {
   entityName = 'lineup';
 
-  attributes = {
-    match_id: {
-      value: null, required: true, unique: false, validations: ['inDb'], relatedEntity: 'match',
-    },
-    player_id: {
-      value: null, required: true, unique: false, validations: ['inDb'], relatedEntity: 'player',
-    },
-    position: {
-      value: null, required: true, unique: false, validations: ['inDb'], relatedEntity: 'position',
-    },
-    shirt_number: {
-      value: null, required: true, unique: false, validations: ['isPositive'], relatedEntity: null,
-    },
+  value = [];
+
+  constraints = {
+    minLength: 11,
+    maxLength: 11,
+    sharedAttrs: ['match_id'],
+    uniqueAttrs: ['player_id', 'shirt_number'],
   };
 
-  constructor(obj) {
+  constructor(value) {
     super();
-    this.setAttributes(obj);
+    this.value = value;
   }
 };

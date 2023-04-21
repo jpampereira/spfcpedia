@@ -1,6 +1,6 @@
-const DbEntity = require('./DbEntity');
+const IndividualEntity = require('./IndividualEntity');
 
-module.exports = class Stage extends DbEntity {
+module.exports = class Stage extends IndividualEntity {
   entityName = 'stage';
 
   attributes = {

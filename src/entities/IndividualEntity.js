@@ -1,7 +1,7 @@
 const validator = require('../utils/validator')();
 const exits = require('../configs/exits');
 
-module.exports = class DbEntity {
+module.exports = class IndividualEntity {
   // Attributes:
   // entityName = '...'
   // attributes = { attribute: { value, required, unique, validations, relatedEntity }, ... }

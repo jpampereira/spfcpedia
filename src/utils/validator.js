@@ -5,6 +5,7 @@ module.exports = () => {
   const existsOrError = (value, msg) => {
     if (value === undefined || value === null) throw new ValidationError(msg);
     if (typeof value === 'string' && !value.trim()) throw new ValidationError(msg);
+    if (Array.isArray(value) && value.length === 0) throw new ValidationError(msg);
   };
 
   const notExistsOrError = (value, msg) => {
@@ -59,6 +60,37 @@ module.exports = () => {
     if (!value.match(/^\d{4}-\d{2}-\d{2}$/)) throw new ValidationError(msg);
   };
 
+  const arraySizeIsRespectedOrError = (value, min, max, msg) => {
+    if (value.length < min || value.length > max) throw new ValidationError(msg);
+  };
+
+  const nonDuplicateValuesOrError = (list, msg, attr) => {
+    let newList = list;
+    const firstValue = newList[0];
+
+    if (typeof firstValue !== 'number' && typeof firstValue !== 'string') {
+      newList = newList.map((obj) => obj[attr]);
+    }
+
+    const set = new Set(newList);
+
+    if (newList.length !== set.size) throw new ValidationError(msg);
+  };
+
+  const singledValueListOrError = (list, msg, attr) => {
+    let newList = list;
+    let firstElement = newList[0];
+
+    if (typeof firstElement !== 'number' && typeof firstElement !== 'string') {
+      newList = newList.map((obj) => obj[attr]);
+      firstElement = firstElement[attr];
+    }
+
+    const result = newList.every((item) => item === firstElement);
+
+    if (!result) throw new ValidationError(msg);
+  };
+
   return {
     existsOrError,
     notExistsOrError,
@@ -67,5 +99,8 @@ module.exports = () => {
     isPositiveOrError,
     isDateTimeFormatOrError,
     isDateFormatOrError,
+    arraySizeIsRespectedOrError,
+    nonDuplicateValuesOrError,
+    singledValueListOrError,
   };
 };

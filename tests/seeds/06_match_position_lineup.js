@@ -122,6 +122,19 @@ exports.seed = (knex) => {
         opponent_goals: 0,
         highlights: 'https://www.youtube.com/watch?v=4W2iHV5vJXI',
       },
+      {
+        id: 17003,
+        tournament_stage: 16000,
+        datetime: '2023-01-26 21:30',
+        local: 12000,
+        referee: 14011,
+        assistant_referee_1: 14012,
+        assistant_referee_2: 14013,
+        fourth_official: 14014,
+        opponent: 13003,
+        opponent_goals: 1,
+        highlights: 'https://www.youtube.com/watch?v=kjq4MP_gimw',
+      },
     ]))
     .then(() => knex('position').insert([
       { id: 18000, symbol: 'G', name: 'Goalkepper' },

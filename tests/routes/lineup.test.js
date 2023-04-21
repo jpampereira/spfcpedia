@@ -27,7 +27,7 @@ test('Deve listar um escalado de uma partida', () => {
     });
 });
 
-test('Deve listar uma escalação por partida', () => {
+test('Deve listar a escalação de uma partida', () => {
   return request(app).get(`${MAIN_ROUTE}/byMatch/17000`)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -84,10 +84,36 @@ describe('Não deve inserir uma escalação...', () => {
   test('sem o atributo player_id', () => testTemplate([...newData, { match_id: 17002, position: 18003, shirt_number: 9 }], 'O atributo player_id é obrigatório'));
   test('sem o atributo position', () => testTemplate([...newData, { match_id: 17002, player_id: 19010, shirt_number: 9 }], 'O atributo position é obrigatório'));
   test('sem o atributo shirt_number', () => testTemplate([...newData, { player_id: 19010, position: 18003, match_id: 17002 }], 'O atributo shirt_number é obrigatório'));
-  test('cujo valor de match_id é inválido', () => testTemplate([...newData, { match_id: 17003, player_id: 19010, position: 18003, shirt_number: 9 }], 'O valor de match_id é inválido'));
+  test('cujo valor de match_id é inválido', () => testTemplate([...newData, { match_id: 17004, player_id: 19010, position: 18003, shirt_number: 9 }], 'O valor de match_id é inválido'));
   test('cujo valor de player_id é inválido', () => testTemplate([...newData, { match_id: 17002, player_id: 19022, position: 18003, shirt_number: 9 }], 'O valor de player_id é inválido'));
   test('cujo valor de position é inválido', () => testTemplate([...newData, { match_id: 17002, player_id: 19010, position: 18005, shirt_number: 9 }], 'O valor de position é inválido'));
   test('cujo valor de shirt_number é inválido', () => testTemplate([...newData, { match_id: 17002, player_id: 19010, position: 18003, shirt_number: -1 }], 'O valor de shirt_number é inválido'));
+  test('com menos de 11 jogadores', () => testTemplate([...newData], 'O número de itens em lineup é inválido'));
+
+  test('com mais de 11 jogadores', () => {
+    return testTemplate([...newData,
+      { match_id: 17002, player_id: 19010, position: 18003, shirt_number: 9 },
+      { match_id: 17002, player_id: 19012, position: 18002, shirt_number: 14 },
+    ], 'O número de itens em lineup é inválido');
+  });
+
+  test('com jogadores duplicados', () => testTemplate([...newData, { match_id: 17002, player_id: 19002, position: 18001, shirt_number: 5 }], 'Todos os player_id de um mesmo lineup devem possuir valores diferentes'));
+  test('com números de camisa duplicados', () => testTemplate([...newData, { match_id: 17002, player_id: 19016, position: 18001, shirt_number: 5 }], 'Todos os shirt_number de um mesmo lineup devem possuir valores diferentes'));
+  test('para mais de uma partida', () => testTemplate([...newData, { match_id: 17003, player_id: 19010, position: 18003, shirt_number: 9 }], 'Todos os match_id de um mesmo lineup devem possuir o mesmo valor'));
+
+  test('se a partida já possuir uma cadastrada', () => testTemplate([
+    { match_id: 17001, player_id: 19000, position: 18000, shirt_number: 23 },
+    { match_id: 17001, player_id: 19011, position: 18001, shirt_number: 2 },
+    { match_id: 17001, player_id: 19003, position: 18001, shirt_number: 3 },
+    { match_id: 17001, player_id: 19016, position: 18001, shirt_number: 28 },
+    { match_id: 17001, player_id: 19004, position: 18001, shirt_number: 6 },
+    { match_id: 17001, player_id: 19005, position: 18002, shirt_number: 29 },
+    { match_id: 17001, player_id: 19006, position: 18003, shirt_number: 27 },
+    { match_id: 17001, player_id: 19018, position: 18002, shirt_number: 21 },
+    { match_id: 17001, player_id: 19008, position: 18002, shirt_number: 10 },
+    { match_id: 17001, player_id: 19017, position: 18003, shirt_number: 22 },
+    { match_id: 17001, player_id: 19010, position: 18003, shirt_number: 9 },
+  ], 'Registro já cadastrado'));
 });
 
 describe('Deve alterar uma escalação com sucesso', () => {
