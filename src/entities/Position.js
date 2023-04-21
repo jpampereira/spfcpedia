@@ -5,10 +5,10 @@ module.exports = class Position extends DbEntity {
 
   attributes = {
     symbol: {
-      value: null, required: true, unique: true, validations: ['exists'], relatedTable: null,
+      value: null, required: true, unique: true, validations: ['exists'], relatedEntity: null,
     },
     name: {
-      value: null, required: true, unique: true, validations: ['exists'], relatedTable: null,
+      value: null, required: true, unique: true, validations: ['exists'], relatedEntity: null,
     },
   };
 

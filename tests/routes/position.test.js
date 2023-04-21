@@ -6,7 +6,7 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/position';
 
 beforeAll(() => {
-  run('05_position_player');
+  run('06_match_position_lineup');
 });
 
 test('Deve retornar todas as posições', () => {
@@ -18,7 +18,7 @@ test('Deve retornar todas as posições', () => {
 });
 
 test('Deve retornar uma posição pelo Id', () => {
-  return request(app).get(`${MAIN_ROUTE}/12000`)
+  return request(app).get(`${MAIN_ROUTE}/18000`)
     .then((res) => {
       expect(res.status).toBe(200);
       expect(res.body.symbol).toBe('G');
@@ -63,7 +63,7 @@ describe('Não deve inserir uma posição...', () => {
 
 describe('Deve atualizar uma posição com sucesso', () => {
   test('Atualizando a posição', () => {
-    return request(app).put(`${MAIN_ROUTE}/12001`)
+    return request(app).put(`${MAIN_ROUTE}/18001`)
       .send({ symbol: 'CB', name: 'Center Back' })
       .then((res) => {
         expect(res.status).toBe(204);
@@ -71,7 +71,7 @@ describe('Deve atualizar uma posição com sucesso', () => {
   });
 
   test('Atestando que a atualização foi realizada', () => {
-    return request(app).get(`${MAIN_ROUTE}/12001`)
+    return request(app).get(`${MAIN_ROUTE}/18001`)
       .then((res) => {
         expect(res.status).toBe(200);
         expect(res.body.symbol).toBe('CB');
@@ -90,22 +90,22 @@ describe('Não deve atualizar uma posição...', () => {
       });
   };
 
-  test('cujo valor de symbol é inválido', () => testTemplate(12000, { symbol: '' }, 'O valor de symbol é inválido'));
-  test('cujo valor de name é inválido', () => testTemplate(12000, { name: '' }, 'O valor de name é inválido'));
-  test('para um símbolo já cadastrado', () => testTemplate(12000, { symbol: 'F' }, 'Já existe um registro com esse symbol'));
-  test('para um nome já cadastrado', () => testTemplate(12000, { name: 'Midfielder' }, 'Já existe um registro com esse name'));
+  test('cujo valor de symbol é inválido', () => testTemplate(18000, { symbol: '' }, 'O valor de symbol é inválido'));
+  test('cujo valor de name é inválido', () => testTemplate(18000, { name: '' }, 'O valor de name é inválido'));
+  test('para um símbolo já cadastrado', () => testTemplate(18000, { symbol: 'F' }, 'Já existe um registro com esse symbol'));
+  test('para um nome já cadastrado', () => testTemplate(18000, { name: 'Midfielder' }, 'Já existe um registro com esse name'));
 });
 
 describe('Deve remover uma posição com sucesso', () => {
   test('Removendo a posição', () => {
-    return request(app).delete(`${MAIN_ROUTE}/12004`)
+    return request(app).delete(`${MAIN_ROUTE}/18004`)
       .then((res) => {
         expect(res.status).toBe(204);
       });
   });
 
   test('Atestando que a remoção foi realizada', () => {
-    return request(app).get(`${MAIN_ROUTE}/12004`)
+    return request(app).get(`${MAIN_ROUTE}/18004`)
       .then((res) => {
         expect(res.status).toBe(200);
         expect(res.body).toStrictEqual({});
@@ -122,5 +122,5 @@ describe('Não deve remover uma posição...', () => {
       });
   };
 
-  test('com jogadores associados', () => testTemplate(12000, 'A posição possui jogadores associados'));
+  test('com jogadores associados', () => testTemplate(18000, 'A posição possui escalações associadas'));
 });

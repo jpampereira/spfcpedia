@@ -5,10 +5,10 @@ module.exports = class Stage extends DbEntity {
 
   attributes = {
     name: {
-      value: null, required: true, unique: false, validations: ['exists'], relatedTable: null,
+      value: null, required: true, unique: false, validations: ['exists'], relatedEntity: null,
     },
     tournament_id: {
-      value: null, required: true, unique: false, validations: ['inDb'], relatedTable: 'tournament',
+      value: null, required: true, unique: false, validations: ['inDb'], relatedEntity: 'tournament',
     },
   };
 

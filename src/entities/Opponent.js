@@ -5,7 +5,7 @@ module.exports = class Opponent extends DbEntity {
 
   attributes = {
     name: {
-      value: null, required: true, unique: true, validations: ['exists'], relatedTable: null,
+      value: null, required: true, unique: true, validations: ['exists'], relatedEntity: null,
     },
   };
 

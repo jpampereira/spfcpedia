@@ -12,12 +12,12 @@ module.exports = (app) => {
     for (const tournament of tournaments) {
       const newTournament = new Tournament(tournament);
 
-      await newTournament.allRequiredAttributesAreFilledOrError();
-      await newTournament.validAttributesOrError();
+      await newTournament.requiredAttributesAreFilledOrError();
+      await newTournament.attributesValueAreValidOrError();
       await newTournament.uniqueConstraintInviolatedOrError();
-      await newTournament.instanceDoesntExistOrError();
+      await newTournament.instanceDoesntExistInDbOrError();
 
-      newTournaments.push(newTournament.getObject());
+      newTournaments.push(newTournament.getAttributes());
     }
 
     return app.db('tournament').insert(newTournaments, ['id', 'name']);
@@ -27,12 +27,12 @@ module.exports = (app) => {
     const [currentTournament] = await read({ id: tournamentId });
     let newTournament = new Tournament({ ...currentTournament, ...updatedTournament });
 
-    await newTournament.validAttributesOrError();
-    await newTournament.allRequiredAttributesAreFilledOrError();
+    await newTournament.attributesValueAreValidOrError();
+    await newTournament.requiredAttributesAreFilledOrError();
     await newTournament.uniqueConstraintInviolatedOrError(tournamentId);
-    await newTournament.instanceDoesntExistOrError(tournamentId);
+    await newTournament.instanceDoesntExistInDbOrError(tournamentId);
 
-    newTournament = newTournament.getObject();
+    newTournament = newTournament.getAttributes();
     newTournament.updated_at = 'now';
 
     return app.db('tournament').update(newTournament).where({ id: tournamentId });

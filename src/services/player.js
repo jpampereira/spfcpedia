@@ -3,7 +3,7 @@ const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
-    return app.db('player').select(app.db.raw('id, name, nickname, position, to_char(birth, \'YYYY-MM-DD\') as birth, nationality, image')).where(filter);
+    return app.db('player').select(app.db.raw('id, name, nickname, to_char(birth, \'YYYY-MM-DD\') as birth, nationality, image')).where(filter);
   };
 
   const create = async (players) => {
@@ -12,27 +12,27 @@ module.exports = (app) => {
     for (const player of players) {
       const newPlayer = new Player(player);
 
-      await newPlayer.allRequiredAttributesAreFilledOrError();
-      await newPlayer.validAttributesOrError();
+      await newPlayer.requiredAttributesAreFilledOrError();
+      await newPlayer.attributesValueAreValidOrError();
       await newPlayer.uniqueConstraintInviolatedOrError();
-      await newPlayer.instanceDoesntExistOrError();
+      await newPlayer.instanceDoesntExistInDbOrError();
 
-      newPlayers.push(newPlayer.getObject());
+      newPlayers.push(newPlayer.getAttributes());
     }
 
-    return app.db('player').insert(newPlayers, ['id', 'name', 'nickname', 'position', 'birth', 'image']);
+    return app.db('player').insert(newPlayers, ['id', 'name', 'nickname', 'birth', 'image']);
   };
 
   const update = async (playerId, updatedPlayer) => {
     const [currentPlayer] = await read({ id: playerId });
     let newPlayer = new Player({ ...currentPlayer, ...updatedPlayer });
 
-    await newPlayer.validAttributesOrError();
-    await newPlayer.allRequiredAttributesAreFilledOrError();
+    await newPlayer.attributesValueAreValidOrError();
+    await newPlayer.requiredAttributesAreFilledOrError();
     await newPlayer.uniqueConstraintInviolatedOrError(playerId);
-    await newPlayer.instanceDoesntExistOrError(playerId);
+    await newPlayer.instanceDoesntExistInDbOrError(playerId);
 
-    newPlayer = newPlayer.getObject();
+    newPlayer = newPlayer.getAttributes();
     newPlayer.updated_at = 'now';
 
     return app.db('player').update(newPlayer).where({ id: playerId });

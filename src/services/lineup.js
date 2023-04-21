@@ -2,7 +2,7 @@ const Lineup = require('../entities/Lineup');
 
 module.exports = (app) => {
   const read = (filter = {}) => {
-    return app.db('lineup').select(['id', 'match_id', 'player_id', 'shirt_number']).where(filter);
+    return app.db('lineup').select(['id', 'match_id', 'player_id', 'position', 'shirt_number']).where(filter);
   };
 
   const create = async (lineup) => {
@@ -11,27 +11,27 @@ module.exports = (app) => {
     for (const player of lineup) {
       const chosePlayer = new Lineup(player);
 
-      await chosePlayer.allRequiredAttributesAreFilledOrError();
-      await chosePlayer.validAttributesOrError();
+      await chosePlayer.requiredAttributesAreFilledOrError();
+      await chosePlayer.attributesValueAreValidOrError();
       await chosePlayer.uniqueConstraintInviolatedOrError();
-      await chosePlayer.instanceDoesntExistOrError();
+      await chosePlayer.instanceDoesntExistInDbOrError();
 
-      newLineup.push(chosePlayer.getObject());
+      newLineup.push(chosePlayer.getAttributes());
     }
 
-    return app.db('lineup').insert(newLineup, ['id', 'match_id', 'player_id', 'shirt_number']);
+    return app.db('lineup').insert(newLineup, ['id', 'match_id', 'player_id', 'position', 'shirt_number']);
   };
 
   const update = async (chosePlayerId, updatedChosePlayer) => {
     const [currentChosePlayer] = await read({ id: chosePlayerId });
     let newChosePlayer = new Lineup({ ...currentChosePlayer, ...updatedChosePlayer });
 
-    await newChosePlayer.validAttributesOrError();
-    await newChosePlayer.allRequiredAttributesAreFilledOrError();
+    await newChosePlayer.attributesValueAreValidOrError();
+    await newChosePlayer.requiredAttributesAreFilledOrError();
     await newChosePlayer.uniqueConstraintInviolatedOrError(chosePlayerId);
-    await newChosePlayer.instanceDoesntExistOrError(chosePlayerId);
+    await newChosePlayer.instanceDoesntExistInDbOrError(chosePlayerId);
 
-    newChosePlayer = newChosePlayer.getObject();
+    newChosePlayer = newChosePlayer.getAttributes();
     newChosePlayer.updated_at = 'now';
 
     return app.db('lineup').update(newChosePlayer).where({ id: chosePlayerId });

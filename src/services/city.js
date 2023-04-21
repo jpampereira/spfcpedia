@@ -12,12 +12,12 @@ module.exports = (app) => {
     for (const city of cities) {
       const newCity = new City(city);
 
-      await newCity.allRequiredAttributesAreFilledOrError();
-      await newCity.validAttributesOrError();
+      await newCity.requiredAttributesAreFilledOrError();
+      await newCity.attributesValueAreValidOrError();
       await newCity.uniqueConstraintInviolatedOrError();
-      await newCity.instanceDoesntExistOrError();
+      await newCity.instanceDoesntExistInDbOrError();
 
-      newCities.push(newCity.getObject());
+      newCities.push(newCity.getAttributes());
     }
 
     return app.db('city').insert(newCities, ['id', 'name', 'country_id']);
@@ -27,12 +27,12 @@ module.exports = (app) => {
     const [currentCity] = await read({ id: cityId });
     let newCity = new City({ ...currentCity, ...updatedCity });
 
-    await newCity.validAttributesOrError();
-    await newCity.allRequiredAttributesAreFilledOrError();
+    await newCity.attributesValueAreValidOrError();
+    await newCity.requiredAttributesAreFilledOrError();
     await newCity.uniqueConstraintInviolatedOrError(cityId);
-    await newCity.instanceDoesntExistOrError(cityId);
+    await newCity.instanceDoesntExistInDbOrError(cityId);
 
-    newCity = newCity.getObject();
+    newCity = newCity.getAttributes();
     newCity.updated_at = 'now';
 
     return app.db('city').update(newCity).where({ id: cityId });

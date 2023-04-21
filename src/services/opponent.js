@@ -12,12 +12,12 @@ module.exports = (app) => {
     for (const opponent of opponents) {
       const newOpponent = new Opponent(opponent);
 
-      await newOpponent.allRequiredAttributesAreFilledOrError();
-      await newOpponent.validAttributesOrError();
+      await newOpponent.requiredAttributesAreFilledOrError();
+      await newOpponent.attributesValueAreValidOrError();
       await newOpponent.uniqueConstraintInviolatedOrError();
-      await newOpponent.instanceDoesntExistOrError();
+      await newOpponent.instanceDoesntExistInDbOrError();
 
-      newOpponents.push(newOpponent.getObject());
+      newOpponents.push(newOpponent.getAttributes());
     }
 
     return app.db('opponent').insert(newOpponents, ['id', 'name']);
@@ -27,12 +27,12 @@ module.exports = (app) => {
     const [currentOpponent] = await read({ id: opponentId });
     let newOpponent = new Opponent({ ...currentOpponent, ...updatedOpponent });
 
-    await newOpponent.validAttributesOrError();
-    await newOpponent.allRequiredAttributesAreFilledOrError();
+    await newOpponent.attributesValueAreValidOrError();
+    await newOpponent.requiredAttributesAreFilledOrError();
     await newOpponent.uniqueConstraintInviolatedOrError(opponentId);
-    await newOpponent.instanceDoesntExistOrError(opponentId);
+    await newOpponent.instanceDoesntExistInDbOrError(opponentId);
 
-    newOpponent = newOpponent.getObject();
+    newOpponent = newOpponent.getAttributes();
     newOpponent.updated_at = 'now';
 
     return app.db('opponent').update(newOpponent).where({ id: opponentId });

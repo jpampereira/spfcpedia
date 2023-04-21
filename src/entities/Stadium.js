@@ -5,13 +5,13 @@ module.exports = class Stadium extends DbEntity {
 
   attributes = {
     name: {
-      value: null, required: true, unique: true, validations: ['exists'], relatedTable: null,
+      value: null, required: true, unique: true, validations: ['exists'], relatedEntity: null,
     },
     nickname: {
-      value: null, required: false, unique: true, validations: [], relatedTable: null,
+      value: null, required: false, unique: true, validations: [], relatedEntity: null,
     },
     city_id: {
-      value: null, required: true, unique: false, validations: ['inDb'], relatedTable: 'city',
+      value: null, required: true, unique: false, validations: ['inDb'], relatedEntity: 'city',
     },
   };
 

@@ -112,7 +112,7 @@ describe('Deve remover um árbitro com sucesso', () => {
 
 describe('Não deve remover um árbitro...', () => {
   beforeAll(() => {
-    run('06_match_lineup');
+    run('06_match_position_lineup');
   });
 
   const testTemplate = (id, errorMessage) => {

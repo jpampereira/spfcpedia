@@ -5,13 +5,16 @@ module.exports = class Lineup extends DbEntity {
 
   attributes = {
     match_id: {
-      value: null, required: true, unique: false, validations: ['inDb'], relatedTable: 'match',
+      value: null, required: true, unique: false, validations: ['inDb'], relatedEntity: 'match',
     },
     player_id: {
-      value: null, required: true, unique: false, validations: ['inDb'], relatedTable: 'player',
+      value: null, required: true, unique: false, validations: ['inDb'], relatedEntity: 'player',
+    },
+    position: {
+      value: null, required: true, unique: false, validations: ['inDb'], relatedEntity: 'position',
     },
     shirt_number: {
-      value: null, required: true, unique: false, validations: ['isPositive'], relatedTable: null,
+      value: null, required: true, unique: false, validations: ['isPositive'], relatedEntity: null,
     },
   };
 

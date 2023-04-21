@@ -12,12 +12,12 @@ module.exports = (app) => {
     for (const stage of stages) {
       const newStage = new Stage(stage);
 
-      await newStage.allRequiredAttributesAreFilledOrError();
-      await newStage.validAttributesOrError();
+      await newStage.requiredAttributesAreFilledOrError();
+      await newStage.attributesValueAreValidOrError();
       await newStage.uniqueConstraintInviolatedOrError();
-      await newStage.instanceDoesntExistOrError();
+      await newStage.instanceDoesntExistInDbOrError();
 
-      newStages.push(newStage.getObject());
+      newStages.push(newStage.getAttributes());
     }
 
     return app.db('stage').insert(newStages, ['id', 'name', 'tournament_id']);
@@ -27,12 +27,12 @@ module.exports = (app) => {
     const [currentStage] = await read({ id: stageId });
     let newStage = new Stage({ ...currentStage, ...updatedStage });
 
-    await newStage.validAttributesOrError();
-    await newStage.allRequiredAttributesAreFilledOrError();
+    await newStage.attributesValueAreValidOrError();
+    await newStage.requiredAttributesAreFilledOrError();
     await newStage.uniqueConstraintInviolatedOrError(stageId);
-    await newStage.instanceDoesntExistOrError(stageId);
+    await newStage.instanceDoesntExistInDbOrError(stageId);
 
-    newStage = newStage.getObject();
+    newStage = newStage.getAttributes();
     newStage.updated_at = 'now';
 
     return app.db('stage').update(newStage).where({ id: stageId });

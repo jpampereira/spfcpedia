@@ -12,12 +12,12 @@ module.exports = (app) => {
     for (const referee of referees) {
       const newReferee = new Referee(referee);
 
-      await newReferee.allRequiredAttributesAreFilledOrError();
-      await newReferee.validAttributesOrError();
+      await newReferee.requiredAttributesAreFilledOrError();
+      await newReferee.attributesValueAreValidOrError();
       await newReferee.uniqueConstraintInviolatedOrError();
-      await newReferee.instanceDoesntExistOrError();
+      await newReferee.instanceDoesntExistInDbOrError();
 
-      newReferees.push(newReferee.getObject());
+      newReferees.push(newReferee.getAttributes());
     }
 
     return app.db('referee').insert(newReferees, ['id', 'name']);
@@ -27,12 +27,12 @@ module.exports = (app) => {
     const [currentReferee] = await read({ id: refereeId });
     let newReferee = new Referee({ ...currentReferee, ...updatedReferee });
 
-    await newReferee.validAttributesOrError();
-    await newReferee.allRequiredAttributesAreFilledOrError();
+    await newReferee.attributesValueAreValidOrError();
+    await newReferee.requiredAttributesAreFilledOrError();
     await newReferee.uniqueConstraintInviolatedOrError(refereeId);
-    await newReferee.instanceDoesntExistOrError(refereeId);
+    await newReferee.instanceDoesntExistInDbOrError(refereeId);
 
-    newReferee = newReferee.getObject();
+    newReferee = newReferee.getAttributes();
     newReferee.updated_at = 'now';
 
     return app.db('referee').update(newReferee).where({ id: refereeId });

@@ -5,10 +5,10 @@ module.exports = class City extends DbEntity {
 
   attributes = {
     name: {
-      value: null, required: true, unique: false, validations: ['exists'], relatedTable: null,
+      value: null, required: true, unique: false, validations: ['exists'], relatedEntity: null,
     },
     country_id: {
-      value: null, required: true, unique: false, validations: ['inDb'], relatedTable: 'country',
+      value: null, required: true, unique: false, validations: ['inDb'], relatedEntity: 'country',
     },
   };
 

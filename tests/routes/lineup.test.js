@@ -6,7 +6,7 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/lineup';
 
 beforeAll(() => {
-  run('06_match_lineup');
+  run('06_match_position_lineup');
 });
 
 test('Deve listar todas as escalações', () => {
@@ -38,17 +38,17 @@ test('Deve listar uma escalação por partida', () => {
 test('Deve inserir a escalação de uma partida com sucesso', () => {
   return request(app).post(MAIN_ROUTE)
     .send([
-      { match_id: 17001, player_id: 19000, shirt_number: 23 },
-      { match_id: 17001, player_id: 19011, shirt_number: 2 },
-      { match_id: 17001, player_id: 19003, shirt_number: 3 },
-      { match_id: 17001, player_id: 19016, shirt_number: 28 },
-      { match_id: 17001, player_id: 19004, shirt_number: 6 },
-      { match_id: 17001, player_id: 19005, shirt_number: 29 },
-      { match_id: 17001, player_id: 19006, shirt_number: 27 },
-      { match_id: 17001, player_id: 19018, shirt_number: 21 },
-      { match_id: 17001, player_id: 19008, shirt_number: 10 },
-      { match_id: 17001, player_id: 19017, shirt_number: 22 },
-      { match_id: 17001, player_id: 19010, shirt_number: 9 },
+      { match_id: 17001, player_id: 19000, position: 18000, shirt_number: 23 },
+      { match_id: 17001, player_id: 19011, position: 18001, shirt_number: 2 },
+      { match_id: 17001, player_id: 19003, position: 18001, shirt_number: 3 },
+      { match_id: 17001, player_id: 19016, position: 18001, shirt_number: 28 },
+      { match_id: 17001, player_id: 19004, position: 18001, shirt_number: 6 },
+      { match_id: 17001, player_id: 19005, position: 18002, shirt_number: 29 },
+      { match_id: 17001, player_id: 19006, position: 18003, shirt_number: 27 },
+      { match_id: 17001, player_id: 19018, position: 18002, shirt_number: 21 },
+      { match_id: 17001, player_id: 19008, position: 18002, shirt_number: 10 },
+      { match_id: 17001, player_id: 19017, position: 18003, shirt_number: 22 },
+      { match_id: 17001, player_id: 19010, position: 18003, shirt_number: 9 },
     ])
     .then((res) => {
       expect(res.status).toBe(201);
@@ -68,24 +68,26 @@ describe('Não deve inserir uma escalação...', () => {
   };
 
   const newData = [
-    { match_id: 17002, player_id: 19000, shirt_number: 23 },
-    { match_id: 17002, player_id: 19001, shirt_number: 13 },
-    { match_id: 17002, player_id: 19002, shirt_number: 5 },
-    { match_id: 17002, player_id: 19003, shirt_number: 3 },
-    { match_id: 17002, player_id: 19004, shirt_number: 6 },
-    { match_id: 17002, player_id: 19018, shirt_number: 21 },
-    { match_id: 17002, player_id: 19006, shirt_number: 27 },
-    { match_id: 17002, player_id: 19008, shirt_number: 10 },
-    { match_id: 17002, player_id: 19007, shirt_number: 11 },
-    { match_id: 17002, player_id: 19017, shirt_number: 22 },
+    { match_id: 17002, player_id: 19000, position: 18000, shirt_number: 23 },
+    { match_id: 17002, player_id: 19001, position: 18001, shirt_number: 13 },
+    { match_id: 17002, player_id: 19002, position: 18001, shirt_number: 5 },
+    { match_id: 17002, player_id: 19003, position: 18001, shirt_number: 3 },
+    { match_id: 17002, player_id: 19004, position: 18001, shirt_number: 6 },
+    { match_id: 17002, player_id: 19018, position: 18002, shirt_number: 21 },
+    { match_id: 17002, player_id: 19006, position: 18003, shirt_number: 27 },
+    { match_id: 17002, player_id: 19008, position: 18002, shirt_number: 10 },
+    { match_id: 17002, player_id: 19007, position: 18002, shirt_number: 11 },
+    { match_id: 17002, player_id: 19017, position: 18003, shirt_number: 22 },
   ];
 
-  test('sem o atributo match_id', () => testTemplate([...newData, { player_id: 19010, shirt_number: 9 }], 'O atributo match_id é obrigatório'));
-  test('sem o atributo player_id', () => testTemplate([...newData, { match_id: 17002, shirt_number: 9 }], 'O atributo player_id é obrigatório'));
-  test('sem o atributo shirt_number', () => testTemplate([...newData, { player_id: 19010, match_id: 17002 }], 'O atributo shirt_number é obrigatório'));
-  test('cujo valor de match_id é inválido', () => testTemplate([...newData, { match_id: 17003, player_id: 19010, shirt_number: 9 }], 'O valor de match_id é inválido'));
-  test('cujo valor de player_id é inválido', () => testTemplate([...newData, { match_id: 17002, player_id: 19022, shirt_number: 9 }], 'O valor de player_id é inválido'));
-  test('cujo valor de shirt_number é inválido', () => testTemplate([...newData, { match_id: 17002, player_id: 19010, shirt_number: -1 }], 'O valor de shirt_number é inválido'));
+  test('sem o atributo match_id', () => testTemplate([...newData, { player_id: 19010, position: 18003, shirt_number: 9 }], 'O atributo match_id é obrigatório'));
+  test('sem o atributo player_id', () => testTemplate([...newData, { match_id: 17002, position: 18003, shirt_number: 9 }], 'O atributo player_id é obrigatório'));
+  test('sem o atributo position', () => testTemplate([...newData, { match_id: 17002, player_id: 19010, shirt_number: 9 }], 'O atributo position é obrigatório'));
+  test('sem o atributo shirt_number', () => testTemplate([...newData, { player_id: 19010, position: 18003, match_id: 17002 }], 'O atributo shirt_number é obrigatório'));
+  test('cujo valor de match_id é inválido', () => testTemplate([...newData, { match_id: 17003, player_id: 19010, position: 18003, shirt_number: 9 }], 'O valor de match_id é inválido'));
+  test('cujo valor de player_id é inválido', () => testTemplate([...newData, { match_id: 17002, player_id: 19022, position: 18003, shirt_number: 9 }], 'O valor de player_id é inválido'));
+  test('cujo valor de position é inválido', () => testTemplate([...newData, { match_id: 17002, player_id: 19010, position: 18005, shirt_number: 9 }], 'O valor de position é inválido'));
+  test('cujo valor de shirt_number é inválido', () => testTemplate([...newData, { match_id: 17002, player_id: 19010, position: 18003, shirt_number: -1 }], 'O valor de shirt_number é inválido'));
 });
 
 describe('Deve alterar uma escalação com sucesso', () => {
@@ -117,7 +119,8 @@ describe('Não deve alterar uma escalação...', () => {
       });
   };
 
-  test('cujo valor de player_id é inválido', () => testTemplate(20000, { player_id: 18022 }, 'O valor de player_id é inválido'));
+  test('cujo valor de player_id é inválido', () => testTemplate(20000, { player_id: 19022 }, 'O valor de player_id é inválido'));
+  test('cujo valor de position é inválido', () => testTemplate(20000, { position: 18005 }, 'O valor de position é inválido'));
   test('cujo valor de shirt_number é inválido', () => testTemplate(20000, { shirt_number: -1 }, 'O valor de shirt_number é inválido'));
 });
 

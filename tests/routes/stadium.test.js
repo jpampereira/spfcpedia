@@ -118,7 +118,7 @@ describe('Deve remover um estádio com sucesso', () => {
 
 describe('Não deve remover um estádio...', () => {
   beforeAll(() => {
-    run('06_match_lineup');
+    run('06_match_position_lineup');
   });
 
   const testTemplate = (id, errorMessage) => {

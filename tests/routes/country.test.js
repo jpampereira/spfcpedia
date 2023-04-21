@@ -107,11 +107,9 @@ describe('Deve remover um país com sucesso', () => {
 });
 
 describe('Não deve remover um país...', () => {
-  beforeAll(() => {
-    run('05_position_player');
-  });
+  const testTemplate = (seedScript, id, errorMessage) => {
+    run(seedScript);
 
-  const testTemplate = (id, errorMessage) => {
     return request(app).delete(`${MAIN_ROUTE}/${id}`)
       .then((res) => {
         expect(res.status).toBe(400);
@@ -119,6 +117,6 @@ describe('Não deve remover um país...', () => {
       });
   };
 
-  test('que possui cidades associadas', () => testTemplate(10000, 'O país possui cidades associadas'));
-  test('que possui jogadores associados', () => testTemplate(10001, 'O país possui jogadores associados'));
+  test('que possui cidades associadas', () => testTemplate('04_country_city_stadium', 10000, 'O país possui cidades associadas'));
+  test('que possui jogadores associados', () => testTemplate('05_player', 10001, 'O país possui jogadores associados'));
 });

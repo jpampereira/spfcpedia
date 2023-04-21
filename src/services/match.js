@@ -12,12 +12,12 @@ module.exports = (app) => {
     for (const match of matches) {
       const newMatch = new Match(match);
 
-      await newMatch.allRequiredAttributesAreFilledOrError();
-      await newMatch.validAttributesOrError();
+      await newMatch.requiredAttributesAreFilledOrError();
+      await newMatch.attributesValueAreValidOrError();
       await newMatch.uniqueConstraintInviolatedOrError();
-      await newMatch.instanceDoesntExistOrError();
+      await newMatch.instanceDoesntExistInDbOrError();
 
-      newMatches.push(newMatch.getObject());
+      newMatches.push(newMatch.getAttributes());
     }
 
     return app.db('match').insert(newMatches, ['id', 'tournament_stage', 'datetime', 'local', 'referee', 'assistant_referee_1', 'assistant_referee_2', 'fourth_official', 'opponent', 'opponent_goals', 'highlights']);
@@ -27,12 +27,12 @@ module.exports = (app) => {
     const [currentMatch] = await read({ id: matchId });
     let newMatch = new Match({ ...currentMatch, ...updatedMatch });
 
-    await newMatch.validAttributesOrError();
-    await newMatch.allRequiredAttributesAreFilledOrError();
+    await newMatch.attributesValueAreValidOrError();
+    await newMatch.requiredAttributesAreFilledOrError();
     await newMatch.uniqueConstraintInviolatedOrError(matchId);
-    await newMatch.instanceDoesntExistOrError(matchId);
+    await newMatch.instanceDoesntExistInDbOrError(matchId);
 
-    newMatch = newMatch.getObject();
+    newMatch = newMatch.getAttributes();
     newMatch.updated_at = 'now';
 
     return app.db('match').update(updatedMatch).where({ id: matchId });

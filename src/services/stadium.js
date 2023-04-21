@@ -12,12 +12,12 @@ module.exports = (app) => {
     for (const stadium of stadiums) {
       const newStadium = new Stadium(stadium);
 
-      await newStadium.allRequiredAttributesAreFilledOrError();
-      await newStadium.validAttributesOrError();
+      await newStadium.requiredAttributesAreFilledOrError();
+      await newStadium.attributesValueAreValidOrError();
       await newStadium.uniqueConstraintInviolatedOrError();
-      await newStadium.instanceDoesntExistOrError();
+      await newStadium.instanceDoesntExistInDbOrError();
 
-      newStadiums.push(newStadium.getObject());
+      newStadiums.push(newStadium.getAttributes());
     }
 
     return app.db('stadium').insert(newStadiums, ['id', 'name', 'nickname', 'city_id']);
@@ -27,12 +27,12 @@ module.exports = (app) => {
     const [currentStadium] = await read({ id: stadiumId });
     let newStadium = new Stadium({ ...currentStadium, ...updatedStadium });
 
-    await newStadium.validAttributesOrError();
-    await newStadium.allRequiredAttributesAreFilledOrError();
+    await newStadium.attributesValueAreValidOrError();
+    await newStadium.requiredAttributesAreFilledOrError();
     await newStadium.uniqueConstraintInviolatedOrError(stadiumId);
-    await newStadium.instanceDoesntExistOrError(stadiumId);
+    await newStadium.instanceDoesntExistInDbOrError(stadiumId);
 
-    newStadium = newStadium.getObject();
+    newStadium = newStadium.getAttributes();
     newStadium.updated_at = 'now';
 
     return app.db('stadium').update(newStadium).where({ id: stadiumId });

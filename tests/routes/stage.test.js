@@ -114,7 +114,7 @@ describe('Deve remover uma fase com sucesso', () => {
 
 describe('Não deve remover uma fase...', () => {
   beforeAll(() => {
-    run('06_match_lineup');
+    run('06_match_position_lineup');
   });
 
   const testTemplate = (id, errorMessage) => {

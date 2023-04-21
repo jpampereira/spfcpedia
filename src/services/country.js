@@ -12,12 +12,12 @@ module.exports = (app) => {
     for (const country of countries) {
       const newCountry = new Country(country);
 
-      await newCountry.allRequiredAttributesAreFilledOrError();
-      await newCountry.validAttributesOrError();
+      await newCountry.requiredAttributesAreFilledOrError();
+      await newCountry.attributesValueAreValidOrError();
       await newCountry.uniqueConstraintInviolatedOrError();
-      await newCountry.instanceDoesntExistOrError();
+      await newCountry.instanceDoesntExistInDbOrError();
 
-      newCountries.push(newCountry.getObject());
+      newCountries.push(newCountry.getAttributes());
     }
 
     return app.db('country').insert(newCountries, ['id', 'name']);
@@ -27,12 +27,12 @@ module.exports = (app) => {
     const [currentCountry] = await read({ id: countryId });
     let newCountry = new Country({ ...currentCountry, ...updatedCountry });
 
-    await newCountry.validAttributesOrError();
-    await newCountry.allRequiredAttributesAreFilledOrError();
+    await newCountry.attributesValueAreValidOrError();
+    await newCountry.requiredAttributesAreFilledOrError();
     await newCountry.uniqueConstraintInviolatedOrError(countryId);
-    await newCountry.instanceDoesntExistOrError(countryId);
+    await newCountry.instanceDoesntExistInDbOrError(countryId);
 
-    newCountry = newCountry.getObject();
+    newCountry = newCountry.getAttributes();
     newCountry.updated_at = 'now';
 
     return app.db('country').update(newCountry).where({ id: countryId });

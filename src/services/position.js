@@ -12,12 +12,12 @@ module.exports = (app) => {
     for (const position of positions) {
       const newPosition = new Position(position);
 
-      await newPosition.allRequiredAttributesAreFilledOrError();
-      await newPosition.validAttributesOrError();
+      await newPosition.requiredAttributesAreFilledOrError();
+      await newPosition.attributesValueAreValidOrError();
       await newPosition.uniqueConstraintInviolatedOrError();
-      await newPosition.instanceDoesntExistOrError();
+      await newPosition.instanceDoesntExistInDbOrError();
 
-      newPositions.push(newPosition.getObject());
+      newPositions.push(newPosition.getAttributes());
     }
 
     return app.db('position').insert(newPositions, ['id', 'symbol', 'name']);
@@ -27,19 +27,19 @@ module.exports = (app) => {
     const [currentPosition] = await read({ id: positionId });
     let newPosition = new Position({ ...currentPosition, ...updatedPosition });
 
-    await newPosition.validAttributesOrError();
-    await newPosition.allRequiredAttributesAreFilledOrError();
+    await newPosition.attributesValueAreValidOrError();
+    await newPosition.requiredAttributesAreFilledOrError();
     await newPosition.uniqueConstraintInviolatedOrError(positionId);
-    await newPosition.instanceDoesntExistOrError(positionId);
+    await newPosition.instanceDoesntExistInDbOrError(positionId);
 
-    newPosition = newPosition.getObject();
+    newPosition = newPosition.getAttributes();
     newPosition.updated_at = 'now';
 
     return app.db('position').update(newPosition).where({ id: positionId });
   };
 
   const remove = async (positionId) => {
-    await validator.notExistsInDbOrError('player', { position: positionId }, 'A posição possui jogadores associados');
+    await validator.notExistsInDbOrError('lineup', { position: positionId }, 'A posição possui escalações associadas');
 
     return app.db('position').del().where({ id: positionId });
   };
