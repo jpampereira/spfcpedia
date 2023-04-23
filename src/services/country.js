@@ -24,7 +24,8 @@ module.exports = (app) => {
 
   const update = async (countryId, updatedCountry) => {
     const [currentCountry] = await read({ id: countryId });
-    let newCountry = new Country({ ...currentCountry, ...updatedCountry });
+    let newCountry = new Country(currentCountry);
+    newCountry.setAttributes(updatedCountry);
 
     await newCountry.attributesValueAreValidOrError();
     await newCountry.requiredAttributesAreFilledOrError();

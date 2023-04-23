@@ -1,5 +1,4 @@
 const Stadium = require('../entities/Stadium');
-const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
@@ -25,7 +24,8 @@ module.exports = (app) => {
 
   const update = async (stadiumId, updatedStadium) => {
     const [currentStadium] = await read({ id: stadiumId });
-    let newStadium = new Stadium({ ...currentStadium, ...updatedStadium });
+    let newStadium = new Stadium(currentStadium);
+    newStadium.setAttributes(updatedStadium);
 
     await newStadium.attributesValueAreValidOrError();
     await newStadium.requiredAttributesAreFilledOrError();
@@ -43,7 +43,6 @@ module.exports = (app) => {
     currentStadium = new Stadium(currentStadium);
 
     await currentStadium.dependentEntitiesDoesntHaveDataOrError(stadiumId);
-    await validator.notExistsInDbOrError('match', { local: stadiumId }, 'O estádio possui partidas associadas');
 
     return app.db('stadium').del().where({ id: stadiumId });
   };

@@ -24,7 +24,8 @@ module.exports = (app) => {
 
   const update = async (positionId, updatedPosition) => {
     const [currentPosition] = await read({ id: positionId });
-    let newPosition = new Position({ ...currentPosition, ...updatedPosition });
+    let newPosition = new Position(currentPosition);
+    newPosition.setAttributes(updatedPosition);
 
     await newPosition.attributesValueAreValidOrError();
     await newPosition.requiredAttributesAreFilledOrError();

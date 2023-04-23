@@ -1,5 +1,4 @@
 const Referee = require('../entities/Referee');
-const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
@@ -25,7 +24,8 @@ module.exports = (app) => {
 
   const update = async (refereeId, updatedReferee) => {
     const [currentReferee] = await read({ id: refereeId });
-    let newReferee = new Referee({ ...currentReferee, ...updatedReferee });
+    let newReferee = new Referee(currentReferee);
+    newReferee.setAttributes(updatedReferee);
 
     await newReferee.attributesValueAreValidOrError();
     await newReferee.requiredAttributesAreFilledOrError();
@@ -43,7 +43,6 @@ module.exports = (app) => {
     currentReferee = new Referee(currentReferee);
 
     await currentReferee.dependentEntitiesDoesntHaveDataOrError(refereeId);
-    await validator.notExistsInDbOrError('match', ['referee = ? or assistant_referee_1 = ? or assistant_referee_2 = ? or fourth_official = ?', refereeId], 'O árbitro possui partidas associadas');
 
     return app.db('referee').del().where({ id: refereeId });
   };

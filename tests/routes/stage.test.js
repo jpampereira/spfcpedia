@@ -113,11 +113,9 @@ describe('Deve remover uma fase com sucesso', () => {
 });
 
 describe('Não deve remover uma fase...', () => {
-  beforeAll(() => {
-    run('06_match_position_lineup');
-  });
+  const testTemplate = (seedScript, id, errorMessage) => {
+    run(seedScript);
 
-  const testTemplate = (id, errorMessage) => {
     return request(app).delete(`${MAIN_ROUTE}/${id}`)
       .then((res) => {
         expect(res.status).toBe(400);
@@ -125,5 +123,6 @@ describe('Não deve remover uma fase...', () => {
       });
   };
 
-  test('que possui partidas associadas', () => testTemplate(16000, 'A fase possui partidas associadas'));
+  test('não cadastrado', () => testTemplate('04_country_city_stadium', 11012, 'Registro não encontrado'));
+  test('que possui partidas associadas', () => testTemplate('06_match_position_lineup', 16000, 'Existem dados em match associados a esse registro'));
 });

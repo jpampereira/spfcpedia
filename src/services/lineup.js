@@ -34,7 +34,8 @@ module.exports = (app) => {
 
   const update = async (selectedPlayerId, updatedSelectedPlayer) => {
     const [currentselectedPlayer] = await read({ id: selectedPlayerId });
-    let selectedPlayer = new SelectedPlayer({ ...currentselectedPlayer, ...updatedSelectedPlayer });
+    let selectedPlayer = new SelectedPlayer(currentselectedPlayer);
+    selectedPlayer.setAttributes(updatedSelectedPlayer);
 
     await selectedPlayer.attributesValueAreValidOrError();
     await selectedPlayer.requiredAttributesAreFilledOrError();
@@ -47,7 +48,18 @@ module.exports = (app) => {
     return app.db('lineup').update(selectedPlayer).where({ id: selectedPlayerId });
   };
 
-  const remove = (matchId) => {
+  const remove = async (matchId) => {
+    let currentLineup = await read({ match_id: matchId });
+    currentLineup = new Lineup(currentLineup);
+    currentLineup = currentLineup.getCollection();
+
+    for (let currentselectedPlayer of currentLineup) {
+      const { id } = currentselectedPlayer;
+      currentselectedPlayer = new SelectedPlayer(currentselectedPlayer);
+
+      await currentselectedPlayer.dependentEntitiesDoesntHaveDataOrError(id);
+    }
+
     return app.db('lineup').del().where({ match_id: matchId });
   };
 

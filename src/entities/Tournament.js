@@ -4,15 +4,13 @@ module.exports = class Stage extends IndividualEntity {
   entityName = 'tournament';
 
   attributes = {
-    name: {
-      value: null, required: true, unique: true, validations: ['exists'], relatedEntity: null,
-    },
+    name: { value: null, required: true, unique: true, validations: ['exists'], relatedEntity: null },
   };
 
   dependentEntities = ['stage'];
 
   constructor(obj) {
-    super();
+    super(obj);
     this.setAttributes(obj);
   }
 };

@@ -122,5 +122,6 @@ describe('Não deve remover uma posição...', () => {
       });
   };
 
+  test('não cadastrada', () => testTemplate(18005, 'Registro não encontrado'));
   test('com escalações associadas', () => testTemplate(18000, 'Existem dados em lineup associados a esse registro'));
 });

@@ -4,11 +4,16 @@ const exits = require('../configs/exits');
 module.exports = class CompositeEntity {
   // Attributes:
   // entityName = null;
-  // value = [];
+  // values = [];
   // constraints = { minLength, maxLength, sharedAttrs, uniqueAttrs }
 
+  constructor(values) {
+    const errorMsg = exits.DATA_DOESNT_EXIST_ERROR;
+    validator.existsOrError(values, errorMsg);
+  }
+
   getCollection() {
-    return this.value;
+    return this.values;
   }
 
   async collectionSizeIntoBoundaryOrError() {
@@ -16,7 +21,7 @@ module.exports = class CompositeEntity {
     const errorMsg = errorMsgTemplate.replace(/<ENTITY_NAME>/, this.entityName);
 
     validator.arraySizeIsRespectedOrError(
-      this.value,
+      this.values,
       this.constraints.minLength,
       this.constraints.maxLength,
       errorMsg,
@@ -30,7 +35,7 @@ module.exports = class CompositeEntity {
       let errorMsg = errorMsgTemplate.replace(/<ATTR_NAME>/, attribute);
       errorMsg = errorMsg.replace(/<ENTITY_NAME>/, this.entityName);
 
-      validator.singledValueListOrError(this.value, errorMsg, attribute);
+      validator.singledValueListOrError(this.values, errorMsg, attribute);
     });
   }
 
@@ -41,7 +46,7 @@ module.exports = class CompositeEntity {
       let errorMsg = errorMsgTemplate.replace(/<ATTR_NAME>/, attribute);
       errorMsg = errorMsg.replace(/<ENTITY_NAME>/, this.entityName);
 
-      validator.nonDuplicateValuesOrError(this.value, errorMsg, attribute);
+      validator.nonDuplicateValuesOrError(this.values, errorMsg, attribute);
     });
   }
 
@@ -52,7 +57,7 @@ module.exports = class CompositeEntity {
     const query = {};
 
     this.constraints.sharedAttrs.forEach((attribute) => {
-      query[attribute] = this.value[0][attribute];
+      query[attribute] = this.values[0][attribute];
     });
 
     await validator.notExistsInDbOrError(this.entityName, query, errorMsg);

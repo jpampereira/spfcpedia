@@ -24,7 +24,8 @@ module.exports = (app) => {
 
   const update = async (playerId, updatedPlayer) => {
     const [currentPlayer] = await read({ id: playerId });
-    let newPlayer = new Player({ ...currentPlayer, ...updatedPlayer });
+    let newPlayer = new Player(currentPlayer);
+    newPlayer.setAttributes(updatedPlayer);
 
     await newPlayer.attributesValueAreValidOrError();
     await newPlayer.requiredAttributesAreFilledOrError();

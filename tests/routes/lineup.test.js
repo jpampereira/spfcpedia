@@ -166,3 +166,15 @@ describe('Deve remover uma escalação de uma partida com sucesso', () => {
       });
   });
 });
+
+describe('Não deve remover uma escalação...', () => {
+  const testTemplate = (id, errorMessage) => {
+    return request(app).delete(`${MAIN_ROUTE}/byMatch/${id}`)
+      .then((res) => {
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe(errorMessage);
+      });
+  };
+
+  test('não cadastrada', () => testTemplate(17004, 'Registro não encontrado'));
+});

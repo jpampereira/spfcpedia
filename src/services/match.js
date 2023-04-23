@@ -2,7 +2,7 @@ const Match = require('../entities/Match');
 
 module.exports = (app) => {
   const read = (filter = {}) => {
-    return app.db('match').select(app.db.raw('tournament_stage, to_char(datetime, \'YYYY-MM-DD HH24:MI\') as datetime, local, referee, assistant_referee_1, assistant_referee_2, fourth_official, opponent, opponent_goals, highlights')).where(filter);
+    return app.db('match').select(app.db.raw('id, stage_id, to_char(datetime, \'YYYY-MM-DD HH24:MI\') as datetime, stadium_id, referee, assistant_referee_1, assistant_referee_2, fourth_official, opponent_id, opponent_goals, highlights')).where(filter);
   };
 
   const create = async (matches) => {
@@ -19,12 +19,13 @@ module.exports = (app) => {
       newMatches.push(newMatch.getAttributes());
     }
 
-    return app.db('match').insert(newMatches, ['id', 'tournament_stage', 'datetime', 'local', 'referee', 'assistant_referee_1', 'assistant_referee_2', 'fourth_official', 'opponent', 'opponent_goals', 'highlights']);
+    return app.db('match').insert(newMatches, ['id', 'stage_id', 'datetime', 'stadium_id', 'referee', 'assistant_referee_1', 'assistant_referee_2', 'fourth_official', 'opponent_id', 'opponent_goals', 'highlights']);
   };
 
   const update = async (matchId, updatedMatch) => {
     const [currentMatch] = await read({ id: matchId });
-    let newMatch = new Match({ ...currentMatch, ...updatedMatch });
+    let newMatch = new Match(currentMatch);
+    newMatch.setAttributes(updatedMatch);
 
     await newMatch.attributesValueAreValidOrError();
     await newMatch.requiredAttributesAreFilledOrError();

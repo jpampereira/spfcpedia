@@ -117,6 +117,7 @@ describe('Não deve remover um país...', () => {
       });
   };
 
+  test('não cadastrado', () => testTemplate('04_country_city_stadium', 10006, 'Registro não encontrado'));
   test('que possui cidades associadas', () => testTemplate('04_country_city_stadium', 10000, 'Existem dados em city associados a esse registro'));
   test('que possui jogadores associados', () => testTemplate('05_player', 10001, 'Existem dados em player associados a esse registro'));
 });

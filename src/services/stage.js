@@ -1,5 +1,4 @@
 const Stage = require('../entities/Stage');
-const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
@@ -25,7 +24,8 @@ module.exports = (app) => {
 
   const update = async (stageId, updatedStage) => {
     const [currentStage] = await read({ id: stageId });
-    let newStage = new Stage({ ...currentStage, ...updatedStage });
+    let newStage = new Stage(currentStage);
+    newStage.setAttributes(updatedStage);
 
     await newStage.attributesValueAreValidOrError();
     await newStage.requiredAttributesAreFilledOrError();
@@ -43,7 +43,6 @@ module.exports = (app) => {
     currentStage = new Stage(currentStage);
 
     await currentStage.dependentEntitiesDoesntHaveDataOrError(stageId);
-    await validator.notExistsInDbOrError('match', { tournament_stage: stageId }, 'A fase possui partidas associadas');
 
     return app.db('stage').del().where({ id: stageId });
   };

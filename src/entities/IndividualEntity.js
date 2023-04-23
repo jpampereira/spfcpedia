@@ -7,10 +7,12 @@ module.exports = class IndividualEntity {
   // attributes = { attribute: { value, required, unique, validations, relatedEntity }, ... }
   // dependentEntities = []
 
-  setAttributes(obj) {
+  constructor(obj) {
     const errorMsg = exits.DATA_DOESNT_EXIST_ERROR;
     validator.existsOrError(obj, errorMsg);
+  }
 
+  setAttributes(obj) {
     const listOfAttributes = Object.entries(obj);
 
     listOfAttributes.forEach((attribute) => {

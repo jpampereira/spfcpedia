@@ -122,5 +122,6 @@ describe('Não deve remover uma cidade...', () => {
       });
   };
 
+  test('não cadastrada', () => testTemplate(11009, 'Registro não encontrado'));
   test('que possui estádios associados', () => testTemplate(11000, 'Existem dados em stadium associados a esse registro'));
 });

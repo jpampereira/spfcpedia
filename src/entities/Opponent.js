@@ -4,15 +4,13 @@ module.exports = class Opponent extends IndividualEntity {
   entityName = 'opponent';
 
   attributes = {
-    name: {
-      value: null, required: true, unique: true, validations: ['exists'], relatedEntity: null,
-    },
+    name: { value: null, required: true, unique: true, validations: ['exists'], relatedEntity: null },
   };
 
-  dependentEntities = [];
+  dependentEntities = ['match'];
 
   constructor(obj) {
-    super();
+    super(obj);
     this.setAttributes(obj);
   }
 };

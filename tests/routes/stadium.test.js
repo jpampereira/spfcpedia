@@ -117,11 +117,9 @@ describe('Deve remover um estádio com sucesso', () => {
 });
 
 describe('Não deve remover um estádio...', () => {
-  beforeAll(() => {
-    run('06_match_position_lineup');
-  });
+  const testTemplate = (seedScript, id, errorMessage) => {
+    run(seedScript);
 
-  const testTemplate = (id, errorMessage) => {
     return request(app).delete(`${MAIN_ROUTE}/${id}`)
       .then((res) => {
         expect(res.status).toBe(400);
@@ -129,5 +127,6 @@ describe('Não deve remover um estádio...', () => {
       });
   };
 
-  test('que possui partidas associadas', () => testTemplate(12000, 'O estádio possui partidas associadas'));
+  test('não cadastrado', () => testTemplate('04_country_city_stadium', 12010, 'Registro não encontrado'));
+  test('que possui partidas associadas', () => testTemplate('06_match_position_lineup', 12000, 'Existem dados em match associados a esse registro'));
 });

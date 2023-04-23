@@ -1,5 +1,4 @@
 const Opponent = require('../entities/Opponent');
-const validator = require('../utils/validator')();
 
 module.exports = (app) => {
   const read = (filter = {}) => {
@@ -25,7 +24,8 @@ module.exports = (app) => {
 
   const update = async (opponentId, updatedOpponent) => {
     const [currentOpponent] = await read({ id: opponentId });
-    let newOpponent = new Opponent({ ...currentOpponent, ...updatedOpponent });
+    let newOpponent = new Opponent(currentOpponent);
+    newOpponent.setAttributes(updatedOpponent);
 
     await newOpponent.attributesValueAreValidOrError();
     await newOpponent.requiredAttributesAreFilledOrError();
@@ -43,7 +43,6 @@ module.exports = (app) => {
     currentOpponent = new Opponent(currentOpponent);
 
     await currentOpponent.dependentEntitiesDoesntHaveDataOrError(opponentId);
-    await validator.notExistsInDbOrError('match', { opponent: opponentId }, 'O adversário possui partidas associadas');
 
     return app.db('opponent').del().where({ id: opponentId });
   };

@@ -150,11 +150,9 @@ describe('Deve remover um jogador com sucesso', () => {
 });
 
 describe('Não deve remover um jogador...', () => {
-  beforeAll(() => {
-    run('06_match_position_lineup');
-  });
+  const testTemplate = (seedScript, id, errorMessage) => {
+    run(seedScript);
 
-  const testTemplate = (id, errorMessage) => {
     return request(app).delete(`${MAIN_ROUTE}/${id}`)
       .then((res) => {
         expect(res.status).toBe(400);
@@ -162,5 +160,6 @@ describe('Não deve remover um jogador...', () => {
       });
   };
 
-  test('com escalações associada', () => testTemplate(19000, 'Existem dados em lineup associados a esse registro'));
+  test('não cadastrado', () => testTemplate('05_player', 13022, 'Registro não encontrado'));
+  test('com escalações associada', () => testTemplate('06_match_position_lineup', 19000, 'Existem dados em lineup associados a esse registro'));
 });

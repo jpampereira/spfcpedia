@@ -24,7 +24,8 @@ module.exports = (app) => {
 
   const update = async (tournamentId, updatedTournament) => {
     const [currentTournament] = await read({ id: tournamentId });
-    let newTournament = new Tournament({ ...currentTournament, ...updatedTournament });
+    let newTournament = new Tournament(currentTournament);
+    newTournament.setAttributes(updatedTournament);
 
     await newTournament.attributesValueAreValidOrError();
     await newTournament.requiredAttributesAreFilledOrError();

@@ -3,7 +3,7 @@ const CompositeEntity = require('./CompositeEntity');
 module.exports = class Lineup extends CompositeEntity {
   entityName = 'lineup';
 
-  value = [];
+  values = [];
 
   constraints = {
     minLength: 11,
@@ -12,8 +12,8 @@ module.exports = class Lineup extends CompositeEntity {
     uniqueAttrs: ['player_id', 'shirt_number'],
   };
 
-  constructor(value) {
-    super();
-    this.value = value;
+  constructor(values) {
+    super(values);
+    this.values = values;
   }
 };

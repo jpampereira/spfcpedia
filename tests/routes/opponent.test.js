@@ -109,15 +109,16 @@ describe('Deve remover um adversário com sucesso...', () => {
 });
 
 describe('Não deve remover um adversário...', () => {
-  beforeAll(() => {
-    run('06_match_position_lineup');
-  });
+  const testTemplate = (seedScript, id, errorMessage) => {
+    run(seedScript);
 
-  test('que possui partidas associadas', () => {
-    return request(app).delete(`${MAIN_ROUTE}/13000`)
+    return request(app).delete(`${MAIN_ROUTE}/${id}`)
       .then((res) => {
         expect(res.status).toBe(400);
-        expect(res.body.error).toBe('O adversário possui partidas associadas');
+        expect(res.body.error).toBe(errorMessage);
       });
-  });
+  };
+
+  test('não cadastrado', () => testTemplate('04_country_city_stadium', 10005, 'Registro não encontrado'));
+  test('que possui partidas associadas', () => testTemplate('06_match_position_lineup', 13000, 'Existem dados em match associados a esse registro'));
 });

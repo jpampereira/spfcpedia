@@ -24,7 +24,8 @@ module.exports = (app) => {
 
   const update = async (cityId, updatedCity) => {
     const [currentCity] = await read({ id: cityId });
-    let newCity = new City({ ...currentCity, ...updatedCity });
+    let newCity = new City(currentCity);
+    newCity.setAttributes(updatedCity);
 
     await newCity.attributesValueAreValidOrError();
     await newCity.requiredAttributesAreFilledOrError();
