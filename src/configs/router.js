@@ -14,6 +14,7 @@ module.exports = (app) => {
   router.use('/player', app.routes.player);
   router.use('/match', app.routes.match);
   router.use('/lineup', app.routes.lineup);
+  router.use('/period', app.routes.period);
 
   app.use(router);
 };
