@@ -1,4 +1,4 @@
-const SelectedPlayer = require('../entities/SelectedPlayer');
+const LineupPlayer = require('../entities/LineupPlayer');
 const Lineup = require('../entities/Lineup');
 
 module.exports = (app) => {
@@ -10,14 +10,14 @@ module.exports = (app) => {
     let newLineup = [];
 
     for (const player of lineup) {
-      const selectedPlayer = new SelectedPlayer(player);
+      const lineupPlayer = new LineupPlayer(player);
 
-      await selectedPlayer.requiredAttributesAreFilledOrError();
-      await selectedPlayer.attributesValueAreValidOrError();
-      await selectedPlayer.uniqueConstraintInviolatedOrError();
-      await selectedPlayer.instanceDoesntExistInDbOrError();
+      await lineupPlayer.requiredAttributesAreFilledOrError();
+      await lineupPlayer.attributesValueAreValidOrError();
+      await lineupPlayer.uniqueConstraintInviolatedOrError();
+      await lineupPlayer.instanceDoesntExistInDbOrError();
 
-      newLineup.push(selectedPlayer.getAttributes());
+      newLineup.push(lineupPlayer.getAttributes());
     }
 
     newLineup = new Lineup(newLineup);
@@ -32,20 +32,20 @@ module.exports = (app) => {
     return app.db('lineup').insert(newLineup, ['id', 'match_id', 'player_id', 'position_id', 'shirt_number']);
   };
 
-  const update = async (selectedPlayerId, updatedSelectedPlayer) => {
-    const [currentselectedPlayer] = await read({ id: selectedPlayerId });
-    let selectedPlayer = new SelectedPlayer(currentselectedPlayer);
-    selectedPlayer.setAttributes(updatedSelectedPlayer);
+  const update = async (lineupPlayerId, updatedLineupPlayer) => {
+    const [currentLineupPlayer] = await read({ id: lineupPlayerId });
+    let lineupPlayer = new LineupPlayer(currentLineupPlayer);
+    lineupPlayer.setAttributes(updatedLineupPlayer);
 
-    await selectedPlayer.attributesValueAreValidOrError();
-    await selectedPlayer.requiredAttributesAreFilledOrError();
-    await selectedPlayer.uniqueConstraintInviolatedOrError(selectedPlayerId);
-    await selectedPlayer.instanceDoesntExistInDbOrError(selectedPlayerId);
+    await lineupPlayer.attributesValueAreValidOrError();
+    await lineupPlayer.requiredAttributesAreFilledOrError();
+    await lineupPlayer.uniqueConstraintInviolatedOrError(lineupPlayerId);
+    await lineupPlayer.instanceDoesntExistInDbOrError(lineupPlayerId);
 
-    selectedPlayer = selectedPlayer.getAttributes();
-    selectedPlayer.updated_at = 'now';
+    lineupPlayer = lineupPlayer.getAttributes();
+    lineupPlayer.updated_at = 'now';
 
-    return app.db('lineup').update(selectedPlayer).where({ id: selectedPlayerId });
+    return app.db('lineup').update(lineupPlayer).where({ id: lineupPlayerId });
   };
 
   const remove = async (matchId) => {
@@ -53,11 +53,11 @@ module.exports = (app) => {
     currentLineup = new Lineup(currentLineup);
     currentLineup = currentLineup.getCollection();
 
-    for (let currentselectedPlayer of currentLineup) {
-      const { id } = currentselectedPlayer;
-      currentselectedPlayer = new SelectedPlayer(currentselectedPlayer);
+    for (let currentLineupPlayer of currentLineup) {
+      const { id } = currentLineupPlayer;
+      currentLineupPlayer = new LineupPlayer(currentLineupPlayer);
 
-      await currentselectedPlayer.dependentEntitiesDoesntHaveDataOrError(id);
+      await currentLineupPlayer.dependentEntitiesDoesntHaveDataOrError(id);
     }
 
     return app.db('lineup').del().where({ match_id: matchId });

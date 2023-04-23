@@ -114,7 +114,9 @@ describe('Deve remover uma posição com sucesso', () => {
 });
 
 describe('Não deve remover uma posição...', () => {
-  const testTemplate = (id, errorMessage) => {
+  const testTemplate = (seedScript, id, errorMessage) => {
+    run(seedScript);
+
     return request(app).delete(`${MAIN_ROUTE}/${id}`)
       .then((res) => {
         expect(res.status).toBe(400);
@@ -122,6 +124,7 @@ describe('Não deve remover uma posição...', () => {
       });
   };
 
-  test('não cadastrada', () => testTemplate(18005, 'Registro não encontrado'));
-  test('com escalações associadas', () => testTemplate(18000, 'Existem dados em lineup associados a esse registro'));
+  test('não cadastrada', () => testTemplate('06_match_position_lineup', 18005, 'Registro não encontrado'));
+  test('com escalações associadas', () => testTemplate('06_match_position_lineup', 18000, 'Existem dados em lineup associados a esse registro'));
+  test('com substituições associadas', () => testTemplate('07_period_substitution', 18004, 'Existem dados em substitution associados a esse registro'));
 });

@@ -161,5 +161,6 @@ describe('Não deve remover um jogador...', () => {
   };
 
   test('não cadastrado', () => testTemplate('05_player', 13022, 'Registro não encontrado'));
-  test('com escalações associada', () => testTemplate('06_match_position_lineup', 19000, 'Existem dados em lineup associados a esse registro'));
+  test('com escalações associadas', () => testTemplate('06_match_position_lineup', 19000, 'Existem dados em lineup associados a esse registro'));
+  test('com substituições associadas', () => testTemplate('07_period_substitution', 19014, 'Existem dados em substitution associados a esse registro'));
 });

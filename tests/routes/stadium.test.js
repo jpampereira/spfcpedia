@@ -128,5 +128,5 @@ describe('Não deve remover um estádio...', () => {
   };
 
   test('não cadastrado', () => testTemplate('04_country_city_stadium', 12010, 'Registro não encontrado'));
-  test('que possui partidas associadas', () => testTemplate('06_match_position_lineup', 12000, 'Existem dados em match associados a esse registro'));
+  test('com partidas associadas', () => testTemplate('06_match_position_lineup', 12000, 'Existem dados em match associados a esse registro'));
 });

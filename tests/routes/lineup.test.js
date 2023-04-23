@@ -78,28 +78,22 @@ describe('Não deve inserir uma escalação...', () => {
     { match_id: 17002, player_id: 19008, position_id: 18002, shirt_number: 10 },
     { match_id: 17002, player_id: 19007, position_id: 18002, shirt_number: 11 },
     { match_id: 17002, player_id: 19017, position_id: 18003, shirt_number: 22 },
+    { match_id: 17002, player_id: 19010, position_id: 18003, shirt_number: 9 },
   ];
 
-  test('sem o atributo match_id', () => testTemplate([...newData, { player_id: 19010, position_id: 18003, shirt_number: 9 }], 'O atributo match_id é obrigatório'));
-  test('sem o atributo player_id', () => testTemplate([...newData, { match_id: 17002, position_id: 18003, shirt_number: 9 }], 'O atributo player_id é obrigatório'));
-  test('sem o atributo position_id', () => testTemplate([...newData, { match_id: 17002, player_id: 19010, shirt_number: 9 }], 'O atributo position_id é obrigatório'));
-  test('sem o atributo shirt_number', () => testTemplate([...newData, { player_id: 19010, position_id: 18003, match_id: 17002 }], 'O atributo shirt_number é obrigatório'));
-  test('cujo valor de match_id é inválido', () => testTemplate([...newData, { match_id: 17004, player_id: 19010, position_id: 18003, shirt_number: 9 }], 'O valor de match_id é inválido'));
-  test('cujo valor de player_id é inválido', () => testTemplate([...newData, { match_id: 17002, player_id: 19022, position_id: 18003, shirt_number: 9 }], 'O valor de player_id é inválido'));
-  test('cujo valor de position_id é inválido', () => testTemplate([...newData, { match_id: 17002, player_id: 19010, position_id: 18005, shirt_number: 9 }], 'O valor de position_id é inválido'));
-  test('cujo valor de shirt_number é inválido', () => testTemplate([...newData, { match_id: 17002, player_id: 19010, position_id: 18003, shirt_number: -1 }], 'O valor de shirt_number é inválido'));
-  test('com menos de 11 jogadores', () => testTemplate([...newData], 'O número de itens em lineup é inválido'));
-
-  test('com mais de 11 jogadores', () => {
-    return testTemplate([...newData,
-      { match_id: 17002, player_id: 19010, position_id: 18003, shirt_number: 9 },
-      { match_id: 17002, player_id: 19012, position_id: 18002, shirt_number: 14 },
-    ], 'O número de itens em lineup é inválido');
-  });
-
-  test('com jogadores duplicados', () => testTemplate([...newData, { match_id: 17002, player_id: 19002, position_id: 18001, shirt_number: 5 }], 'Todos os player_id de um mesmo lineup devem possuir valores diferentes'));
-  test('com números de camisa duplicados', () => testTemplate([...newData, { match_id: 17002, player_id: 19016, position_id: 18001, shirt_number: 5 }], 'Todos os shirt_number de um mesmo lineup devem possuir valores diferentes'));
-  test('para mais de uma partida', () => testTemplate([...newData, { match_id: 17003, player_id: 19010, position_id: 18003, shirt_number: 9 }], 'Todos os match_id de um mesmo lineup devem possuir o mesmo valor'));
+  test('sem o atributo match_id', () => testTemplate([...newData.slice(0, 10), { ...newData[10], match_id: null }], 'O atributo match_id é obrigatório'));
+  test('sem o atributo player_id', () => testTemplate([...newData.slice(0, 10), { ...newData[10], player_id: null }], 'O atributo player_id é obrigatório'));
+  test('sem o atributo position_id', () => testTemplate([...newData.slice(0, 10), { ...newData[10], position_id: null }], 'O atributo position_id é obrigatório'));
+  test('sem o atributo shirt_number', () => testTemplate([...newData.slice(0, 10), { ...newData[10], shirt_number: null }], 'O atributo shirt_number é obrigatório'));
+  test('cujo valor de match_id é inválido', () => testTemplate([...newData.slice(0, 10), { ...newData[10], match_id: 17004 }], 'O valor de match_id é inválido'));
+  test('cujo valor de player_id é inválido', () => testTemplate([...newData.slice(0, 10), { ...newData[10], player_id: 19022 }], 'O valor de player_id é inválido'));
+  test('cujo valor de position_id é inválido', () => testTemplate([...newData.slice(0, 10), { ...newData[10], position_id: 18005 }], 'O valor de position_id é inválido'));
+  test('cujo valor de shirt_number é inválido', () => testTemplate([...newData.slice(0, 10), { ...newData[10], shirt_number: -1 }], 'O valor de shirt_number é inválido'));
+  test('com menos de 11 jogadores', () => testTemplate(newData.slice(0, 10), 'O número de itens em lineup é inválido'));
+  test('com mais de 11 jogadores', () => testTemplate([...newData, { match_id: 17002, player_id: 19012, position_id: 18002, shirt_number: 14 }], 'O número de itens em lineup é inválido'));
+  test('com jogadores duplicados', () => testTemplate([...newData.slice(0, 10), { ...newData[10], player_id: 19002 }], 'Todos os player_id de um mesmo lineup devem possuir valores diferentes'));
+  test('com números de camisa duplicados', () => testTemplate([...newData.slice(0, 10), { ...newData[10], shirt_number: 5 }], 'Todos os shirt_number de um mesmo lineup devem possuir valores diferentes'));
+  test('para mais de uma partida', () => testTemplate([...newData.slice(0, 10), { ...newData[10], match_id: 17003 }], 'Todos os match_id de um mesmo lineup devem possuir o mesmo valor'));
 
   test('se a partida já possuir uma cadastrada', () => testTemplate([
     { match_id: 17001, player_id: 19000, position_id: 18000, shirt_number: 23 },
@@ -168,7 +162,9 @@ describe('Deve remover uma escalação de uma partida com sucesso', () => {
 });
 
 describe('Não deve remover uma escalação...', () => {
-  const testTemplate = (id, errorMessage) => {
+  const testTemplate = (seedScript, id, errorMessage) => {
+    run(seedScript);
+
     return request(app).delete(`${MAIN_ROUTE}/byMatch/${id}`)
       .then((res) => {
         expect(res.status).toBe(400);
@@ -176,5 +172,6 @@ describe('Não deve remover uma escalação...', () => {
       });
   };
 
-  test('não cadastrada', () => testTemplate(17004, 'Registro não encontrado'));
+  test('não cadastrada', () => testTemplate('06_match_position_lineup', 17004, 'Registro não encontrado'));
+  test('com substituições associadas', () => testTemplate('07_period_substitution', 17000, 'Existem dados em substitution associados a esse registro'));
 });

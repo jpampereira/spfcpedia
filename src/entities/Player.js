@@ -11,7 +11,7 @@ module.exports = class Player extends IndividualEntity {
     image: { value: null, required: true, unique: false, validations: [], relatedEntity: null },
   };
 
-  dependentEntities = ['lineup'];
+  dependentEntities = ['lineup', 'substitution'];
 
   constructor(obj) {
     super(obj);

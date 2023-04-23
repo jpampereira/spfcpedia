@@ -97,14 +97,14 @@ describe('Não deve atualizar um período...', () => {
 
 describe('Deve remover um período com sucesso', () => {
   test('Removendo o período', () => {
-    return request(app).delete(`${MAIN_ROUTE}/21000`)
+    return request(app).delete(`${MAIN_ROUTE}/21002`)
       .then((res) => {
         expect(res.status).toBe(204);
       });
   });
 
   test('Atestando que a remoção foi realizada', () => {
-    return request(app).get(`${MAIN_ROUTE}/21000`)
+    return request(app).get(`${MAIN_ROUTE}/21002`)
       .then((res) => {
         expect(res.status).toBe(200);
         expect(res.body).toStrictEqual({});
@@ -121,5 +121,6 @@ describe('Não deve remover um período...', () => {
       });
   };
 
-  test('não cadastrada', () => testTemplate(21002, 'Registro não encontrado'));
+  test('não cadastrado', () => testTemplate(21003, 'Registro não encontrado'));
+  test('com substituições associadas', () => testTemplate(21001, 'Existem dados em substitution associados a esse registro'));
 });

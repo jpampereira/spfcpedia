@@ -215,5 +215,5 @@ describe('Não deve remover uma partida...', () => {
   };
 
   test('não cadastrada', () => testTemplate(17004, 'Registro não encontrado'));
-  test('com uma escalação associada', () => testTemplate(17000, 'Existem dados em lineup associados a esse registro'));
+  test('com escalações associadas', () => testTemplate(17000, 'Existem dados em lineup associados a esse registro'));
 });

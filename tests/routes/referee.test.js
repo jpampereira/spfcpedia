@@ -122,5 +122,5 @@ describe('Não deve remover um árbitro...', () => {
   };
 
   test('não cadastrado', () => testTemplate('03_referee', 10008, 'Registro não encontrado'));
-  test('que possui partidas associadas', () => testTemplate('06_match_position_lineup', 14000, 'Existem dados em match associados a esse registro'));
+  test('com partidas associadas', () => testTemplate('06_match_position_lineup', 14000, 'Existem dados em match associados a esse registro'));
 });

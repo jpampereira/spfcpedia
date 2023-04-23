@@ -1,5 +1,6 @@
 exports.seed = (knex) => {
-  return knex('lineup').del()
+  return knex('substitution').del()
+    .then(() => knex('lineup').del())
     .then(() => knex('position').del())
     .then(() => knex('player').del())
     .then(() => knex('match').del())

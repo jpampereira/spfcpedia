@@ -8,7 +8,7 @@ module.exports = class Position extends IndividualEntity {
     name: { value: null, required: true, unique: true, validations: ['exists'], relatedEntity: null },
   };
 
-  dependentEntities = ['lineup'];
+  dependentEntities = ['lineup', 'substitution'];
 
   constructor(obj) {
     super(obj);

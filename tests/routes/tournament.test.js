@@ -115,5 +115,5 @@ describe('Não deve remover um campeonato...', () => {
   };
 
   test('não cadastrado', () => testTemplate(10004, 'Registro não encontrado'));
-  test('que possui fases associadas', () => testTemplate(10000, 'Existem dados em stage associados a esse registro'));
+  test('com fases associadas', () => testTemplate(10000, 'Existem dados em stage associados a esse registro'));
 });

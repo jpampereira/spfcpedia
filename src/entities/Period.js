@@ -8,7 +8,7 @@ module.exports = class Period extends IndividualEntity {
     name: { value: null, required: true, unique: true, validations: ['exists'], relatedEntity: null },
   };
 
-  dependentEntities = [];
+  dependentEntities = ['substitution'];
 
   constructor(obj) {
     super(obj);
