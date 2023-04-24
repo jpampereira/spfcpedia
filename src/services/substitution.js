@@ -3,7 +3,7 @@ const Substitution = require('../entities/Substitution');
 
 module.exports = (app) => {
   const read = (filter = {}) => {
-    return app.db('substitution').select(['id', 'match_id', 'player_id', 'position_id', 'shirt_number', 'lineup_id', 'period_id', 'time']).where(filter);
+    return app.db('substitution').select(['id', 'match_id', 'player_id', 'position_id', 'shirt_number', 'lineup_id', 'period_id', 'time']).where(filter).orderBy('id');
   };
 
   const create = async (substitutions) => {
@@ -15,6 +15,7 @@ module.exports = (app) => {
       await substitutionPlayer.requiredAttributesAreFilledOrError();
       await substitutionPlayer.attributesValueAreValidOrError();
       await substitutionPlayer.uniqueConstraintInviolatedOrError();
+      await substitutionPlayer.onlyOneXorAttributeIsFilledOrError();
       await substitutionPlayer.instanceDoesntExistInDbOrError();
 
       newSubstitutions.push(substitutionPlayer.getAttributes());
@@ -40,6 +41,7 @@ module.exports = (app) => {
     await substitutionPlayer.attributesValueAreValidOrError();
     await substitutionPlayer.requiredAttributesAreFilledOrError();
     await substitutionPlayer.uniqueConstraintInviolatedOrError(substitutionPlayerId);
+    await substitutionPlayer.onlyOneXorAttributeIsFilledOrError();
     await substitutionPlayer.instanceDoesntExistInDbOrError(substitutionPlayerId);
 
     substitutionPlayer = substitutionPlayer.getAttributes();

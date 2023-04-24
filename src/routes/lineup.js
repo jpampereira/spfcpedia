@@ -22,7 +22,7 @@ module.exports = (app) => {
       .catch((err) => next(err));
   });
 
-  router.post('/', (req, res, next) => {
+  router.post('/byMatch', (req, res, next) => {
     return app.services.lineup.create(req.body)
       .then((result) => res.status(exits.HTTP_CREATED).json(result))
       .catch((err) => next(err));

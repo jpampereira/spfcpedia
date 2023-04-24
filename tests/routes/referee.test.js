@@ -9,7 +9,7 @@ beforeAll(() => {
   run('03_referee');
 });
 
-test('Deve retornar todos os árbitros', () => {
+test('Deve listar todos os árbitros', () => {
   return request(app).get(MAIN_ROUTE)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -90,7 +90,7 @@ describe('Não deve atualizar um árbitro...', () => {
   };
 
   test('cujo valor de name é inválido', () => testTemplate(10007, { name: '' }, 'O valor de name é inválido'));
-  test('para um já existente', () => testTemplate(10007, { name: 'Flavio Rodrigues de Souza' }, 'Já existe um registro com esse name'));
+  test('duplicado', () => testTemplate(10007, { name: 'Flavio Rodrigues de Souza' }, 'Já existe um registro com esse name'));
 });
 
 describe('Deve remover um árbitro com sucesso', () => {

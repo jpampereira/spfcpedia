@@ -9,7 +9,7 @@ beforeAll(() => {
   run('07_period_substitution');
 });
 
-test('Deve retornar todos os períodos', () => {
+test('Deve listar todos os períodos', () => {
   return request(app).get(MAIN_ROUTE)
     .then((res) => {
       expect(res.status).toBe(200);

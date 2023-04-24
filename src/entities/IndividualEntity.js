@@ -4,7 +4,7 @@ const exits = require('../configs/exits');
 module.exports = class IndividualEntity {
   // Attributes:
   // entityName = '...'
-  // attributes = { attribute: { value, required, unique, validations, relatedEntity }, ... }
+  // attributes = { attribute: { value, required, unique, validations, relatedEntity, xor }, ... }
   // dependentEntities = []
 
   constructor(obj) {
@@ -41,7 +41,7 @@ module.exports = class IndividualEntity {
     const errorMsgTemplate = exits.REQUIRED_ATTRIBUTE_ERROR;
     const listOfAttributes = Object.entries(this.attributes);
 
-    for (const attribute of listOfAttributes) {
+    listOfAttributes.forEach((attribute) => {
       const [name, { value, required }] = attribute;
 
       const errorMsg = errorMsgTemplate.replace(/<ATTR_NAME>/, name);
@@ -49,7 +49,7 @@ module.exports = class IndividualEntity {
       if (required) {
         validator.existsOrError(value, errorMsg);
       }
-    }
+    });
   }
 
   async attributesValueAreValidOrError() {
@@ -59,27 +59,29 @@ module.exports = class IndividualEntity {
     for (const attribute of listOfAttributes) {
       const [name, { value, validations, relatedEntity }] = attribute;
 
-      for (const validation of validations) {
-        const errorMsg = errorMsgTemplate.replace(/<ATTR_NAME>/, name);
+      if (value !== undefined && value !== null) {
+        for (const validation of validations) {
+          const errorMsg = errorMsgTemplate.replace(/<ATTR_NAME>/, name);
 
-        switch (validation) {
-          case 'exists':
-            validator.existsOrError(value, errorMsg);
-            break;
-          case 'inDb':
-            await validator.existsInDbOrError(relatedEntity, { id: value }, errorMsg);
-            break;
-          case 'isPositive':
-            validator.isPositiveOrError(value, errorMsg);
-            break;
-          case 'datetime':
-            validator.isDateTimeFormatOrError(value, errorMsg);
-            break;
-          case 'date':
-            validator.isDateFormatOrError(value, errorMsg);
-            break;
-          default:
-            break;
+          switch (validation) {
+            case 'exists':
+              validator.existsOrError(value, errorMsg);
+              break;
+            case 'inDb':
+              await validator.existsInDbOrError(relatedEntity, { id: value }, errorMsg);
+              break;
+            case 'isPositive':
+              validator.isPositiveOrError(value, errorMsg);
+              break;
+            case 'datetime':
+              validator.isDateTimeFormatOrError(value, errorMsg);
+              break;
+            case 'date':
+              validator.isDateFormatOrError(value, errorMsg);
+              break;
+            default:
+              break;
+          }
         }
       }
     }
@@ -105,15 +107,28 @@ module.exports = class IndividualEntity {
 
   async instanceDoesntExistInDbOrError(instanceId) {
     const errorMsg = exits.DOUBLE_INSTANCE_ERROR;
-    let query = Object.keys(this.attributes).map((attrName) => `${attrName} = ?`).join(' and ');
-    const values = Object.values(this.attributes).map((attrConfig) => attrConfig.value);
+    const listOfAttributes = Object.entries(this.attributes);
+
+    const query = [];
+    const values = [];
+
+    listOfAttributes.forEach((attribute) => {
+      const [name, { value }] = attribute;
+
+      if (value === null) {
+        query.push(`${name} is null`);
+      } else {
+        query.push(`${name} = ?`);
+        values.push(value);
+      }
+    });
 
     if (instanceId !== undefined) {
-      query += ' and id <> ?';
+      query.push('id <> ?');
       values.push(instanceId);
     }
 
-    await validator.notExistsInDbOrError(this.entityName, [query, values], errorMsg);
+    await validator.notExistsInDbOrError(this.entityName, [query.join(' and '), values], errorMsg);
   }
 
   async dependentEntitiesDoesntHaveDataOrError(instanceId) {
@@ -126,6 +141,27 @@ module.exports = class IndividualEntity {
       query[`${this.entityName}_id`] = instanceId;
 
       await validator.notExistsInDbOrError(dependent, query, errorMsg);
+    }
+  }
+
+  async onlyOneXorAttributeIsFilledOrError() {
+    const listOfAttributes = Object.entries(this.attributes);
+    const errorMsgTemplate = exits.XOR_ATTRIBUTES_ERROR;
+
+    const getAttributesName = (attribute) => attribute[0];
+    const getXorAttributes = (attribute) => attribute[1].xor;
+    const xorAttributesName = listOfAttributes.filter(getXorAttributes).map(getAttributesName);
+
+    if (xorAttributesName.length > 0) {
+      const errorMsg = errorMsgTemplate.replace(/<LIST_OF_ATTRS>/, xorAttributesName.join(', '));
+
+      let result = false;
+
+      xorAttributesName.forEach((attributeName) => {
+        result = !!(result ^ !!this.attributes[attributeName].value); // XOR operation
+      });
+
+      validator.isTrueOrError(result, errorMsg);
     }
   }
 };

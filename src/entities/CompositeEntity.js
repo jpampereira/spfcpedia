@@ -30,8 +30,9 @@ module.exports = class CompositeEntity {
 
   async sharedAttributesConstraintOrError() {
     const errorMsgTemplate = exits.SINGLED_LIST_ITEM_ERROR;
+    const sharedAttributesList = this.constraints.sharedAttrs;
 
-    this.constraints.sharedAttrs.forEach((attribute) => {
+    sharedAttributesList.forEach((attribute) => {
       let errorMsg = errorMsgTemplate.replace(/<ATTR_NAME>/, attribute);
       errorMsg = errorMsg.replace(/<ENTITY_NAME>/, this.entityName);
 
@@ -41,8 +42,9 @@ module.exports = class CompositeEntity {
 
   async uniqueAttributesConstraintOrError() {
     const errorMsgTemplate = exits.DOUBLED_LIST_ITEM_ERROR;
+    const uniqueAttributesList = this.constraints.uniqueAttrs;
 
-    this.constraints.uniqueAttrs.forEach((attribute) => {
+    uniqueAttributesList.forEach((attribute) => {
       let errorMsg = errorMsgTemplate.replace(/<ATTR_NAME>/, attribute);
       errorMsg = errorMsg.replace(/<ENTITY_NAME>/, this.entityName);
 
@@ -53,10 +55,11 @@ module.exports = class CompositeEntity {
   async instanceIsNotInDbOrError() {
     const errorMsgTemplate = exits.UNIQUE_CONSTRAINT_ERROR;
     const errorMsg = errorMsgTemplate.replace(/<ATTR_NAME>/, this.constraints.majorAttr);
+    const sharedAttributesList = this.constraints.sharedAttrs;
 
     const query = {};
 
-    this.constraints.sharedAttrs.forEach((attribute) => {
+    sharedAttributesList.forEach((attribute) => {
       query[attribute] = this.values[0][attribute];
     });
 

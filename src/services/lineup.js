@@ -3,7 +3,7 @@ const Lineup = require('../entities/Lineup');
 
 module.exports = (app) => {
   const read = (filter = {}) => {
-    return app.db('lineup').select(['id', 'match_id', 'player_id', 'position_id', 'shirt_number']).where(filter);
+    return app.db('lineup').select(['id', 'match_id', 'player_id', 'position_id', 'shirt_number']).where(filter).orderBy('id');
   };
 
   const create = async (lineup) => {
@@ -15,6 +15,7 @@ module.exports = (app) => {
       await lineupPlayer.requiredAttributesAreFilledOrError();
       await lineupPlayer.attributesValueAreValidOrError();
       await lineupPlayer.uniqueConstraintInviolatedOrError();
+      await lineupPlayer.onlyOneXorAttributeIsFilledOrError();
       await lineupPlayer.instanceDoesntExistInDbOrError();
 
       newLineup.push(lineupPlayer.getAttributes());
@@ -40,6 +41,7 @@ module.exports = (app) => {
     await lineupPlayer.attributesValueAreValidOrError();
     await lineupPlayer.requiredAttributesAreFilledOrError();
     await lineupPlayer.uniqueConstraintInviolatedOrError(lineupPlayerId);
+    await lineupPlayer.onlyOneXorAttributeIsFilledOrError();
     await lineupPlayer.instanceDoesntExistInDbOrError(lineupPlayerId);
 
     lineupPlayer = lineupPlayer.getAttributes();

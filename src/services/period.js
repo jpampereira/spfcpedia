@@ -2,7 +2,7 @@ const Period = require('../entities/Period');
 
 module.exports = (app) => {
   const read = (filter = {}) => {
-    return app.db('period').select(['id', 'symbol', 'name']).where(filter);
+    return app.db('period').select(['id', 'symbol', 'name']).where(filter).orderBy('id');
   };
 
   const create = async (periods) => {
@@ -14,6 +14,7 @@ module.exports = (app) => {
       await newPeriod.requiredAttributesAreFilledOrError();
       await newPeriod.attributesValueAreValidOrError();
       await newPeriod.uniqueConstraintInviolatedOrError();
+      await newPeriod.onlyOneXorAttributeIsFilledOrError();
       await newPeriod.instanceDoesntExistInDbOrError();
 
       newPeriods.push(newPeriod.getAttributes());
@@ -30,6 +31,7 @@ module.exports = (app) => {
     await newPeriod.attributesValueAreValidOrError();
     await newPeriod.requiredAttributesAreFilledOrError();
     await newPeriod.uniqueConstraintInviolatedOrError(periodId);
+    await newPeriod.onlyOneXorAttributeIsFilledOrError();
     await newPeriod.instanceDoesntExistInDbOrError(periodId);
 
     newPeriod = newPeriod.getAttributes();

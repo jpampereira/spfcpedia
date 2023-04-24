@@ -1,37 +1,37 @@
 const IndividualEntity = require('./IndividualEntity');
 
-module.exports = class LineupPlayer extends IndividualEntity {
-  entityName = 'lineup';
+module.exports = class Goal extends IndividualEntity {
+  entityName = 'goal';
 
   attributes = {
-    match_id: {
+    lineup_id: {
+      value: null,
+      required: false,
+      unique: false,
+      validations: ['inDb'],
+      relatedEntity: 'lineup',
+      xor: true,
+    },
+
+    substitution_id: {
+      value: null,
+      required: false,
+      unique: false,
+      validations: ['inDb'],
+      relatedEntity: 'substitution',
+      xor: true,
+    },
+
+    period_id: {
       value: null,
       required: true,
       unique: false,
       validations: ['inDb'],
-      relatedEntity: 'match',
+      relatedEntity: 'period',
       xor: false,
     },
 
-    player_id: {
-      value: null,
-      required: true,
-      unique: false,
-      validations: ['inDb'],
-      relatedEntity: 'player',
-      xor: false,
-    },
-
-    position_id: {
-      value: null,
-      required: true,
-      unique: false,
-      validations: ['inDb'],
-      relatedEntity: 'position',
-      xor: false,
-    },
-
-    shirt_number: {
+    time: {
       value: null,
       required: true,
       unique: false,
@@ -41,7 +41,7 @@ module.exports = class LineupPlayer extends IndividualEntity {
     },
   };
 
-  dependentEntities = ['substitution'];
+  dependentEntities = [];
 
   constructor(obj) {
     super(obj);

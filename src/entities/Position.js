@@ -4,8 +4,23 @@ module.exports = class Position extends IndividualEntity {
   entityName = 'position';
 
   attributes = {
-    symbol: { value: null, required: true, unique: true, validations: ['exists'], relatedEntity: null },
-    name: { value: null, required: true, unique: true, validations: ['exists'], relatedEntity: null },
+    symbol: {
+      value: null,
+      required: true,
+      unique: true,
+      validations: ['exists'],
+      relatedEntity: null,
+      xor: false,
+    },
+
+    name: {
+      value: null,
+      required: true,
+      unique: true,
+      validations: ['exists'],
+      relatedEntity: null,
+      xor: false,
+    },
   };
 
   dependentEntities = ['lineup', 'substitution'];

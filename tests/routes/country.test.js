@@ -9,7 +9,7 @@ beforeAll(() => {
   run('04_country_city_stadium');
 });
 
-test('Deve retornar todos os países', () => {
+test('Deve listar todos os países', () => {
   return request(app).get(MAIN_ROUTE)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -86,7 +86,7 @@ describe('Não deve atualizar um país...', () => {
   };
 
   test('cujo valor de name é inválido', () => testTemplate(10005, { name: '' }, 'O valor de name é inválido'));
-  test('para um já existente', () => testTemplate(10005, { name: 'Argentina' }, 'Já existe um registro com esse name'));
+  test('duplicado', () => testTemplate(10005, { name: 'Argentina' }, 'Já existe um registro com esse name'));
 });
 
 describe('Deve remover um país com sucesso', () => {

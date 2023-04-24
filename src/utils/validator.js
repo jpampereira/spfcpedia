@@ -91,6 +91,10 @@ module.exports = () => {
     if (!result) throw new ValidationError(msg);
   };
 
+  const isTrueOrError = (value, msg) => {
+    if (!value) throw new ValidationError(msg);
+  };
+
   return {
     existsOrError,
     notExistsOrError,
@@ -102,5 +106,6 @@ module.exports = () => {
     arraySizeIsRespectedOrError,
     nonDuplicateValuesOrError,
     singledValueListOrError,
+    isTrueOrError,
   };
 };

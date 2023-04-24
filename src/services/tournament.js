@@ -14,6 +14,7 @@ module.exports = (app) => {
       await newTournament.requiredAttributesAreFilledOrError();
       await newTournament.attributesValueAreValidOrError();
       await newTournament.uniqueConstraintInviolatedOrError();
+      await newTournament.onlyOneXorAttributeIsFilledOrError();
       await newTournament.instanceDoesntExistInDbOrError();
 
       newTournaments.push(newTournament.getAttributes());
@@ -30,6 +31,7 @@ module.exports = (app) => {
     await newTournament.attributesValueAreValidOrError();
     await newTournament.requiredAttributesAreFilledOrError();
     await newTournament.uniqueConstraintInviolatedOrError(tournamentId);
+    await newTournament.onlyOneXorAttributeIsFilledOrError();
     await newTournament.instanceDoesntExistInDbOrError(tournamentId);
 
     newTournament = newTournament.getAttributes();

@@ -14,6 +14,7 @@ module.exports = (app) => {
       await newOpponent.requiredAttributesAreFilledOrError();
       await newOpponent.attributesValueAreValidOrError();
       await newOpponent.uniqueConstraintInviolatedOrError();
+      await newOpponent.onlyOneXorAttributeIsFilledOrError();
       await newOpponent.instanceDoesntExistInDbOrError();
 
       newOpponents.push(newOpponent.getAttributes());
@@ -30,6 +31,7 @@ module.exports = (app) => {
     await newOpponent.attributesValueAreValidOrError();
     await newOpponent.requiredAttributesAreFilledOrError();
     await newOpponent.uniqueConstraintInviolatedOrError(opponentId);
+    await newOpponent.onlyOneXorAttributeIsFilledOrError();
     await newOpponent.instanceDoesntExistInDbOrError(opponentId);
 
     newOpponent = newOpponent.getAttributes();

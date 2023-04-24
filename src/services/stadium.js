@@ -14,6 +14,7 @@ module.exports = (app) => {
       await newStadium.requiredAttributesAreFilledOrError();
       await newStadium.attributesValueAreValidOrError();
       await newStadium.uniqueConstraintInviolatedOrError();
+      await newStadium.onlyOneXorAttributeIsFilledOrError();
       await newStadium.instanceDoesntExistInDbOrError();
 
       newStadiums.push(newStadium.getAttributes());
@@ -30,6 +31,7 @@ module.exports = (app) => {
     await newStadium.attributesValueAreValidOrError();
     await newStadium.requiredAttributesAreFilledOrError();
     await newStadium.uniqueConstraintInviolatedOrError(stadiumId);
+    await newStadium.onlyOneXorAttributeIsFilledOrError();
     await newStadium.instanceDoesntExistInDbOrError(stadiumId);
 
     newStadium = newStadium.getAttributes();

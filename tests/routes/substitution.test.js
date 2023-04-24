@@ -17,7 +17,7 @@ test('Deve listar todas as substituições', () => {
     });
 });
 
-test('Deve listar uma substituição de uma partida', () => {
+test('Deve retornar uma substituição de uma partida', () => {
   return request(app).get(`${MAIN_ROUTE}/22000`)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -40,7 +40,7 @@ test('Deve listar as substituições de uma partida', () => {
 });
 
 test('Deve inserir as substituições de uma partida com sucesso', () => {
-  return request(app).post(MAIN_ROUTE)
+  return request(app).post(`${MAIN_ROUTE}/byMatch`)
     .send([
       { match_id: 17002, player_id: 19020, position_id: 18001, shirt_number: 17, lineup_id: 20023, period_id: 21001, time: 21 },
       { match_id: 17002, player_id: 19021, position_id: 18001, shirt_number: 35, lineup_id: 20025, period_id: 21001, time: 37 },
@@ -57,7 +57,7 @@ test('Deve inserir as substituições de uma partida com sucesso', () => {
 
 describe('Não deve inserir as substituições...', () => {
   const testTemplate = (data, errorMessage) => {
-    return request(app).post(MAIN_ROUTE)
+    return request(app).post(`${MAIN_ROUTE}/byMatch`)
       .send(data)
       .then((res) => {
         expect(res.status).toBe(400);

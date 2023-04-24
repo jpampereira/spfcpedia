@@ -14,6 +14,7 @@ module.exports = (app) => {
       await newCity.requiredAttributesAreFilledOrError();
       await newCity.attributesValueAreValidOrError();
       await newCity.uniqueConstraintInviolatedOrError();
+      await newCity.onlyOneXorAttributeIsFilledOrError();
       await newCity.instanceDoesntExistInDbOrError();
 
       newCities.push(newCity.getAttributes());
@@ -30,6 +31,7 @@ module.exports = (app) => {
     await newCity.attributesValueAreValidOrError();
     await newCity.requiredAttributesAreFilledOrError();
     await newCity.uniqueConstraintInviolatedOrError(cityId);
+    await newCity.onlyOneXorAttributeIsFilledOrError();
     await newCity.instanceDoesntExistInDbOrError(cityId);
 
     newCity = newCity.getAttributes();

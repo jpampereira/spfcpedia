@@ -4,7 +4,14 @@ module.exports = class Country extends IndividualEntity {
   entityName = 'country';
 
   attributes = {
-    name: { value: null, required: true, unique: true, validations: ['exists'], relatedEntity: null },
+    name: {
+      value: null,
+      required: true,
+      unique: true,
+      validations: ['exists'],
+      relatedEntity: null,
+      xor: false,
+    },
   };
 
   dependentEntities = ['city', 'player'];

@@ -14,6 +14,7 @@ module.exports = (app) => {
       await newStage.requiredAttributesAreFilledOrError();
       await newStage.attributesValueAreValidOrError();
       await newStage.uniqueConstraintInviolatedOrError();
+      await newStage.onlyOneXorAttributeIsFilledOrError();
       await newStage.instanceDoesntExistInDbOrError();
 
       newStages.push(newStage.getAttributes());
@@ -30,6 +31,7 @@ module.exports = (app) => {
     await newStage.attributesValueAreValidOrError();
     await newStage.requiredAttributesAreFilledOrError();
     await newStage.uniqueConstraintInviolatedOrError(stageId);
+    await newStage.onlyOneXorAttributeIsFilledOrError();
     await newStage.instanceDoesntExistInDbOrError(stageId);
 
     newStage = newStage.getAttributes();

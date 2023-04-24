@@ -13,4 +13,5 @@ module.exports = {
   SINGLED_LIST_ITEM_ERROR: 'Todos os <ATTR_NAME> de um mesmo <ENTITY_NAME> devem possuir o mesmo valor',
   DATA_DEPENDENCY_ERROR: 'Existem dados em <ENTITY_NAME> associados a esse registro',
   DATA_DOESNT_EXIST_ERROR: 'Registro não encontrado',
+  XOR_ATTRIBUTES_ERROR: 'Apenas um desses atributos deve ser preenchido: <LIST_OF_ATTRS>',
 };

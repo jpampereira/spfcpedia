@@ -88,7 +88,7 @@ describe('Não deve atualizar um adversário...', () => {
   };
 
   test('cujo valor de name é inválido', () => testTemplate(10002, { name: '' }, 'O valor de name é inválido'));
-  test('para um já existente', () => testTemplate(10002, { name: 'Sport Club Corinthians Paulista' }, 'Já existe um registro com esse name'));
+  test('duplicado', () => testTemplate(10002, { name: 'Sport Club Corinthians Paulista' }, 'Já existe um registro com esse name'));
 });
 
 describe('Deve remover um adversário com sucesso...', () => {

@@ -9,7 +9,7 @@ beforeAll(() => {
   run('06_match_position_lineup');
 });
 
-test('Deve retornar todas as posições', () => {
+test('Deve listar todas as posições', () => {
   return request(app).get(MAIN_ROUTE)
     .then((res) => {
       expect(res.status).toBe(200);

@@ -2,7 +2,7 @@ const Match = require('../entities/Match');
 
 module.exports = (app) => {
   const read = (filter = {}) => {
-    return app.db('match').select(app.db.raw('id, stage_id, to_char(datetime, \'YYYY-MM-DD HH24:MI\') as datetime, stadium_id, referee, assistant_referee_1, assistant_referee_2, fourth_official, opponent_id, opponent_goals, highlights')).where(filter);
+    return app.db('match').select(app.db.raw('id, stage_id, to_char(datetime, \'YYYY-MM-DD HH24:MI\') as datetime, stadium_id, referee, assistant_referee_1, assistant_referee_2, fourth_official, opponent_id, opponent_goals, highlights')).where(filter).orderBy('id');
   };
 
   const create = async (matches) => {
@@ -14,6 +14,7 @@ module.exports = (app) => {
       await newMatch.requiredAttributesAreFilledOrError();
       await newMatch.attributesValueAreValidOrError();
       await newMatch.uniqueConstraintInviolatedOrError();
+      await newMatch.onlyOneXorAttributeIsFilledOrError();
       await newMatch.instanceDoesntExistInDbOrError();
 
       newMatches.push(newMatch.getAttributes());
@@ -30,6 +31,7 @@ module.exports = (app) => {
     await newMatch.attributesValueAreValidOrError();
     await newMatch.requiredAttributesAreFilledOrError();
     await newMatch.uniqueConstraintInviolatedOrError(matchId);
+    await newMatch.onlyOneXorAttributeIsFilledOrError();
     await newMatch.instanceDoesntExistInDbOrError(matchId);
 
     newMatch = newMatch.getAttributes();

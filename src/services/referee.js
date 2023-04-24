@@ -14,6 +14,7 @@ module.exports = (app) => {
       await newReferee.requiredAttributesAreFilledOrError();
       await newReferee.attributesValueAreValidOrError();
       await newReferee.uniqueConstraintInviolatedOrError();
+      await newReferee.onlyOneXorAttributeIsFilledOrError();
       await newReferee.instanceDoesntExistInDbOrError();
 
       newReferees.push(newReferee.getAttributes());
@@ -30,6 +31,7 @@ module.exports = (app) => {
     await newReferee.attributesValueAreValidOrError();
     await newReferee.requiredAttributesAreFilledOrError();
     await newReferee.uniqueConstraintInviolatedOrError(refereeId);
+    await newReferee.onlyOneXorAttributeIsFilledOrError();
     await newReferee.instanceDoesntExistInDbOrError(refereeId);
 
     newReferee = newReferee.getAttributes();

@@ -2,7 +2,7 @@ const Player = require('../entities/Player');
 
 module.exports = (app) => {
   const read = (filter = {}) => {
-    return app.db('player').select(app.db.raw('id, name, nickname, to_char(birth, \'YYYY-MM-DD\') as birth, country_id, image')).where(filter);
+    return app.db('player').select(app.db.raw('id, name, nickname, to_char(birth, \'YYYY-MM-DD\') as birth, country_id, image')).where(filter).orderBy('id');
   };
 
   const create = async (players) => {
@@ -14,6 +14,7 @@ module.exports = (app) => {
       await newPlayer.requiredAttributesAreFilledOrError();
       await newPlayer.attributesValueAreValidOrError();
       await newPlayer.uniqueConstraintInviolatedOrError();
+      await newPlayer.onlyOneXorAttributeIsFilledOrError();
       await newPlayer.instanceDoesntExistInDbOrError();
 
       newPlayers.push(newPlayer.getAttributes());
@@ -30,6 +31,7 @@ module.exports = (app) => {
     await newPlayer.attributesValueAreValidOrError();
     await newPlayer.requiredAttributesAreFilledOrError();
     await newPlayer.uniqueConstraintInviolatedOrError(playerId);
+    await newPlayer.onlyOneXorAttributeIsFilledOrError();
     await newPlayer.instanceDoesntExistInDbOrError(playerId);
 
     newPlayer = newPlayer.getAttributes();

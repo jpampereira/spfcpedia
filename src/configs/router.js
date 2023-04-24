@@ -16,6 +16,7 @@ module.exports = (app) => {
   router.use('/lineup', app.routes.lineup);
   router.use('/period', app.routes.period);
   router.use('/substitution', app.routes.substitution);
+  router.use('/goal', app.routes.goal);
 
   app.use(router);
 };

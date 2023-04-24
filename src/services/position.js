@@ -2,7 +2,7 @@ const Position = require('../entities/Position');
 
 module.exports = (app) => {
   const read = (filter = {}) => {
-    return app.db('position').select(['id', 'symbol', 'name']).where(filter);
+    return app.db('position').select(['id', 'symbol', 'name']).where(filter).orderBy('id');
   };
 
   const create = async (positions) => {
@@ -14,6 +14,7 @@ module.exports = (app) => {
       await newPosition.requiredAttributesAreFilledOrError();
       await newPosition.attributesValueAreValidOrError();
       await newPosition.uniqueConstraintInviolatedOrError();
+      await newPosition.onlyOneXorAttributeIsFilledOrError();
       await newPosition.instanceDoesntExistInDbOrError();
 
       newPositions.push(newPosition.getAttributes());
@@ -30,6 +31,7 @@ module.exports = (app) => {
     await newPosition.attributesValueAreValidOrError();
     await newPosition.requiredAttributesAreFilledOrError();
     await newPosition.uniqueConstraintInviolatedOrError(positionId);
+    await newPosition.onlyOneXorAttributeIsFilledOrError();
     await newPosition.instanceDoesntExistInDbOrError(positionId);
 
     newPosition = newPosition.getAttributes();

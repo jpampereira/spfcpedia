@@ -14,6 +14,7 @@ module.exports = (app) => {
       await newCountry.requiredAttributesAreFilledOrError();
       await newCountry.attributesValueAreValidOrError();
       await newCountry.uniqueConstraintInviolatedOrError();
+      await newCountry.onlyOneXorAttributeIsFilledOrError();
       await newCountry.instanceDoesntExistInDbOrError();
 
       newCountries.push(newCountry.getAttributes());
@@ -30,6 +31,7 @@ module.exports = (app) => {
     await newCountry.attributesValueAreValidOrError();
     await newCountry.requiredAttributesAreFilledOrError();
     await newCountry.uniqueConstraintInviolatedOrError(countryId);
+    await newCountry.onlyOneXorAttributeIsFilledOrError();
     await newCountry.instanceDoesntExistInDbOrError(countryId);
 
     newCountry = newCountry.getAttributes();

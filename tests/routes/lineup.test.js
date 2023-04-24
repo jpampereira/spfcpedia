@@ -17,7 +17,7 @@ test('Deve listar todas as escalações', () => {
     });
 });
 
-test('Deve listar um escalado de uma partida', () => {
+test('Deve retornar um escalado de uma partida', () => {
   return request(app).get(`${MAIN_ROUTE}/20000`)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -36,7 +36,7 @@ test('Deve listar a escalação de uma partida', () => {
 });
 
 test('Deve inserir a escalação de uma partida com sucesso', () => {
-  return request(app).post(MAIN_ROUTE)
+  return request(app).post(`${MAIN_ROUTE}/byMatch`)
     .send([
       { match_id: 17001, player_id: 19000, position_id: 18000, shirt_number: 23 },
       { match_id: 17001, player_id: 19011, position_id: 18001, shirt_number: 2 },
@@ -59,7 +59,7 @@ test('Deve inserir a escalação de uma partida com sucesso', () => {
 
 describe('Não deve inserir uma escalação...', () => {
   const testTemplate = (data, errorMessage) => {
-    return request(app).post(MAIN_ROUTE)
+    return request(app).post(`${MAIN_ROUTE}/byMatch`)
       .send(data)
       .then((res) => {
         expect(res.status).toBe(400);
