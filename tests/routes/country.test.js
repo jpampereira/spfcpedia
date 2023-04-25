@@ -6,10 +6,10 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/country';
 
 beforeAll(() => {
-  run('04_country_city_stadium');
+  run('05_country');
 });
 
-test('Deve listar todos os países', () => {
+test('Deve retornar todos os países', () => {
   return request(app).get(MAIN_ROUTE)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -85,7 +85,7 @@ describe('Não deve atualizar um país...', () => {
       });
   };
 
-  test('cujo valor de name é inválido', () => testTemplate(10005, { name: '' }, 'O valor de name é inválido'));
+  test('com o valor de name inválido', () => testTemplate(10005, { name: '' }, 'O valor de name é inválido'));
   test('duplicado', () => testTemplate(10005, { name: 'Argentina' }, 'Já existe um registro com esse name'));
 });
 
@@ -107,8 +107,10 @@ describe('Deve remover um país com sucesso', () => {
 });
 
 describe('Não deve remover um país...', () => {
-  const testTemplate = (seedScript, id, errorMessage) => {
-    run(seedScript);
+  const testTemplate = (id, errorMessage, seedScript) => {
+    if (seedScript !== undefined) {
+      run(seedScript);
+    }
 
     return request(app).delete(`${MAIN_ROUTE}/${id}`)
       .then((res) => {
@@ -117,7 +119,7 @@ describe('Não deve remover um país...', () => {
       });
   };
 
-  test('não cadastrado', () => testTemplate('04_country_city_stadium', 10006, 'Registro não encontrado'));
-  test('que possui cidades associadas', () => testTemplate('04_country_city_stadium', 10000, 'Existem dados em city associados a esse registro'));
-  test('que possui jogadores associados', () => testTemplate('05_player', 10001, 'Existem dados em player associados a esse registro'));
+  test('não cadastrado', () => testTemplate(10006, 'Registro não encontrado'));
+  test('com cidades associadas', () => testTemplate(10000, 'Existem dados em city associados a esse registro', '06_city'));
+  test('com jogadores associados', () => testTemplate(10000, 'Existem dados em player associados a esse registro', '09_player'));
 });

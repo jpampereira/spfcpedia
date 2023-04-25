@@ -6,7 +6,7 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/position';
 
 beforeAll(() => {
-  run('06_match_position_lineup');
+  run('10_position');
 });
 
 test('Deve listar todas as posições', () => {
@@ -18,7 +18,7 @@ test('Deve listar todas as posições', () => {
 });
 
 test('Deve retornar uma posição pelo Id', () => {
-  return request(app).get(`${MAIN_ROUTE}/18000`)
+  return request(app).get(`${MAIN_ROUTE}/10000`)
     .then((res) => {
       expect(res.status).toBe(200);
       expect(res.body.symbol).toBe('G');
@@ -29,8 +29,8 @@ test('Deve retornar uma posição pelo Id', () => {
 test('Deve inserir novas posições com sucesso', () => {
   return request(app).post(MAIN_ROUTE)
     .send([
+      { symbol: 'LB', name: 'Left Back' },
       { symbol: 'RB', name: 'Right Back' },
-      { symbol: 'LW', name: 'Left Wing' },
     ])
     .then((res) => {
       expect(res.status).toBe(201);
@@ -50,20 +50,20 @@ describe('Não deve inserir uma posição...', () => {
   };
 
   const newData = [
-    { symbol: 'RW', name: 'Right Wing' },
+    { symbol: 'LW', name: 'Left Wing' },
     { symbol: 'LM', name: 'Left Midfielder' },
     { symbol: 'RM', name: 'Right Midfielder' },
   ];
 
-  test('sem o atributo symbol', () => testTemplate([...newData, { name: 'Center Midfielder' }], 'O atributo symbol é obrigatório'));
-  test('sem o atributo name', () => testTemplate([...newData, { symbol: 'CM' }], 'O atributo name é obrigatório'));
-  test('com símbolo duplicado', () => testTemplate([...newData, { symbol: 'RB', name: 'Lateral Direito' }], 'Já existe um registro com esse symbol'));
-  test('com nome duplicado', () => testTemplate([...newData, { symbol: 'PE', name: 'Left Wing' }], 'Já existe um registro com esse name'));
+  test('sem o atributo symbol', () => testTemplate([...newData, { name: 'Right Wing' }], 'O atributo symbol é obrigatório'));
+  test('sem o atributo name', () => testTemplate([...newData, { symbol: 'RW' }], 'O atributo name é obrigatório'));
+  test('com símbolo duplicado', () => testTemplate([...newData, { symbol: 'RB', name: 'Right Wing' }], 'Já existe um registro com esse symbol'));
+  test('com nome duplicado', () => testTemplate([...newData, { symbol: 'RW', name: 'Right Back' }], 'Já existe um registro com esse name'));
 });
 
 describe('Deve atualizar uma posição com sucesso', () => {
   test('Atualizando a posição', () => {
-    return request(app).put(`${MAIN_ROUTE}/18001`)
+    return request(app).put(`${MAIN_ROUTE}/10001`)
       .send({ symbol: 'CB', name: 'Center Back' })
       .then((res) => {
         expect(res.status).toBe(204);
@@ -71,7 +71,7 @@ describe('Deve atualizar uma posição com sucesso', () => {
   });
 
   test('Atestando que a atualização foi realizada', () => {
-    return request(app).get(`${MAIN_ROUTE}/18001`)
+    return request(app).get(`${MAIN_ROUTE}/10001`)
       .then((res) => {
         expect(res.status).toBe(200);
         expect(res.body.symbol).toBe('CB');
@@ -90,22 +90,22 @@ describe('Não deve atualizar uma posição...', () => {
       });
   };
 
-  test('cujo valor de symbol é inválido', () => testTemplate(18000, { symbol: '' }, 'O valor de symbol é inválido'));
-  test('cujo valor de name é inválido', () => testTemplate(18000, { name: '' }, 'O valor de name é inválido'));
-  test('para um símbolo já cadastrado', () => testTemplate(18000, { symbol: 'F' }, 'Já existe um registro com esse symbol'));
-  test('para um nome já cadastrado', () => testTemplate(18000, { name: 'Midfielder' }, 'Já existe um registro com esse name'));
+  test('com o valor de symbol inválido', () => testTemplate(10000, { symbol: '' }, 'O valor de symbol é inválido'));
+  test('com o valor de name inválido', () => testTemplate(10000, { name: '' }, 'O valor de name é inválido'));
+  test('com símbolo duplicado', () => testTemplate(10000, { symbol: 'F' }, 'Já existe um registro com esse symbol'));
+  test('com nome duplicado', () => testTemplate(10000, { name: 'Midfielder' }, 'Já existe um registro com esse name'));
 });
 
 describe('Deve remover uma posição com sucesso', () => {
   test('Removendo a posição', () => {
-    return request(app).delete(`${MAIN_ROUTE}/18004`)
+    return request(app).delete(`${MAIN_ROUTE}/10003`)
       .then((res) => {
         expect(res.status).toBe(204);
       });
   });
 
   test('Atestando que a remoção foi realizada', () => {
-    return request(app).get(`${MAIN_ROUTE}/18004`)
+    return request(app).get(`${MAIN_ROUTE}/10003`)
       .then((res) => {
         expect(res.status).toBe(200);
         expect(res.body).toStrictEqual({});
@@ -114,8 +114,10 @@ describe('Deve remover uma posição com sucesso', () => {
 });
 
 describe('Não deve remover uma posição...', () => {
-  const testTemplate = (seedScript, id, errorMessage) => {
-    run(seedScript);
+  const testTemplate = (id, errorMessage, seedScript) => {
+    if (seedScript !== undefined) {
+      run(seedScript);
+    }
 
     return request(app).delete(`${MAIN_ROUTE}/${id}`)
       .then((res) => {
@@ -124,7 +126,7 @@ describe('Não deve remover uma posição...', () => {
       });
   };
 
-  test('não cadastrada', () => testTemplate('06_match_position_lineup', 18005, 'Registro não encontrado'));
-  test('com escalações associadas', () => testTemplate('06_match_position_lineup', 18000, 'Existem dados em lineup associados a esse registro'));
-  test('com substituições associadas', () => testTemplate('07_period_substitution', 18004, 'Existem dados em substitution associados a esse registro'));
+  test('não cadastrada', () => testTemplate(10004, 'Registro não encontrado'));
+  test('com escalações associadas', () => testTemplate(18000, 'Existem dados em lineup associados a esse registro', '12_lineup'));
+  test('com substituições associadas', () => testTemplate(18004, 'Existem dados em substitution associados a esse registro', '13_substitution'));
 });

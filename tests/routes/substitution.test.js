@@ -6,10 +6,10 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/substitution';
 
 beforeAll(() => {
-  run('07_period_substitution');
+  run('13_substitution');
 });
 
-test('Deve listar todas as substituições', () => {
+test('Deve retornar todas as substituições', () => {
   return request(app).get(MAIN_ROUTE)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -17,7 +17,7 @@ test('Deve listar todas as substituições', () => {
     });
 });
 
-test('Deve retornar uma substituição de uma partida', () => {
+test('Deve retornar uma substituição pelo Id', () => {
   return request(app).get(`${MAIN_ROUTE}/22000`)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -31,7 +31,7 @@ test('Deve retornar uma substituição de uma partida', () => {
     });
 });
 
-test('Deve listar as substituições de uma partida', () => {
+test('Deve retornar as substituições de uma partida', () => {
   return request(app).get(`${MAIN_ROUTE}/byMatch/17000`)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -80,13 +80,13 @@ describe('Não deve inserir as substituições...', () => {
   test('sem o atributo lineup_id', () => testTemplate([...newData.slice(0, 4), { ...newData[4], lineup_id: null }], 'O atributo lineup_id é obrigatório'));
   test('sem o atributo period_id', () => testTemplate([...newData.slice(0, 4), { ...newData[4], period_id: null }], 'O atributo period_id é obrigatório'));
   test('sem o atributo time', () => testTemplate([...newData.slice(0, 4), { ...newData[4], time: null }], 'O atributo time é obrigatório'));
-  test('cujo valor de match_id é inválido', () => testTemplate([...newData.slice(0, 4), { ...newData[4], match_id: 17004 }], 'O valor de match_id é inválido'));
-  test('cujo valor de player_id é inválido', () => testTemplate([...newData.slice(0, 4), { ...newData[4], player_id: 19022 }], 'O valor de player_id é inválido'));
-  test('cujo valor de position_id é inválido', () => testTemplate([...newData.slice(0, 4), { ...newData[4], position_id: 18005 }], 'O valor de position_id é inválido'));
-  test('cujo valor de shirt_number é inválido', () => testTemplate([...newData.slice(0, 4), { ...newData[4], shirt_number: -1 }], 'O valor de shirt_number é inválido'));
-  test('cujo valor de lineup_id é inválido', () => testTemplate([...newData.slice(0, 4), { ...newData[4], lineup_id: 20044 }], 'O valor de lineup_id é inválido'));
-  test('cujo valor de period_id é inválido', () => testTemplate([...newData.slice(0, 4), { ...newData[4], period_id: 21003 }], 'O valor de period_id é inválido'));
-  test('cujo valor de time é inválido', () => testTemplate([...newData.slice(0, 4), { ...newData[4], time: -1 }], 'O valor de time é inválido'));
+  test('com o valor de match_id inválido', () => testTemplate([...newData.slice(0, 4), { ...newData[4], match_id: 17004 }], 'O valor de match_id é inválido'));
+  test('com o valor de player_id inválido', () => testTemplate([...newData.slice(0, 4), { ...newData[4], player_id: 19022 }], 'O valor de player_id é inválido'));
+  test('com o valor de position_id inválido', () => testTemplate([...newData.slice(0, 4), { ...newData[4], position_id: 18005 }], 'O valor de position_id é inválido'));
+  test('com o valor de shirt_number inválido', () => testTemplate([...newData.slice(0, 4), { ...newData[4], shirt_number: -1 }], 'O valor de shirt_number é inválido'));
+  test('com o valor de lineup_id inválido', () => testTemplate([...newData.slice(0, 4), { ...newData[4], lineup_id: 20044 }], 'O valor de lineup_id é inválido'));
+  test('com o valor de period_id inválido', () => testTemplate([...newData.slice(0, 4), { ...newData[4], period_id: 21003 }], 'O valor de period_id é inválido'));
+  test('com o valor de time inválido', () => testTemplate([...newData.slice(0, 4), { ...newData[4], time: -1 }], 'O valor de time é inválido'));
   test('com mais de 5 jogadores', () => testTemplate([...newData, { match_id: 17003, player_id: 19012, position_id: 18002, shirt_number: 37, lineup_id: 20033, period_id: 21001, time: 28 }], 'O número de itens em substitution é inválido'));
   test('com jogadores duplicados', () => testTemplate([...newData.slice(0, 4), { ...newData[4], player_id: 19013 }], 'Todos os player_id de um mesmo substitution devem possuir valores diferentes'));
   test('com substitutos duplicados', () => testTemplate([...newData.slice(0, 4), { ...newData[4], lineup_id: 20037 }], 'Todos os lineup_id de um mesmo substitution devem possuir valores diferentes'));
@@ -132,12 +132,12 @@ describe('Não deve alterar uma substituição...', () => {
       });
   };
 
-  test('cujo valor de player_id é inválido', () => testTemplate(22000, { player_id: 19022 }, 'O valor de player_id é inválido'));
-  test('cujo valor de position_id é inválido', () => testTemplate(22000, { position_id: 18005 }, 'O valor de position_id é inválido'));
-  test('cujo valor de shirt_number é inválido', () => testTemplate(22000, { shirt_number: -1 }, 'O valor de shirt_number é inválido'));
-  test('cujo valor de lineup_id é inválido', () => testTemplate(22000, { lineup_id: 20044 }, 'O valor de lineup_id é inválido'));
-  test('cujo valor de period_id é inválido', () => testTemplate(22000, { period_id: 21003 }, 'O valor de period_id é inválido'));
-  test('cujo valor de time é inválido', () => testTemplate(22000, { time: -1 }, 'O valor de time é inválido'));
+  test('com o valor de player_id inválido', () => testTemplate(22000, { player_id: 19022 }, 'O valor de player_id é inválido'));
+  test('com o valor de position_id inválido', () => testTemplate(22000, { position_id: 18005 }, 'O valor de position_id é inválido'));
+  test('com o valor de shirt_number inválido', () => testTemplate(22000, { shirt_number: -1 }, 'O valor de shirt_number é inválido'));
+  test('com o valor de lineup_id inválido', () => testTemplate(22000, { lineup_id: 20044 }, 'O valor de lineup_id é inválido'));
+  test('com o valor de period_id inválido', () => testTemplate(22000, { period_id: 21003 }, 'O valor de period_id é inválido'));
+  test('com o valor de time inválido', () => testTemplate(22000, { time: -1 }, 'O valor de time é inválido'));
 });
 
 describe('Deve remover as substituições de uma partida com sucesso', () => {
@@ -158,8 +158,10 @@ describe('Deve remover as substituições de uma partida com sucesso', () => {
 });
 
 describe('Não deve remover uma escalação...', () => {
-  const testTemplate = (seedScript, id, errorMessage) => {
-    run(seedScript);
+  const testTemplate = (id, errorMessage, seedScript) => {
+    if (seedScript !== undefined) {
+      run(seedScript);
+    }
 
     return request(app).delete(`${MAIN_ROUTE}/byMatch/${id}`)
       .then((res) => {
@@ -168,5 +170,6 @@ describe('Não deve remover uma escalação...', () => {
       });
   };
 
-  test('não cadastrada', () => testTemplate('07_period_substitution', 17004, 'Registro não encontrado'));
+  test('não cadastrada', () => testTemplate(17004, 'Registro não encontrado'));
+  test('com gols associados', () => testTemplate(17002, 'Existem dados em goal associados a esse registro', '14_goal'));
 });

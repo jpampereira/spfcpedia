@@ -6,7 +6,7 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/match';
 
 beforeAll(() => {
-  run('06_match_position_lineup');
+  run('08_match');
 });
 
 test('Deve listar todas as partidas', () => {
@@ -122,22 +122,22 @@ describe('Não deve inserir uma partida...', () => {
   test('sem o atributo opponent_id', () => testTemplate([...newData, { ...wrongData, opponent_id: null }], 'O atributo opponent_id é obrigatório'));
   test('sem o atributo opponent_goals', () => testTemplate([...newData, { ...wrongData, opponent_goals: null }], 'O atributo opponent_goals é obrigatório'));
   test('sem o atributo highlights', () => testTemplate([...newData, { ...wrongData, highlights: null }], 'O atributo highlights é obrigatório'));
-  test('cujo valor de stage_id é inválido', () => testTemplate([...newData, { ...wrongData, stage_id: 16004 }], 'O valor de stage_id é inválido'));
-  test('cujo valor de datetime é inválido', () => testTemplate([...newData, { ...wrongData, datetime: '2023-01-29 18' }], 'O valor de datetime é inválido'));
-  test('cujo valor de stadium_id é inválido', () => testTemplate([...newData, { ...wrongData, stadium_id: 12005 }], 'O valor de stadium_id é inválido'));
-  test('cujo valor de referee é inválido', () => testTemplate([...newData, { ...wrongData, referee: 14029 }], 'O valor de referee é inválido'));
-  test('cujo valor de assistant_referee_1 é inválido', () => testTemplate([...newData, { ...wrongData, assistant_referee_1: 14029 }], 'O valor de assistant_referee_1 é inválido'));
-  test('cujo valor de assistant_referee_2 é inválido', () => testTemplate([...newData, { ...wrongData, assistant_referee_2: 14029 }], 'O valor de assistant_referee_2 é inválido'));
-  test('cujo valor de fourth_official é inválido', () => testTemplate([...newData, { ...wrongData, fourth_official: 14029 }], 'O valor de fourth_official é inválido'));
-  test('cujo valor de opponent_id é inválido', () => testTemplate([...newData, { ...wrongData, opponent_id: 13009 }], 'O valor de opponent_id é inválido'));
-  test('cujo valor de opponent_goals é inválido', () => testTemplate([...newData, { ...wrongData, opponent_goals: -2 }], 'O valor de opponent_goals é inválido'));
+  test('com o valor de stage_id inválido', () => testTemplate([...newData, { ...wrongData, stage_id: 16004 }], 'O valor de stage_id é inválido'));
+  test('com o valor de datetime inválido', () => testTemplate([...newData, { ...wrongData, datetime: '2023-01-29 18' }], 'O valor de datetime é inválido'));
+  test('com o valor de stadium_id inválido', () => testTemplate([...newData, { ...wrongData, stadium_id: 12005 }], 'O valor de stadium_id é inválido'));
+  test('com o valor de referee inválido', () => testTemplate([...newData, { ...wrongData, referee: 14029 }], 'O valor de referee é inválido'));
+  test('com o valor de assistant_referee_1 inválido', () => testTemplate([...newData, { ...wrongData, assistant_referee_1: 14029 }], 'O valor de assistant_referee_1 é inválido'));
+  test('com o valor de assistant_referee_2 inválido', () => testTemplate([...newData, { ...wrongData, assistant_referee_2: 14029 }], 'O valor de assistant_referee_2 é inválido'));
+  test('com o valor de fourth_official inválido', () => testTemplate([...newData, { ...wrongData, fourth_official: 14029 }], 'O valor de fourth_official é inválido'));
+  test('com o valor de opponent_id inválido', () => testTemplate([...newData, { ...wrongData, opponent_id: 13009 }], 'O valor de opponent_id é inválido'));
+  test('com o valor de opponent_goals inválido', () => testTemplate([...newData, { ...wrongData, opponent_goals: -2 }], 'O valor de opponent_goals é inválido'));
   test('duplicada', () => testTemplate([...newData, wrongData], 'Registro já cadastrado'));
 });
 
 describe('Deve alterar uma partida com sucesso', () => {
   test('Atualizando a partida', () => {
     return request(app).put(`${MAIN_ROUTE}/17001`)
-      .send({ opponent_goals: 1, highlights: 'https://www.youtube.com/watch?v=8X4TVhN8T88&t=13s' })
+      .send({ opponent_goals: 1, highlights: 'https://www.youtube.com/watch?v=8X4TVhN8T88' })
       .then((res) => {
         expect(res.status).toBe(204);
       });
@@ -148,7 +148,7 @@ describe('Deve alterar uma partida com sucesso', () => {
       .then((res) => {
         expect(res.status).toBe(200);
         expect(res.body.opponent_goals).toBe(1);
-        expect(res.body.highlights).toBe('https://www.youtube.com/watch?v=8X4TVhN8T88&t=13s');
+        expect(res.body.highlights).toBe('https://www.youtube.com/watch?v=8X4TVhN8T88');
       });
   });
 });
@@ -176,15 +176,16 @@ describe('Não deve alterar uma partida...', () => {
     highlights: 'https://www.youtube.com/watch?v=6haIBI_zD9E',
   };
 
-  test('cujo valor de stage_id é inválido', () => testTemplate(17000, { ...data, stage_id: 16004 }, 'O valor de stage_id é inválido'));
-  test('cujo valor de datetime é inválido', () => testTemplate(17000, { ...data, datetime: '2023-01-29 18' }, 'O valor de datetime é inválido'));
-  test('cujo valor de stadium_id é inválido', () => testTemplate(17000, { ...data, stadium_id: 12005 }, 'O valor de stadium_id é inválido'));
-  test('cujo valor de referee é inválido', () => testTemplate(17000, { ...data, referee: 14029 }, 'O valor de referee é inválido'));
-  test('cujo valor de assistant_referee_1 é inválido', () => testTemplate(17000, { ...data, assistant_referee_1: 14029 }, 'O valor de assistant_referee_1 é inválido'));
-  test('cujo valor de assistant_referee_2 é inválido', () => testTemplate(17000, { ...data, assistant_referee_2: 14029 }, 'O valor de assistant_referee_2 é inválido'));
-  test('cujo valor de fourth_official é inválido', () => testTemplate(17000, { ...data, fourth_official: 14029 }, 'O valor de fourth_official é inválido'));
-  test('cujo valor de opponent_id é inválido', () => testTemplate(17000, { ...data, opponent_id: 13009 }, 'O valor de opponent_id é inválido'));
-  test('cujo valor de opponent_goals é inválido', () => testTemplate(17000, { ...data, opponent_goals: -2 }, 'O valor de opponent_goals é inválido'));
+  test('com o valor de stage_id inválido', () => testTemplate(17000, { ...data, stage_id: 16004 }, 'O valor de stage_id é inválido'));
+  test('com o valor de datetime inválido', () => testTemplate(17000, { ...data, datetime: '2023-01-29 18' }, 'O valor de datetime é inválido'));
+  test('com o valor de stadium_id inválido', () => testTemplate(17000, { ...data, stadium_id: 12005 }, 'O valor de stadium_id é inválido'));
+  test('com o valor de referee inválido', () => testTemplate(17000, { ...data, referee: 14029 }, 'O valor de referee é inválido'));
+  test('com o valor de assistant_referee_1 inválido', () => testTemplate(17000, { ...data, assistant_referee_1: 14029 }, 'O valor de assistant_referee_1 é inválido'));
+  test('com o valor de assistant_referee_2 inválido', () => testTemplate(17000, { ...data, assistant_referee_2: 14029 }, 'O valor de assistant_referee_2 é inválido'));
+  test('com o valor de fourth_official inválido', () => testTemplate(17000, { ...data, fourth_official: 14029 }, 'O valor de fourth_official é inválido'));
+  test('com o valor de opponent_id inválido', () => testTemplate(17000, { ...data, opponent_id: 13009 }, 'O valor de opponent_id é inválido'));
+  test('com o valor de opponent_goals inválido', () => testTemplate(17000, { ...data, opponent_goals: -2 }, 'O valor de opponent_goals é inválido'));
+  test('com o valor de highlights inválido', () => testTemplate(17000, { ...data, highlights: '' }, 'O valor de highlights é inválido'));
   test('duplicada', () => testTemplate(17000, data, 'Registro já cadastrado'));
 });
 
@@ -206,7 +207,11 @@ describe('Deve remover uma partida com sucesso', () => {
 });
 
 describe('Não deve remover uma partida...', () => {
-  const testTemplate = (id, errorMessage) => {
+  const testTemplate = (id, errorMessage, seedScript) => {
+    if (seedScript !== undefined) {
+      run(seedScript);
+    }
+
     return request(app).delete(`${MAIN_ROUTE}/${id}`)
       .then((res) => {
         expect(res.status).toBe(400);
@@ -215,5 +220,5 @@ describe('Não deve remover uma partida...', () => {
   };
 
   test('não cadastrada', () => testTemplate(17004, 'Registro não encontrado'));
-  test('com escalações associadas', () => testTemplate(17000, 'Existem dados em lineup associados a esse registro'));
+  test('com escalações associadas', () => testTemplate(17000, 'Existem dados em lineup associados a esse registro', '12_lineup'));
 });

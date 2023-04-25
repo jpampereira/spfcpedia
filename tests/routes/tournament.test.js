@@ -6,10 +6,10 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/tournament';
 
 beforeAll(() => {
-  run('01_tournament_stage');
+  run('01_tournament');
 });
 
-test('Deve listar todos os campeonatos', () => {
+test('Deve retornar todos os campeonatos', () => {
   return request(app).get(MAIN_ROUTE)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -84,7 +84,7 @@ describe('Não deve atualizar um campeonato...', () => {
       });
   };
 
-  test('cujo valor de name é inválido', () => testTemplate(10001, { name: '' }, 'O valor de name é inválido'));
+  test('com o valor de name inválido', () => testTemplate(10001, { name: '' }, 'O valor de name é inválido'));
   test('duplicado', () => testTemplate(10001, { name: 'Copa do Brasil' }, 'Já existe um registro com esse name'));
 });
 
@@ -106,7 +106,11 @@ describe('Deve remover um campeonato com sucesso', () => {
 });
 
 describe('Não deve remover um campeonato...', () => {
-  const testTemplate = (id, errorMessage) => {
+  const testTemplate = (id, errorMessage, seedScript) => {
+    if (seedScript !== undefined) {
+      run(seedScript);
+    }
+
     return request(app).delete(`${MAIN_ROUTE}/${id}`)
       .then((res) => {
         expect(res.status).toBe(400);
@@ -115,5 +119,5 @@ describe('Não deve remover um campeonato...', () => {
   };
 
   test('não cadastrado', () => testTemplate(10004, 'Registro não encontrado'));
-  test('com fases associadas', () => testTemplate(10000, 'Existem dados em stage associados a esse registro'));
+  test('com fases associadas', () => testTemplate(10000, 'Existem dados em stage associados a esse registro', '02_stage'));
 });

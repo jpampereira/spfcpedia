@@ -6,10 +6,10 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/goal';
 
 beforeAll(() => {
-  run('08_goal_card');
+  run('14_goal');
 });
 
-test('Deve listar todos os gols', () => {
+test('Deve retornar todos os gols', () => {
   return request(app).get(MAIN_ROUTE)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -17,7 +17,7 @@ test('Deve listar todos os gols', () => {
     });
 });
 
-test('Deve listar um gol pelo Id', () => {
+test('Deve retornar um gol pelo Id', () => {
   return request(app).get(`${MAIN_ROUTE}/23000`)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -53,17 +53,17 @@ describe('Não deve inserir um gol...', () => {
 
   const newData = [
     { lineup_id: 20043, substitution_id: null, period_id: 21001, time: 29 },
-    { lineup_id: null, substitution_id: 22019, period_id: 21001, time: 43 },
+    { lineup_id: null, substitution_id: 22012, period_id: 21001, time: 43 },
   ];
 
-  test('sem o atributo period_id', () => testTemplate([...newData.slice(0, 1), { ...newData[1], period_id: null }], 'O atributo period_id é obrigatório'));
-  test('sem o atributo time', () => testTemplate([...newData.slice(0, 1), { ...newData[1], time: null }], 'O atributo time é obrigatório'));
   test('sem lineup_id ou substitution_id estarem preenchidos', () => testTemplate([...newData.slice(0, 1), { ...newData[1], substitution_id: null }], 'Apenas um desses atributos deve ser preenchido: lineup_id, substitution_id'));
   test('com lineup_id e substitution_id preenchidos', () => testTemplate([...newData.slice(0, 1), { ...newData[1], lineup_id: 20043 }], 'Apenas um desses atributos deve ser preenchido: lineup_id, substitution_id'));
-  test('cujo valor de lineup_id é inválido', () => testTemplate([...newData.slice(0, 1), { ...newData[1], lineup_id: 20044 }], 'O valor de lineup_id é inválido'));
-  test('cujo valor de substitution_id é inválido', () => testTemplate([...newData.slice(0, 1), { ...newData[1], substitution_id: 22020 }], 'O valor de substitution_id é inválido'));
-  test('cujo valor de period_id é inválido', () => testTemplate([...newData.slice(0, 1), { ...newData[1], period_id: 21002 }], 'O valor de period_id é inválido'));
-  test('cujo valor de time é inválido', () => testTemplate([...newData.slice(0, 1), { ...newData[1], time: -1 }], 'O valor de time é inválido'));
+  test('sem o atributo period_id', () => testTemplate([...newData.slice(0, 1), { ...newData[1], period_id: null }], 'O atributo period_id é obrigatório'));
+  test('sem o atributo time', () => testTemplate([...newData.slice(0, 1), { ...newData[1], time: null }], 'O atributo time é obrigatório'));
+  test('com o valor de lineup_id inválido', () => testTemplate([...newData.slice(0, 1), { ...newData[1], lineup_id: 20044 }], 'O valor de lineup_id é inválido'));
+  test('com o valor de substitution_id inválido', () => testTemplate([...newData.slice(0, 1), { ...newData[1], substitution_id: 22014 }], 'O valor de substitution_id é inválido'));
+  test('com o valor de period_id inválido', () => testTemplate([...newData.slice(0, 1), { ...newData[1], period_id: 21002 }], 'O valor de period_id é inválido'));
+  test('com o valor de time inválido', () => testTemplate([...newData.slice(0, 1), { ...newData[1], time: -1 }], 'O valor de time é inválido'));
   test('duplicado', () => testTemplate([...newData.slice(0, 1), { lineup_id: 20043, substitution_id: null, period_id: 21001, time: 12 }], 'Registro já cadastrado'));
 });
 
@@ -99,11 +99,11 @@ describe('Não deve alterar um adversário...', () => {
   };
 
   test('sem lineup_id ou substitution_id estarem preenchidos', () => testTemplate(23000, { lineup_id: null }, 'Apenas um desses atributos deve ser preenchido: lineup_id, substitution_id'));
-  test('com lineup_id e substitution_id preenchidos', () => testTemplate(23000, { substitution_id: 22019 }, 'Apenas um desses atributos deve ser preenchido: lineup_id, substitution_id'));
-  test('cujo valor de lineup_id é inválido', () => testTemplate(23000, { lineup_id: 20044 }, 'O valor de lineup_id é inválido'));
-  test('cujo valor de substitution_id é inválido', () => testTemplate(23000, { substitution_id: 22020 }, 'O valor de substitution_id é inválido'));
-  test('cujo valor de period_id é inválido', () => testTemplate(23000, { period_id: 21002 }, 'O valor de period_id é inválido'));
-  test('cujo valor de time é inválido', () => testTemplate(23000, { time: -1 }, 'O valor de time é inválido'));
+  test('com lineup_id e substitution_id preenchidos', () => testTemplate(23000, { substitution_id: 22013 }, 'Apenas um desses atributos deve ser preenchido: lineup_id, substitution_id'));
+  test('com o valor de lineup_id inválido', () => testTemplate(23000, { lineup_id: 20044 }, 'O valor de lineup_id é inválido'));
+  test('com o valor de substitution_id inválido', () => testTemplate(23000, { substitution_id: 22020 }, 'O valor de substitution_id é inválido'));
+  test('com o valor de period_id inválido', () => testTemplate(23000, { period_id: 21002 }, 'O valor de period_id é inválido'));
+  test('com o valor de time inválido', () => testTemplate(23000, { time: -1 }, 'O valor de time é inválido'));
   test('duplicado', () => testTemplate(23000, { lineup_id: 20043, substitution_id: null, period_id: 21001, time: 12 }, 'Registro já cadastrado'));
 });
 
@@ -125,8 +125,10 @@ describe('Deve remover um gol com sucesso', () => {
 });
 
 describe('Não deve remover um gol...', () => {
-  const testTemplate = (seedScript, id, errorMessage) => {
-    run(seedScript);
+  const testTemplate = (id, errorMessage, seedScript) => {
+    if (seedScript !== undefined) {
+      run(seedScript);
+    }
 
     return request(app).delete(`${MAIN_ROUTE}/${id}`)
       .then((res) => {
@@ -135,5 +137,5 @@ describe('Não deve remover um gol...', () => {
       });
   };
 
-  test('não cadastrado', () => testTemplate('08_goal_card', 23002, 'Registro não encontrado'));
+  test('não cadastrado', () => testTemplate(23002, 'Registro não encontrado'));
 });

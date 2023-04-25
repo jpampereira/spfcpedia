@@ -13,14 +13,10 @@ exports.seed = (knex) => {
     .then(() => knex('stadium').del())
     .then(() => knex('city').del())
     .then(() => knex('country').del())
-    .then(() => knex('referee').insert([
-      { id: 10000, name: 'Vinícius Gonçalves Dias Araújo' },
-      { id: 10001, name: 'Danilu Rikardu Simone Manos' },
-      { id: 10002, name: 'Robson Ferreira Oliveira' },
-      { id: 10003, name: 'Ilbert Estevam da Silva' },
-      { id: 10004, name: 'Flavio Rodrigues de Souza' },
-      { id: 10005, name: 'Marcelo Carvalho Van Gasse' },
-      { id: 10006, name: 'Diego Morelli de Oliveira' },
-      { id: 10007, name: 'Paulo Cesar Francisco' },
+    .then(() => knex('position').insert([
+      { id: 10000, symbol: 'G', name: 'Goalkepper' },
+      { id: 10001, symbol: 'D', name: 'Defense' },
+      { id: 10002, symbol: 'M', name: 'Midfielder' },
+      { id: 10003, symbol: 'F', name: 'Forward' },
     ]));
 };

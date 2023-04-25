@@ -6,10 +6,10 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/city';
 
 beforeAll(() => {
-  run('04_country_city_stadium');
+  run('06_city');
 });
 
-test('Deve listar todas as cidades', () => {
+test('Deve retornar todas as cidades', () => {
   return request(app).get(MAIN_ROUTE)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -17,7 +17,7 @@ test('Deve listar todas as cidades', () => {
     });
 });
 
-test('Deve retornar uma cidade por Id', () => {
+test('Deve retornar uma cidade pelo Id', () => {
   return request(app).get(`${MAIN_ROUTE}/11000`)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -59,7 +59,7 @@ describe('Não deve inserir uma cidade...', () => {
 
   test('sem o atributo name', () => testTemplate([...newData, { country_id: 10003 }], 'O atributo name é obrigatório'));
   test('sem o atributo country_id', () => testTemplate([...newData, { name: 'Potosí' }], 'O atributo country_id é obrigatório'));
-  test('cujo valor de country_id é inválido', () => testTemplate([...newData, { name: 'Potosí', country_id: 10006 }], 'O valor de country_id é inválido'));
+  test('com o valor de country_id inválido', () => testTemplate([...newData, { name: 'Potosí', country_id: 10006 }], 'O valor de country_id é inválido'));
   test('duplicada', () => testTemplate([...newData, { name: 'São Paulo', country_id: 10000 }], 'Registro já cadastrado'));
 });
 
@@ -91,8 +91,8 @@ describe('Não deve atualizar uma cidade...', () => {
       });
   };
 
-  test('cujo valor de name é inválido', () => testTemplate(11000, { name: '' }, 'O valor de name é inválido'));
-  test('cujo valor de country_id é inválido', () => testTemplate(11000, { country_id: 10006 }, 'O valor de country_id é inválido'));
+  test('com o valor de name inválido', () => testTemplate(11000, { name: '' }, 'O valor de name é inválido'));
+  test('com o valor de country_id inválido', () => testTemplate(11000, { country_id: 10006 }, 'O valor de country_id é inválido'));
   test('duplicada', () => testTemplate(11000, { name: 'Curitiba' }, 'Registro já cadastrado'));
 });
 
@@ -114,7 +114,11 @@ describe('Deve remover uma cidade com sucesso', () => {
 });
 
 describe('Não deve remover uma cidade...', () => {
-  const testTemplate = (id, errorMessage) => {
+  const testTemplate = (id, errorMessage, seedScript) => {
+    if (seedScript !== undefined) {
+      run(seedScript);
+    }
+
     return request(app).delete(`${MAIN_ROUTE}/${id}`)
       .then((res) => {
         expect(res.status).toBe(400);
@@ -123,5 +127,5 @@ describe('Não deve remover uma cidade...', () => {
   };
 
   test('não cadastrada', () => testTemplate(11009, 'Registro não encontrado'));
-  test('que possui estádios associados', () => testTemplate(11000, 'Existem dados em stadium associados a esse registro'));
+  test('com estádios associados', () => testTemplate(11000, 'Existem dados em stadium associados a esse registro', '07_stadium'));
 });

@@ -9,7 +9,7 @@ beforeAll(() => {
   run('03_referee');
 });
 
-test('Deve listar todos os árbitros', () => {
+test('Deve retornar todos os árbitros', () => {
   return request(app).get(MAIN_ROUTE)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -89,7 +89,7 @@ describe('Não deve atualizar um árbitro...', () => {
       });
   };
 
-  test('cujo valor de name é inválido', () => testTemplate(10007, { name: '' }, 'O valor de name é inválido'));
+  test('com o valor de name inválido', () => testTemplate(10007, { name: '' }, 'O valor de name é inválido'));
   test('duplicado', () => testTemplate(10007, { name: 'Flavio Rodrigues de Souza' }, 'Já existe um registro com esse name'));
 });
 
@@ -111,8 +111,10 @@ describe('Deve remover um árbitro com sucesso', () => {
 });
 
 describe('Não deve remover um árbitro...', () => {
-  const testTemplate = (seedScript, id, errorMessage) => {
-    run(seedScript);
+  const testTemplate = (id, errorMessage, seedScript) => {
+    if (seedScript !== undefined) {
+      run(seedScript);
+    }
 
     return request(app).delete(`${MAIN_ROUTE}/${id}`)
       .then((res) => {
@@ -121,6 +123,6 @@ describe('Não deve remover um árbitro...', () => {
       });
   };
 
-  test('não cadastrado', () => testTemplate('03_referee', 10008, 'Registro não encontrado'));
-  test('com partidas associadas', () => testTemplate('06_match_position_lineup', 14000, 'Existem dados em match associados a esse registro'));
+  test('não cadastrado', () => testTemplate(10008, 'Registro não encontrado'));
+  test('com partidas associadas', () => testTemplate(14000, 'Existem dados em match associados a esse registro', '08_match'));
 });

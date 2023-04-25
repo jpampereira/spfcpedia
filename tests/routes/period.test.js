@@ -6,7 +6,7 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/period';
 
 beforeAll(() => {
-  run('07_period_substitution');
+  run('11_period');
 });
 
 test('Deve listar todos os períodos', () => {
@@ -18,7 +18,7 @@ test('Deve listar todos os períodos', () => {
 });
 
 test('Deve retornar um período pelo Id', () => {
-  return request(app).get(`${MAIN_ROUTE}/21000`)
+  return request(app).get(`${MAIN_ROUTE}/10000`)
     .then((res) => {
       expect(res.status).toBe(200);
       expect(res.body.symbol).toBe('FT');
@@ -29,8 +29,8 @@ test('Deve retornar um período pelo Id', () => {
 test('Deve inserir novos períodos com sucesso', () => {
   return request(app).post(MAIN_ROUTE)
     .send([
-      { symbol: 'FEXT', name: 'First Extra Time' },
-      { symbol: 'SEXT', name: 'Second Extra Time' },
+      { symbol: 'PEN', name: 'Penalty' },
+      { symbol: 'INT', name: 'Interval' },
     ])
     .then((res) => {
       expect(res.status).toBe(201);
@@ -50,31 +50,31 @@ describe('Não deve inserir um período...', () => {
   };
 
   const newData = [
-    { symbol: 'INT', name: 'Interval' },
-    { symbol: 'PEN', name: 'Penalty' },
+    { symbol: 'P1', name: 'Period 1' },
+    { symbol: 'P2', name: 'Period 2' },
   ];
 
   test('sem o atributo symbol', () => testTemplate([...newData, { name: 'New Time' }], 'O atributo symbol é obrigatório'));
   test('sem o atributo name', () => testTemplate([...newData, { symbol: 'NT' }], 'O atributo name é obrigatório'));
   test('com símbolo duplicado', () => testTemplate([...newData, { symbol: 'FT', name: 'New Time' }], 'Já existe um registro com esse symbol'));
-  test('com nome duplicado', () => testTemplate([...newData, { symbol: 'TT', name: 'Third Time' }], 'Já existe um registro com esse name'));
+  test('com nome duplicado', () => testTemplate([...newData, { symbol: 'NT', name: 'Third Time' }], 'Já existe um registro com esse name'));
 });
 
 describe('Deve atualizar um período com sucesso', () => {
   test('Atualizando o período', () => {
-    return request(app).put(`${MAIN_ROUTE}/21001`)
-      .send({ name: 'Second Time' })
+    return request(app).put(`${MAIN_ROUTE}/10002`)
+      .send({ name: 'First Extra Time' })
       .then((res) => {
         expect(res.status).toBe(204);
       });
   });
 
   test('Atestando que a atualização foi realizada', () => {
-    return request(app).get(`${MAIN_ROUTE}/21001`)
+    return request(app).get(`${MAIN_ROUTE}/10002`)
       .then((res) => {
         expect(res.status).toBe(200);
-        expect(res.body.symbol).toBe('ST');
-        expect(res.body.name).toBe('Second Time');
+        expect(res.body.symbol).toBe('FEXT');
+        expect(res.body.name).toBe('First Extra Time');
       });
   });
 });
@@ -89,22 +89,22 @@ describe('Não deve atualizar um período...', () => {
       });
   };
 
-  test('cujo valor de symbol é inválido', () => testTemplate(21000, { symbol: '' }, 'O valor de symbol é inválido'));
-  test('cujo valor de name é inválido', () => testTemplate(21000, { name: '' }, 'O valor de name é inválido'));
-  test('para um símbolo já cadastrado', () => testTemplate(21000, { symbol: 'ST' }, 'Já existe um registro com esse symbol'));
-  test('para um nome já cadastrado', () => testTemplate(21000, { name: 'Second Time' }, 'Já existe um registro com esse name'));
+  test('com o valor de symbol é inválido', () => testTemplate(10000, { symbol: '' }, 'O valor de symbol é inválido'));
+  test('com o valor de name é inválido', () => testTemplate(10000, { name: '' }, 'O valor de name é inválido'));
+  test('com símbolo duplicado', () => testTemplate(10000, { symbol: 'ST' }, 'Já existe um registro com esse symbol'));
+  test('com nome duplicado', () => testTemplate(10000, { name: 'Second Time' }, 'Já existe um registro com esse name'));
 });
 
 describe('Deve remover um período com sucesso', () => {
   test('Removendo o período', () => {
-    return request(app).delete(`${MAIN_ROUTE}/21002`)
+    return request(app).delete(`${MAIN_ROUTE}/10003`)
       .then((res) => {
         expect(res.status).toBe(204);
       });
   });
 
   test('Atestando que a remoção foi realizada', () => {
-    return request(app).get(`${MAIN_ROUTE}/21002`)
+    return request(app).get(`${MAIN_ROUTE}/10003`)
       .then((res) => {
         expect(res.status).toBe(200);
         expect(res.body).toStrictEqual({});
@@ -113,7 +113,11 @@ describe('Deve remover um período com sucesso', () => {
 });
 
 describe('Não deve remover um período...', () => {
-  const testTemplate = (id, errorMessage) => {
+  const testTemplate = (id, errorMessage, seedScript) => {
+    if (seedScript !== undefined) {
+      run(seedScript);
+    }
+
     return request(app).delete(`${MAIN_ROUTE}/${id}`)
       .then((res) => {
         expect(res.status).toBe(400);
@@ -121,6 +125,7 @@ describe('Não deve remover um período...', () => {
       });
   };
 
-  test('não cadastrado', () => testTemplate(21003, 'Registro não encontrado'));
-  test('com substituições associadas', () => testTemplate(21001, 'Existem dados em substitution associados a esse registro'));
+  test('não cadastrado', () => testTemplate(10004, 'Registro não encontrado'));
+  test('com substituições associadas', () => testTemplate(21001, 'Existem dados em substitution associados a esse registro', '13_substitution'));
+  test('com gols associados', () => testTemplate(21000, 'Existem dados em goal associados a esse registro', '14_goal'));
 });

@@ -6,10 +6,10 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/stage';
 
 beforeAll(() => {
-  run('01_tournament_stage');
+  run('02_stage');
 });
 
-test('Deve listar todas as fases', () => {
+test('Deve retornar todas as fases', () => {
   return request(app).get(MAIN_ROUTE)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -17,7 +17,7 @@ test('Deve listar todas as fases', () => {
     });
 });
 
-test('Deve retornar uma fase por Id', () => {
+test('Deve retornar uma fase pelo Id', () => {
   return request(app).get(`${MAIN_ROUTE}/11000`)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -58,7 +58,7 @@ describe('Não deve inserir uma fase...', () => {
 
   test('sem o atributo name', () => testTemplate([...newData, { tournament_id: 10003 }], 'O atributo name é obrigatório'));
   test('sem o atributo tournament_id', () => testTemplate([...newData, { name: 'Final' }], 'O atributo tournament_id é obrigatório'));
-  test('cujo valor de tournament_id é inválido', () => testTemplate([...newData, { name: 'Final', tournament_id: 10004 }], 'O valor de tournament_id é inválido'));
+  test('com o valor de tournament_id inválido', () => testTemplate([...newData, { name: 'Final', tournament_id: 10004 }], 'O valor de tournament_id é inválido'));
   test('duplicada', () => testTemplate([...newData, { name: 'Playoffs de Oitavas de Final', tournament_id: 10003 }], 'Registro já cadastrado'));
 });
 
@@ -90,8 +90,8 @@ describe('Não deve atualizar a fase...', () => {
       });
   };
 
-  test('cujo valor de name é inválido', () => testTemplate(11011, { name: '' }, 'O valor de name é inválido'));
-  test('cujo valor de tournament_id é inválido', () => testTemplate(11011, { tournament_id: 10004 }, 'O valor de tournament_id é inválido'));
+  test('com o valor de name inválido', () => testTemplate(11011, { name: '' }, 'O valor de name é inválido'));
+  test('com o valor de tournament_id inválido', () => testTemplate(11011, { tournament_id: 10004 }, 'O valor de tournament_id é inválido'));
   test('duplicada', () => testTemplate(11011, { name: 'Semi Final' }, 'Registro já cadastrado'));
 });
 
@@ -113,8 +113,10 @@ describe('Deve remover uma fase com sucesso', () => {
 });
 
 describe('Não deve remover uma fase...', () => {
-  const testTemplate = (seedScript, id, errorMessage) => {
-    run(seedScript);
+  const testTemplate = (id, errorMessage, seedScript) => {
+    if (seedScript !== undefined) {
+      run(seedScript);
+    }
 
     return request(app).delete(`${MAIN_ROUTE}/${id}`)
       .then((res) => {
@@ -123,6 +125,6 @@ describe('Não deve remover uma fase...', () => {
       });
   };
 
-  test('não cadastrado', () => testTemplate('04_country_city_stadium', 11012, 'Registro não encontrado'));
-  test('com partidas associadas', () => testTemplate('06_match_position_lineup', 16000, 'Existem dados em match associados a esse registro'));
+  test('não cadastrado', () => testTemplate(11012, 'Registro não encontrado'));
+  test('com partidas associadas', () => testTemplate(16000, 'Existem dados em match associados a esse registro', '08_match'));
 });

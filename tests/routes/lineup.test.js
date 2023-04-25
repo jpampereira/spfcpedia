@@ -6,7 +6,7 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/lineup';
 
 beforeAll(() => {
-  run('06_match_position_lineup');
+  run('12_lineup');
 });
 
 test('Deve listar todas as escalações', () => {
@@ -17,7 +17,7 @@ test('Deve listar todas as escalações', () => {
     });
 });
 
-test('Deve retornar um escalado de uma partida', () => {
+test('Deve retornar um escalado pelo Id', () => {
   return request(app).get(`${MAIN_ROUTE}/20000`)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -27,7 +27,7 @@ test('Deve retornar um escalado de uma partida', () => {
     });
 });
 
-test('Deve listar a escalação de uma partida', () => {
+test('Deve retornar a escalação de uma partida', () => {
   return request(app).get(`${MAIN_ROUTE}/byMatch/17000`)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -85,10 +85,10 @@ describe('Não deve inserir uma escalação...', () => {
   test('sem o atributo player_id', () => testTemplate([...newData.slice(0, 10), { ...newData[10], player_id: null }], 'O atributo player_id é obrigatório'));
   test('sem o atributo position_id', () => testTemplate([...newData.slice(0, 10), { ...newData[10], position_id: null }], 'O atributo position_id é obrigatório'));
   test('sem o atributo shirt_number', () => testTemplate([...newData.slice(0, 10), { ...newData[10], shirt_number: null }], 'O atributo shirt_number é obrigatório'));
-  test('cujo valor de match_id é inválido', () => testTemplate([...newData.slice(0, 10), { ...newData[10], match_id: 17004 }], 'O valor de match_id é inválido'));
-  test('cujo valor de player_id é inválido', () => testTemplate([...newData.slice(0, 10), { ...newData[10], player_id: 19022 }], 'O valor de player_id é inválido'));
-  test('cujo valor de position_id é inválido', () => testTemplate([...newData.slice(0, 10), { ...newData[10], position_id: 18005 }], 'O valor de position_id é inválido'));
-  test('cujo valor de shirt_number é inválido', () => testTemplate([...newData.slice(0, 10), { ...newData[10], shirt_number: -1 }], 'O valor de shirt_number é inválido'));
+  test('com o valor de match_id inválido', () => testTemplate([...newData.slice(0, 10), { ...newData[10], match_id: 17004 }], 'O valor de match_id é inválido'));
+  test('com o valor de player_id inválido', () => testTemplate([...newData.slice(0, 10), { ...newData[10], player_id: 19022 }], 'O valor de player_id é inválido'));
+  test('com o valor de position_id inválido', () => testTemplate([...newData.slice(0, 10), { ...newData[10], position_id: 18005 }], 'O valor de position_id é inválido'));
+  test('com o valor de shirt_number inválido', () => testTemplate([...newData.slice(0, 10), { ...newData[10], shirt_number: -1 }], 'O valor de shirt_number é inválido'));
   test('com menos de 11 jogadores', () => testTemplate(newData.slice(0, 10), 'O número de itens em lineup é inválido'));
   test('com mais de 11 jogadores', () => testTemplate([...newData, { match_id: 17002, player_id: 19012, position_id: 18002, shirt_number: 14 }], 'O número de itens em lineup é inválido'));
   test('com jogadores duplicados', () => testTemplate([...newData.slice(0, 10), { ...newData[10], player_id: 19002 }], 'Todos os player_id de um mesmo lineup devem possuir valores diferentes'));
@@ -139,9 +139,9 @@ describe('Não deve alterar uma escalação...', () => {
       });
   };
 
-  test('cujo valor de player_id é inválido', () => testTemplate(20000, { player_id: 19022 }, 'O valor de player_id é inválido'));
-  test('cujo valor de position_id é inválido', () => testTemplate(20000, { position_id: 18005 }, 'O valor de position_id é inválido'));
-  test('cujo valor de shirt_number é inválido', () => testTemplate(20000, { shirt_number: -1 }, 'O valor de shirt_number é inválido'));
+  test('com o valor de player_id inválido', () => testTemplate(20000, { player_id: 19022 }, 'O valor de player_id é inválido'));
+  test('com o valor de position_id inválido', () => testTemplate(20000, { position_id: 18005 }, 'O valor de position_id é inválido'));
+  test('com o valor de shirt_number inválido', () => testTemplate(20000, { shirt_number: -1 }, 'O valor de shirt_number é inválido'));
 });
 
 describe('Deve remover uma escalação de uma partida com sucesso', () => {
@@ -162,8 +162,10 @@ describe('Deve remover uma escalação de uma partida com sucesso', () => {
 });
 
 describe('Não deve remover uma escalação...', () => {
-  const testTemplate = (seedScript, id, errorMessage) => {
-    run(seedScript);
+  const testTemplate = (id, errorMessage, seedScript) => {
+    if (seedScript !== undefined) {
+      run(seedScript);
+    }
 
     return request(app).delete(`${MAIN_ROUTE}/byMatch/${id}`)
       .then((res) => {
@@ -172,6 +174,7 @@ describe('Não deve remover uma escalação...', () => {
       });
   };
 
-  test('não cadastrada', () => testTemplate('06_match_position_lineup', 17004, 'Registro não encontrado'));
-  test('com substituições associadas', () => testTemplate('07_period_substitution', 17000, 'Existem dados em substitution associados a esse registro'));
+  test('não cadastrada', () => testTemplate(17002, 'Registro não encontrado'));
+  test('com substituições associadas', () => testTemplate(17000, 'Existem dados em substitution associados a esse registro', '13_substitution'));
+  test('com gols associados', () => testTemplate(17001, 'Existem dados em goal associados a esse registro', '14_goal'));
 });

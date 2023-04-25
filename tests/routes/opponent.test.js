@@ -6,7 +6,7 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/opponent';
 
 beforeAll(() => {
-  run('02_opponent');
+  run('04_opponent');
 });
 
 test('Deve retornar todos os adversários', () => {
@@ -87,7 +87,7 @@ describe('Não deve atualizar um adversário...', () => {
       });
   };
 
-  test('cujo valor de name é inválido', () => testTemplate(10002, { name: '' }, 'O valor de name é inválido'));
+  test('com o valor de name inválido', () => testTemplate(10002, { name: '' }, 'O valor de name é inválido'));
   test('duplicado', () => testTemplate(10002, { name: 'Sport Club Corinthians Paulista' }, 'Já existe um registro com esse name'));
 });
 
@@ -109,8 +109,10 @@ describe('Deve remover um adversário com sucesso...', () => {
 });
 
 describe('Não deve remover um adversário...', () => {
-  const testTemplate = (seedScript, id, errorMessage) => {
-    run(seedScript);
+  const testTemplate = (id, errorMessage, seedScript) => {
+    if (seedScript !== undefined) {
+      run(seedScript);
+    }
 
     return request(app).delete(`${MAIN_ROUTE}/${id}`)
       .then((res) => {
@@ -119,6 +121,6 @@ describe('Não deve remover um adversário...', () => {
       });
   };
 
-  test('não cadastrado', () => testTemplate('04_country_city_stadium', 10005, 'Registro não encontrado'));
-  test('que possui partidas associadas', () => testTemplate('06_match_position_lineup', 13000, 'Existem dados em match associados a esse registro'));
+  test('não cadastrado', () => testTemplate(10005, 'Registro não encontrado'));
+  test('com partidas associadas', () => testTemplate(13000, 'Existem dados em match associados a esse registro', '08_match'));
 });

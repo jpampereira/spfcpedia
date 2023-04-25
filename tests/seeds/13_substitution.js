@@ -1,5 +1,6 @@
 exports.seed = (knex) => {
-  return knex('goal').del()
+  return knex('card').del()
+    .then(() => knex('goal').del())
     .then(() => knex('substitution').del())
     .then(() => knex('period').del())
     .then(() => knex('lineup').del())
@@ -144,7 +145,7 @@ exports.seed = (knex) => {
       { id: 18001, symbol: 'D', name: 'Defense' },
       { id: 18002, symbol: 'M', name: 'Midfielder' },
       { id: 18003, symbol: 'F', name: 'Forward' },
-      { id: 18004, symbol: 'MN', name: 'Manager' },
+      { id: 18004, symbol: 'LW', name: 'Left Wing' },
     ]))
     .then(() => knex('player').insert([
       {
@@ -353,8 +354,7 @@ exports.seed = (knex) => {
     ]))
     .then(() => knex('period').insert([
       { id: 21000, symbol: 'FT', name: 'First Time' },
-      { id: 21001, symbol: 'ST', name: 'Third Time' },
-      { id: 21002, symbol: 'ET', name: 'Eight Time' },
+      { id: 21001, symbol: 'ST', name: 'Second Time' },
     ]))
     .then(() => knex('substitution').insert([
       { id: 22000, match_id: 17000, player_id: 19011, position_id: 18001, shirt_number: 2, lineup_id: 20001, period_id: 21001, time: 15 },

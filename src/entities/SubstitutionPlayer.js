@@ -68,7 +68,7 @@ module.exports = class LineupPlayer extends IndividualEntity {
     },
   };
 
-  dependentEntities = [];
+  dependentEntities = ['goal'];
 
   constructor(obj) {
     super(obj);

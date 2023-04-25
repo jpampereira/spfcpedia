@@ -89,7 +89,7 @@ module.exports = class Match extends IndividualEntity {
       value: null,
       required: true,
       unique: false,
-      validations: [],
+      validations: ['exists'],
       relatedEntity: null,
       xor: false,
     },

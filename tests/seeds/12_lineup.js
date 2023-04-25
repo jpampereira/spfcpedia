@@ -1,7 +1,7 @@
 exports.seed = (knex) => {
-  return knex('goal').del()
+  return knex('card').del()
+    .then(() => knex('goal').del())
     .then(() => knex('substitution').del())
-    .then(() => knex('period').del())
     .then(() => knex('lineup').del())
     .then(() => knex('position').del())
     .then(() => knex('player').del())
@@ -315,69 +315,6 @@ exports.seed = (knex) => {
       { id: 20007, match_id: 17000, player_id: 19007, position_id: 18002, shirt_number: 11 },
       { id: 20008, match_id: 17000, player_id: 19008, position_id: 18002, shirt_number: 10 },
       { id: 20009, match_id: 17000, player_id: 19009, position_id: 18003, shirt_number: 12 },
-      { id: 20010, match_id: 17000, player_id: 19010, position_id: 18003, shirt_number: 9 },
-      { id: 20011, match_id: 17001, player_id: 19000, position_id: 18000, shirt_number: 23 },
-      { id: 20012, match_id: 17001, player_id: 19011, position_id: 18001, shirt_number: 2 },
-      { id: 20013, match_id: 17001, player_id: 19002, position_id: 18001, shirt_number: 3 },
-      { id: 20014, match_id: 17001, player_id: 19016, position_id: 18001, shirt_number: 28 },
-      { id: 20015, match_id: 17001, player_id: 19004, position_id: 18001, shirt_number: 6 },
-      { id: 20016, match_id: 17001, player_id: 19005, position_id: 18002, shirt_number: 29 },
-      { id: 20017, match_id: 17001, player_id: 19006, position_id: 18003, shirt_number: 27 },
-      { id: 20018, match_id: 17001, player_id: 19018, position_id: 18002, shirt_number: 21 },
-      { id: 20019, match_id: 17001, player_id: 19008, position_id: 18002, shirt_number: 10 },
-      { id: 20020, match_id: 17001, player_id: 19017, position_id: 18003, shirt_number: 22 },
-      { id: 20021, match_id: 17001, player_id: 19010, position_id: 18003, shirt_number: 9 },
-      { id: 20022, match_id: 17002, player_id: 19000, position_id: 18000, shirt_number: 23 },
-      { id: 20023, match_id: 17002, player_id: 19001, position_id: 18001, shirt_number: 13 },
-      { id: 20024, match_id: 17002, player_id: 19002, position_id: 18001, shirt_number: 5 },
-      { id: 20025, match_id: 17002, player_id: 19003, position_id: 18001, shirt_number: 3 },
-      { id: 20026, match_id: 17002, player_id: 19004, position_id: 18001, shirt_number: 6 },
-      { id: 20027, match_id: 17002, player_id: 19018, position_id: 18002, shirt_number: 21 },
-      { id: 20028, match_id: 17002, player_id: 19006, position_id: 18003, shirt_number: 27 },
-      { id: 20029, match_id: 17002, player_id: 19008, position_id: 18002, shirt_number: 10 },
-      { id: 20030, match_id: 17002, player_id: 19007, position_id: 18002, shirt_number: 11 },
-      { id: 20031, match_id: 17002, player_id: 19017, position_id: 18003, shirt_number: 22 },
-      { id: 20032, match_id: 17002, player_id: 19010, position_id: 18003, shirt_number: 9 },
-      { id: 20033, match_id: 17003, player_id: 19000, position_id: 18000, shirt_number: 23 },
-      { id: 20034, match_id: 17003, player_id: 19020, position_id: 18001, shirt_number: 17 },
-      { id: 20035, match_id: 17003, player_id: 19016, position_id: 18001, shirt_number: 28 },
-      { id: 20036, match_id: 17003, player_id: 19021, position_id: 18001, shirt_number: 35 },
-      { id: 20037, match_id: 17003, player_id: 19004, position_id: 18001, shirt_number: 6 },
-      { id: 20038, match_id: 17003, player_id: 19005, position_id: 18002, shirt_number: 29 },
-      { id: 20039, match_id: 17003, player_id: 19007, position_id: 18002, shirt_number: 11 },
-      { id: 20040, match_id: 17003, player_id: 19006, position_id: 18003, shirt_number: 27 },
-      { id: 20041, match_id: 17003, player_id: 19008, position_id: 18002, shirt_number: 10 },
-      { id: 20042, match_id: 17003, player_id: 19017, position_id: 18003, shirt_number: 22 },
-      { id: 20043, match_id: 17003, player_id: 19012, position_id: 18003, shirt_number: 14 },
-    ]))
-    .then(() => knex('period').insert([
-      { id: 21000, symbol: 'FT', name: 'First Time' },
-      { id: 21001, symbol: 'ST', name: 'Second Time' },
-    ]))
-    .then(() => knex('substitution').insert([
-      { id: 22000, match_id: 17000, player_id: 19011, position_id: 18001, shirt_number: 2, lineup_id: 20001, period_id: 21001, time: 15 },
-      { id: 22001, match_id: 17000, player_id: 19013, position_id: 18001, shirt_number: 19, lineup_id: 20004, period_id: 21001, time: 44 },
-      { id: 22002, match_id: 17000, player_id: 19012, position_id: 18002, shirt_number: 14, lineup_id: 20007, period_id: 21001, time: 35 },
-      { id: 22003, match_id: 17000, player_id: 19015, position_id: 18002, shirt_number: 32, lineup_id: 20008, period_id: 21001, time: 35 },
-      { id: 22004, match_id: 17000, player_id: 19014, position_id: 18003, shirt_number: 31, lineup_id: 20009, period_id: 21001, time: 15 },
-      { id: 22005, match_id: 17001, player_id: 19001, position_id: 18001, shirt_number: 13, lineup_id: 20012, period_id: 21001, time: 14 },
-      { id: 22006, match_id: 17001, player_id: 19019, position_id: 18002, shirt_number: 8, lineup_id: 20018, period_id: 21001, time: 31 },
-      { id: 22007, match_id: 17001, player_id: 19007, position_id: 18002, shirt_number: 11, lineup_id: 20019, period_id: 21001, time: 23 },
-      { id: 22008, match_id: 17001, player_id: 19012, position_id: 18003, shirt_number: 14, lineup_id: 20017, period_id: 21001, time: 31 },
-      { id: 22009, match_id: 17001, player_id: 19009, position_id: 18003, shirt_number: 12, lineup_id: 20020, period_id: 21001, time: 23 },
-      { id: 22010, match_id: 17002, player_id: 19020, position_id: 18001, shirt_number: 17, lineup_id: 20023, period_id: 21001, time: 21 },
-      { id: 22011, match_id: 17002, player_id: 19021, position_id: 18001, shirt_number: 35, lineup_id: 20025, period_id: 21001, time: 37 },
-      { id: 22012, match_id: 17002, player_id: 19019, position_id: 18002, shirt_number: 8, lineup_id: 20027, period_id: 21001, time: 45 },
-      { id: 22013, match_id: 17002, player_id: 19009, position_id: 18003, shirt_number: 12, lineup_id: 20028, period_id: 21001, time: 37 },
-      { id: 22014, match_id: 17002, player_id: 19015, position_id: 18003, shirt_number: 32, lineup_id: 20031, period_id: 21001, time: 45 },
-      { id: 22015, match_id: 17003, player_id: 19013, position_id: 18001, shirt_number: 19, lineup_id: 20037, period_id: 21001, time: 34 },
-      { id: 22016, match_id: 17003, player_id: 19015, position_id: 18003, shirt_number: 32, lineup_id: 20039, period_id: 21001, time: 34 },
-      { id: 22017, match_id: 17003, player_id: 19014, position_id: 18003, shirt_number: 31, lineup_id: 20041, period_id: 21001, time: 34 },
-      { id: 22018, match_id: 17003, player_id: 19019, position_id: 18002, shirt_number: 8, lineup_id: 20040, period_id: 21001, time: 23 },
-      { id: 22019, match_id: 17003, player_id: 19009, position_id: 18003, shirt_number: 12, lineup_id: 20042, period_id: 21001, time: 23 },
-    ]))
-    .then(() => knex('goal').insert([
-      { id: 23000, lineup_id: 20020, substitution_id: null, period_id: 21001, time: 4 },
-      { id: 23001, lineup_id: 20012, substitution_id: null, period_id: 21000, time: 12 },
+      { id: 20010, match_id: 17000, player_id: 19012, position_id: 18003, shirt_number: 14 },
     ]));
 };

@@ -6,10 +6,10 @@ const { run } = require('../seed');
 const MAIN_ROUTE = '/stadium';
 
 beforeAll(() => {
-  run('04_country_city_stadium');
+  run('07_stadium');
 });
 
-test('Deve listar todos os estádios', () => {
+test('Deve retornar todos os estádios', () => {
   return request(app).get(MAIN_ROUTE)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -17,7 +17,7 @@ test('Deve listar todos os estádios', () => {
     });
 });
 
-test('Deve retornar um estádio por Id', () => {
+test('Deve retornar um estádio pelo Id', () => {
   return request(app).get(`${MAIN_ROUTE}/12000`)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -60,7 +60,7 @@ describe('Não deve inserir um estádio...', () => {
 
   test('sem o atributo name', () => testTemplate([...newData, { city_id: 11002 }], 'O atributo name é obrigatório'));
   test('sem o atributo city_id', () => testTemplate([...newData, { name: 'Estádio Durival Britto e Silva', nickname: 'Vila Capanema' }], 'O atributo city_id é obrigatório'));
-  test('cujo valor de city_id é inválido', () => testTemplate([...newData, { name: 'Estádio Durival Britto e Silva', nickname: 'Vila Capanema', city_id: 11011 }], 'O valor de city_id é inválido'));
+  test('com o valor de city_id inválido', () => testTemplate([...newData, { name: 'Estádio Durival Britto e Silva', nickname: 'Vila Capanema', city_id: 11011 }], 'O valor de city_id é inválido'));
   test('com nome duplicado', () => testTemplate([...newData, { name: 'Estádio Cícero Pompeu de Toledo', city_id: 11000 }], 'Já existe um registro com esse name'));
   test('com apelido duplicado', () => testTemplate([...newData, { name: 'Cícero Pompeu de Toledo', nickname: 'Morumbi', city_id: 11000 }], 'Já existe um registro com esse nickname'));
 });
@@ -93,10 +93,10 @@ describe('Não deve atualizar um estádio...', () => {
       });
   };
 
-  test('cujo valor de name é inválido', () => testTemplate(12002, { name: '' }, 'O valor de name é inválido'));
-  test('cujo valor de city_id é inválido', () => testTemplate(12000, { city_id: 11012 }, 'O valor de city_id é inválido'));
-  test('para um nome já cadastrado', () => testTemplate(12001, { name: 'Neo Química Arena' }, 'Já existe um registro com esse name'));
-  test('para um apelido já cadastrado', () => testTemplate(12002, { nickname: 'Morumbi' }, 'Já existe um registro com esse nickname'));
+  test('com o valor de name inválido', () => testTemplate(12002, { name: '' }, 'O valor de name é inválido'));
+  test('com o valor de city_id inválido', () => testTemplate(12000, { city_id: 11012 }, 'O valor de city_id é inválido'));
+  test('com nome duplicado', () => testTemplate(12001, { name: 'Neo Química Arena' }, 'Já existe um registro com esse name'));
+  test('com apelido duplicado', () => testTemplate(12002, { nickname: 'Morumbi' }, 'Já existe um registro com esse nickname'));
 });
 
 describe('Deve remover um estádio com sucesso', () => {
@@ -117,8 +117,10 @@ describe('Deve remover um estádio com sucesso', () => {
 });
 
 describe('Não deve remover um estádio...', () => {
-  const testTemplate = (seedScript, id, errorMessage) => {
-    run(seedScript);
+  const testTemplate = (id, errorMessage, seedScript) => {
+    if (seedScript !== undefined) {
+      run(seedScript);
+    }
 
     return request(app).delete(`${MAIN_ROUTE}/${id}`)
       .then((res) => {
@@ -127,6 +129,6 @@ describe('Não deve remover um estádio...', () => {
       });
   };
 
-  test('não cadastrado', () => testTemplate('04_country_city_stadium', 12010, 'Registro não encontrado'));
-  test('com partidas associadas', () => testTemplate('06_match_position_lineup', 12000, 'Existem dados em match associados a esse registro'));
+  test('não cadastrado', () => testTemplate(12010, 'Registro não encontrado'));
+  test('com partidas associadas', () => testTemplate(12000, 'Existem dados em match associados a esse registro', '08_match'));
 });

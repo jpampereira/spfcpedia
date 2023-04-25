@@ -1,5 +1,6 @@
 exports.seed = (knex) => {
-  return knex('goal').del()
+  return knex('card').del()
+    .then(() => knex('goal').del())
     .then(() => knex('substitution').del())
     .then(() => knex('lineup').del())
     .then(() => knex('position').del())

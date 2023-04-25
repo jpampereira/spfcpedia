@@ -1,5 +1,6 @@
 exports.seed = (knex) => {
-  return knex('goal').del()
+  return knex('card').del()
+    .then(() => knex('goal').del())
     .then(() => knex('substitution').del())
     .then(() => knex('lineup').del())
     .then(() => knex('position').del())
@@ -13,7 +14,7 @@ exports.seed = (knex) => {
     .then(() => knex('city').del())
     .then(() => knex('country').del())
     .then(() => knex('tournament').insert([
-      { id: 10000, name: 'Paulistinha' },
+      { id: 10000, name: 'Campeonato Paulista' },
       { id: 10001, name: 'Campeonato Brasileiro' },
       { id: 10002, name: 'Copa do Brasil' },
       { id: 10003, name: 'Copa Sul-Americana' },

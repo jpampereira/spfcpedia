@@ -23,7 +23,7 @@ module.exports = class Period extends IndividualEntity {
     },
   };
 
-  dependentEntities = ['substitution'];
+  dependentEntities = ['substitution', 'goal'];
 
   constructor(obj) {
     super(obj);
