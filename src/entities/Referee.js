@@ -23,8 +23,8 @@ module.exports = class Referee extends IndividualEntity {
     this.setAttributes(obj);
   }
 
-  async dependentEntitiesDoesntHaveDataOrError(refereeId) {
-    super.dependentEntitiesDoesntHaveDataOrError();
+  async dataIsNotForeignKeyOrError(refereeId) {
+    super.dataIsNotForeignKeyOrError();
 
     const errorMsg = exits.DATA_DEPENDENCY_ERROR.replace(/<ENTITY_NAME>/, 'match');
 

@@ -11,11 +11,11 @@ module.exports = (app) => {
     for (const opponent of opponents) {
       const newOpponent = new Opponent(opponent);
 
-      await newOpponent.requiredAttributesAreFilledOrError();
-      await newOpponent.attributesValueAreValidOrError();
-      await newOpponent.uniqueConstraintInviolatedOrError();
-      await newOpponent.onlyOneXorAttributeIsFilledOrError();
-      await newOpponent.instanceDoesntExistInDbOrError();
+      await newOpponent.requiredAttrsAreFilledOrError();
+      await newOpponent.attrsValuesAreValidOrError();
+      await newOpponent.attrsWithUniqueValueOrError();
+      await newOpponent.oneXorAttrIsFilledOrError();
+      await newOpponent.instanceIsNotInDbOrError();
 
       newOpponents.push(newOpponent.getAttributes());
     }
@@ -28,11 +28,11 @@ module.exports = (app) => {
     let newOpponent = new Opponent(currentOpponent);
     newOpponent.setAttributes(updatedOpponent);
 
-    await newOpponent.attributesValueAreValidOrError();
-    await newOpponent.requiredAttributesAreFilledOrError();
-    await newOpponent.uniqueConstraintInviolatedOrError(opponentId);
-    await newOpponent.onlyOneXorAttributeIsFilledOrError();
-    await newOpponent.instanceDoesntExistInDbOrError(opponentId);
+    await newOpponent.attrsValuesAreValidOrError();
+    await newOpponent.requiredAttrsAreFilledOrError();
+    await newOpponent.attrsWithUniqueValueOrError(opponentId);
+    await newOpponent.oneXorAttrIsFilledOrError();
+    await newOpponent.instanceIsNotInDbOrError(opponentId);
 
     newOpponent = newOpponent.getAttributes();
     newOpponent.updated_at = 'now';
@@ -44,7 +44,7 @@ module.exports = (app) => {
     let [currentOpponent] = await read({ id: opponentId });
     currentOpponent = new Opponent(currentOpponent);
 
-    await currentOpponent.dependentEntitiesDoesntHaveDataOrError(opponentId);
+    await currentOpponent.dataIsNotForeignKeyOrError(opponentId);
 
     return app.db('opponent').del().where({ id: opponentId });
   };

@@ -12,11 +12,11 @@ module.exports = (app) => {
     for (const substitution of substitutions) {
       const substitutionPlayer = new SubstitutionPlayer(substitution);
 
-      await substitutionPlayer.requiredAttributesAreFilledOrError();
-      await substitutionPlayer.attributesValueAreValidOrError();
-      await substitutionPlayer.uniqueConstraintInviolatedOrError();
-      await substitutionPlayer.onlyOneXorAttributeIsFilledOrError();
-      await substitutionPlayer.instanceDoesntExistInDbOrError();
+      await substitutionPlayer.requiredAttrsAreFilledOrError();
+      await substitutionPlayer.attrsValuesAreValidOrError();
+      await substitutionPlayer.attrsWithUniqueValueOrError();
+      await substitutionPlayer.oneXorAttrIsFilledOrError();
+      await substitutionPlayer.instanceIsNotInDbOrError();
 
       newSubstitutions.push(substitutionPlayer.getAttributes());
     }
@@ -24,8 +24,8 @@ module.exports = (app) => {
     newSubstitutions = new Substitution(newSubstitutions);
 
     await newSubstitutions.collectionSizeIntoBoundaryOrError();
-    await newSubstitutions.sharedAttributesConstraintOrError();
-    await newSubstitutions.uniqueAttributesConstraintOrError();
+    await newSubstitutions.attrsWithSameValueOrError();
+    await newSubstitutions.attrsWithDiffValueOrError();
     await newSubstitutions.instanceIsNotInDbOrError();
 
     newSubstitutions = newSubstitutions.getCollection();
@@ -38,11 +38,11 @@ module.exports = (app) => {
     let substitutionPlayer = new SubstitutionPlayer(currentSubstitutionPlayer);
     substitutionPlayer.setAttributes(updatedSubstitutionPlayer);
 
-    await substitutionPlayer.attributesValueAreValidOrError();
-    await substitutionPlayer.requiredAttributesAreFilledOrError();
-    await substitutionPlayer.uniqueConstraintInviolatedOrError(substitutionPlayerId);
-    await substitutionPlayer.onlyOneXorAttributeIsFilledOrError();
-    await substitutionPlayer.instanceDoesntExistInDbOrError(substitutionPlayerId);
+    await substitutionPlayer.attrsValuesAreValidOrError();
+    await substitutionPlayer.requiredAttrsAreFilledOrError();
+    await substitutionPlayer.attrsWithUniqueValueOrError(substitutionPlayerId);
+    await substitutionPlayer.oneXorAttrIsFilledOrError();
+    await substitutionPlayer.instanceIsNotInDbOrError(substitutionPlayerId);
 
     substitutionPlayer = substitutionPlayer.getAttributes();
     substitutionPlayer.updated_at = 'now';
@@ -59,7 +59,7 @@ module.exports = (app) => {
       const { id } = currentSubstitutionPlayer;
       currentSubstitutionPlayer = new SubstitutionPlayer(currentSubstitutionPlayer);
 
-      await currentSubstitutionPlayer.dependentEntitiesDoesntHaveDataOrError(id);
+      await currentSubstitutionPlayer.dataIsNotForeignKeyOrError(id);
     }
 
     return app.db('substitution').del().where({ match_id: matchId });

@@ -37,7 +37,7 @@ module.exports = class IndividualEntity {
     return obj;
   }
 
-  async requiredAttributesAreFilledOrError() {
+  async requiredAttrsAreFilledOrError() {
     const errorMsgTemplate = exits.REQUIRED_ATTRIBUTE_ERROR;
     const listOfAttributes = Object.entries(this.attributes);
 
@@ -52,7 +52,7 @@ module.exports = class IndividualEntity {
     });
   }
 
-  async attributesValueAreValidOrError() {
+  async attrsValuesAreValidOrError() {
     const errorMsgTemplate = exits.INVALID_ATTRIBUTE_ERROR;
     const listOfAttributes = Object.entries(this.attributes);
 
@@ -87,7 +87,7 @@ module.exports = class IndividualEntity {
     }
   }
 
-  async uniqueConstraintInviolatedOrError(instanceId) {
+  async attrsWithUniqueValueOrError(instanceId) {
     const errorMsgTemplate = exits.UNIQUE_CONSTRAINT_ERROR;
     const listOfAttributes = Object.entries(this.attributes);
 
@@ -105,7 +105,7 @@ module.exports = class IndividualEntity {
     }
   }
 
-  async instanceDoesntExistInDbOrError(instanceId) {
+  async instanceIsNotInDbOrError(instanceId) {
     const errorMsg = exits.DOUBLE_INSTANCE_ERROR;
     const listOfAttributes = Object.entries(this.attributes);
 
@@ -131,7 +131,7 @@ module.exports = class IndividualEntity {
     await validator.notExistsInDbOrError(this.entityName, [query.join(' and '), values], errorMsg);
   }
 
-  async dependentEntitiesDoesntHaveDataOrError(instanceId) {
+  async dataIsNotForeignKeyOrError(instanceId) {
     const errorMsgTemplate = exits.DATA_DEPENDENCY_ERROR;
 
     for (const dependent of this.dependentEntities) {
@@ -144,7 +144,7 @@ module.exports = class IndividualEntity {
     }
   }
 
-  async onlyOneXorAttributeIsFilledOrError() {
+  async oneXorAttrIsFilledOrError() {
     const listOfAttributes = Object.entries(this.attributes);
     const errorMsgTemplate = exits.XOR_ATTRIBUTES_ERROR;
 

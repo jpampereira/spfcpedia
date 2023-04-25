@@ -11,11 +11,11 @@ module.exports = (app) => {
     for (const position of positions) {
       const newPosition = new Position(position);
 
-      await newPosition.requiredAttributesAreFilledOrError();
-      await newPosition.attributesValueAreValidOrError();
-      await newPosition.uniqueConstraintInviolatedOrError();
-      await newPosition.onlyOneXorAttributeIsFilledOrError();
-      await newPosition.instanceDoesntExistInDbOrError();
+      await newPosition.requiredAttrsAreFilledOrError();
+      await newPosition.attrsValuesAreValidOrError();
+      await newPosition.attrsWithUniqueValueOrError();
+      await newPosition.oneXorAttrIsFilledOrError();
+      await newPosition.instanceIsNotInDbOrError();
 
       newPositions.push(newPosition.getAttributes());
     }
@@ -28,11 +28,11 @@ module.exports = (app) => {
     let newPosition = new Position(currentPosition);
     newPosition.setAttributes(updatedPosition);
 
-    await newPosition.attributesValueAreValidOrError();
-    await newPosition.requiredAttributesAreFilledOrError();
-    await newPosition.uniqueConstraintInviolatedOrError(positionId);
-    await newPosition.onlyOneXorAttributeIsFilledOrError();
-    await newPosition.instanceDoesntExistInDbOrError(positionId);
+    await newPosition.attrsValuesAreValidOrError();
+    await newPosition.requiredAttrsAreFilledOrError();
+    await newPosition.attrsWithUniqueValueOrError(positionId);
+    await newPosition.oneXorAttrIsFilledOrError();
+    await newPosition.instanceIsNotInDbOrError(positionId);
 
     newPosition = newPosition.getAttributes();
     newPosition.updated_at = 'now';
@@ -44,7 +44,7 @@ module.exports = (app) => {
     let [currentPosition] = await read({ id: positionId });
     currentPosition = new Position(currentPosition);
 
-    await currentPosition.dependentEntitiesDoesntHaveDataOrError(positionId);
+    await currentPosition.dataIsNotForeignKeyOrError(positionId);
 
     return app.db('position').del().where({ id: positionId });
   };

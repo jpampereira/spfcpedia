@@ -8,8 +8,8 @@ module.exports = class Lineup extends CompositeEntity {
   constraints = {
     minLength: 11,
     maxLength: 11,
-    sharedAttrs: ['match_id'],
-    uniqueAttrs: ['player_id', 'shirt_number'],
+    sameValue: ['match_id'],
+    diffValue: ['player_id', 'shirt_number'],
   };
 
   constructor(values) {

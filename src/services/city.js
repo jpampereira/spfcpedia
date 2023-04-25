@@ -11,11 +11,11 @@ module.exports = (app) => {
     for (const city of cities) {
       const newCity = new City(city);
 
-      await newCity.requiredAttributesAreFilledOrError();
-      await newCity.attributesValueAreValidOrError();
-      await newCity.uniqueConstraintInviolatedOrError();
-      await newCity.onlyOneXorAttributeIsFilledOrError();
-      await newCity.instanceDoesntExistInDbOrError();
+      await newCity.requiredAttrsAreFilledOrError();
+      await newCity.attrsValuesAreValidOrError();
+      await newCity.attrsWithUniqueValueOrError();
+      await newCity.oneXorAttrIsFilledOrError();
+      await newCity.instanceIsNotInDbOrError();
 
       newCities.push(newCity.getAttributes());
     }
@@ -28,11 +28,11 @@ module.exports = (app) => {
     let newCity = new City(currentCity);
     newCity.setAttributes(updatedCity);
 
-    await newCity.attributesValueAreValidOrError();
-    await newCity.requiredAttributesAreFilledOrError();
-    await newCity.uniqueConstraintInviolatedOrError(cityId);
-    await newCity.onlyOneXorAttributeIsFilledOrError();
-    await newCity.instanceDoesntExistInDbOrError(cityId);
+    await newCity.attrsValuesAreValidOrError();
+    await newCity.requiredAttrsAreFilledOrError();
+    await newCity.attrsWithUniqueValueOrError(cityId);
+    await newCity.oneXorAttrIsFilledOrError();
+    await newCity.instanceIsNotInDbOrError(cityId);
 
     newCity = newCity.getAttributes();
     newCity.updated_at = 'now';
@@ -44,7 +44,7 @@ module.exports = (app) => {
     let [currentCity] = await read({ id: cityId });
     currentCity = new City(currentCity);
 
-    await currentCity.dependentEntitiesDoesntHaveDataOrError(cityId);
+    await currentCity.dataIsNotForeignKeyOrError(cityId);
 
     return app.db('city').del().where({ id: cityId });
   };

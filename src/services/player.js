@@ -11,11 +11,11 @@ module.exports = (app) => {
     for (const player of players) {
       const newPlayer = new Player(player);
 
-      await newPlayer.requiredAttributesAreFilledOrError();
-      await newPlayer.attributesValueAreValidOrError();
-      await newPlayer.uniqueConstraintInviolatedOrError();
-      await newPlayer.onlyOneXorAttributeIsFilledOrError();
-      await newPlayer.instanceDoesntExistInDbOrError();
+      await newPlayer.requiredAttrsAreFilledOrError();
+      await newPlayer.attrsValuesAreValidOrError();
+      await newPlayer.attrsWithUniqueValueOrError();
+      await newPlayer.oneXorAttrIsFilledOrError();
+      await newPlayer.instanceIsNotInDbOrError();
 
       newPlayers.push(newPlayer.getAttributes());
     }
@@ -28,11 +28,11 @@ module.exports = (app) => {
     let newPlayer = new Player(currentPlayer);
     newPlayer.setAttributes(updatedPlayer);
 
-    await newPlayer.attributesValueAreValidOrError();
-    await newPlayer.requiredAttributesAreFilledOrError();
-    await newPlayer.uniqueConstraintInviolatedOrError(playerId);
-    await newPlayer.onlyOneXorAttributeIsFilledOrError();
-    await newPlayer.instanceDoesntExistInDbOrError(playerId);
+    await newPlayer.attrsValuesAreValidOrError();
+    await newPlayer.requiredAttrsAreFilledOrError();
+    await newPlayer.attrsWithUniqueValueOrError(playerId);
+    await newPlayer.oneXorAttrIsFilledOrError();
+    await newPlayer.instanceIsNotInDbOrError(playerId);
 
     newPlayer = newPlayer.getAttributes();
     newPlayer.updated_at = 'now';
@@ -44,7 +44,7 @@ module.exports = (app) => {
     let [currentPlayer] = await read({ id: playerId });
     currentPlayer = new Player(currentPlayer);
 
-    await currentPlayer.dependentEntitiesDoesntHaveDataOrError(playerId);
+    await currentPlayer.dataIsNotForeignKeyOrError(playerId);
 
     return app.db('player').del().where({ id: playerId });
   };

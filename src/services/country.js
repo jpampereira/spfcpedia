@@ -11,11 +11,11 @@ module.exports = (app) => {
     for (const country of countries) {
       const newCountry = new Country(country);
 
-      await newCountry.requiredAttributesAreFilledOrError();
-      await newCountry.attributesValueAreValidOrError();
-      await newCountry.uniqueConstraintInviolatedOrError();
-      await newCountry.onlyOneXorAttributeIsFilledOrError();
-      await newCountry.instanceDoesntExistInDbOrError();
+      await newCountry.requiredAttrsAreFilledOrError();
+      await newCountry.attrsValuesAreValidOrError();
+      await newCountry.attrsWithUniqueValueOrError();
+      await newCountry.oneXorAttrIsFilledOrError();
+      await newCountry.instanceIsNotInDbOrError();
 
       newCountries.push(newCountry.getAttributes());
     }
@@ -28,11 +28,11 @@ module.exports = (app) => {
     let newCountry = new Country(currentCountry);
     newCountry.setAttributes(updatedCountry);
 
-    await newCountry.attributesValueAreValidOrError();
-    await newCountry.requiredAttributesAreFilledOrError();
-    await newCountry.uniqueConstraintInviolatedOrError(countryId);
-    await newCountry.onlyOneXorAttributeIsFilledOrError();
-    await newCountry.instanceDoesntExistInDbOrError(countryId);
+    await newCountry.attrsValuesAreValidOrError();
+    await newCountry.requiredAttrsAreFilledOrError();
+    await newCountry.attrsWithUniqueValueOrError(countryId);
+    await newCountry.oneXorAttrIsFilledOrError();
+    await newCountry.instanceIsNotInDbOrError(countryId);
 
     newCountry = newCountry.getAttributes();
     newCountry.updated_at = 'now';
@@ -44,7 +44,7 @@ module.exports = (app) => {
     let [currentCountry] = await read({ id: countryId });
     currentCountry = new Country(currentCountry);
 
-    await currentCountry.dependentEntitiesDoesntHaveDataOrError(countryId);
+    await currentCountry.dataIsNotForeignKeyOrError(countryId);
 
     return app.db('country').del().where({ id: countryId });
   };

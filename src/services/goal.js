@@ -11,11 +11,11 @@ module.exports = (app) => {
     for (const goal of goals) {
       const newGoal = new Goal(goal);
 
-      await newGoal.requiredAttributesAreFilledOrError();
-      await newGoal.attributesValueAreValidOrError();
-      await newGoal.uniqueConstraintInviolatedOrError();
-      await newGoal.onlyOneXorAttributeIsFilledOrError();
-      await newGoal.instanceDoesntExistInDbOrError();
+      await newGoal.requiredAttrsAreFilledOrError();
+      await newGoal.attrsValuesAreValidOrError();
+      await newGoal.attrsWithUniqueValueOrError();
+      await newGoal.oneXorAttrIsFilledOrError();
+      await newGoal.instanceIsNotInDbOrError();
 
       newGoals.push(newGoal.getAttributes());
     }
@@ -28,11 +28,11 @@ module.exports = (app) => {
     let newGoal = new Goal(currentGoal);
     newGoal.setAttributes(updatedGoal);
 
-    await newGoal.attributesValueAreValidOrError();
-    await newGoal.requiredAttributesAreFilledOrError();
-    await newGoal.uniqueConstraintInviolatedOrError(goalId);
-    await newGoal.onlyOneXorAttributeIsFilledOrError();
-    await newGoal.instanceDoesntExistInDbOrError(goalId);
+    await newGoal.attrsValuesAreValidOrError();
+    await newGoal.requiredAttrsAreFilledOrError();
+    await newGoal.attrsWithUniqueValueOrError(goalId);
+    await newGoal.oneXorAttrIsFilledOrError();
+    await newGoal.instanceIsNotInDbOrError(goalId);
 
     newGoal = newGoal.getAttributes();
     newGoal.updated_at = 'now';
@@ -44,7 +44,7 @@ module.exports = (app) => {
     let [currentGoal] = await read({ id: goalId });
     currentGoal = new Goal(currentGoal);
 
-    await currentGoal.dependentEntitiesDoesntHaveDataOrError(goalId);
+    await currentGoal.dataIsNotForeignKeyOrError(goalId);
 
     return app.db('goal').del().where({ id: goalId });
   };

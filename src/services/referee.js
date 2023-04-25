@@ -11,11 +11,11 @@ module.exports = (app) => {
     for (const referee of referees) {
       const newReferee = new Referee(referee);
 
-      await newReferee.requiredAttributesAreFilledOrError();
-      await newReferee.attributesValueAreValidOrError();
-      await newReferee.uniqueConstraintInviolatedOrError();
-      await newReferee.onlyOneXorAttributeIsFilledOrError();
-      await newReferee.instanceDoesntExistInDbOrError();
+      await newReferee.requiredAttrsAreFilledOrError();
+      await newReferee.attrsValuesAreValidOrError();
+      await newReferee.attrsWithUniqueValueOrError();
+      await newReferee.oneXorAttrIsFilledOrError();
+      await newReferee.instanceIsNotInDbOrError();
 
       newReferees.push(newReferee.getAttributes());
     }
@@ -28,11 +28,11 @@ module.exports = (app) => {
     let newReferee = new Referee(currentReferee);
     newReferee.setAttributes(updatedReferee);
 
-    await newReferee.attributesValueAreValidOrError();
-    await newReferee.requiredAttributesAreFilledOrError();
-    await newReferee.uniqueConstraintInviolatedOrError(refereeId);
-    await newReferee.onlyOneXorAttributeIsFilledOrError();
-    await newReferee.instanceDoesntExistInDbOrError(refereeId);
+    await newReferee.attrsValuesAreValidOrError();
+    await newReferee.requiredAttrsAreFilledOrError();
+    await newReferee.attrsWithUniqueValueOrError(refereeId);
+    await newReferee.oneXorAttrIsFilledOrError();
+    await newReferee.instanceIsNotInDbOrError(refereeId);
 
     newReferee = newReferee.getAttributes();
     newReferee.updated_at = 'now';
@@ -44,7 +44,7 @@ module.exports = (app) => {
     let [currentReferee] = await read({ id: refereeId });
     currentReferee = new Referee(currentReferee);
 
-    await currentReferee.dependentEntitiesDoesntHaveDataOrError(refereeId);
+    await currentReferee.dataIsNotForeignKeyOrError(refereeId);
 
     return app.db('referee').del().where({ id: refereeId });
   };

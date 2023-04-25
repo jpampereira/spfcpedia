@@ -11,11 +11,11 @@ module.exports = (app) => {
     for (const stadium of stadiums) {
       const newStadium = new Stadium(stadium);
 
-      await newStadium.requiredAttributesAreFilledOrError();
-      await newStadium.attributesValueAreValidOrError();
-      await newStadium.uniqueConstraintInviolatedOrError();
-      await newStadium.onlyOneXorAttributeIsFilledOrError();
-      await newStadium.instanceDoesntExistInDbOrError();
+      await newStadium.requiredAttrsAreFilledOrError();
+      await newStadium.attrsValuesAreValidOrError();
+      await newStadium.attrsWithUniqueValueOrError();
+      await newStadium.oneXorAttrIsFilledOrError();
+      await newStadium.instanceIsNotInDbOrError();
 
       newStadiums.push(newStadium.getAttributes());
     }
@@ -28,11 +28,11 @@ module.exports = (app) => {
     let newStadium = new Stadium(currentStadium);
     newStadium.setAttributes(updatedStadium);
 
-    await newStadium.attributesValueAreValidOrError();
-    await newStadium.requiredAttributesAreFilledOrError();
-    await newStadium.uniqueConstraintInviolatedOrError(stadiumId);
-    await newStadium.onlyOneXorAttributeIsFilledOrError();
-    await newStadium.instanceDoesntExistInDbOrError(stadiumId);
+    await newStadium.attrsValuesAreValidOrError();
+    await newStadium.requiredAttrsAreFilledOrError();
+    await newStadium.attrsWithUniqueValueOrError(stadiumId);
+    await newStadium.oneXorAttrIsFilledOrError();
+    await newStadium.instanceIsNotInDbOrError(stadiumId);
 
     newStadium = newStadium.getAttributes();
     newStadium.updated_at = 'now';
@@ -44,7 +44,7 @@ module.exports = (app) => {
     let [currentStadium] = await read({ id: stadiumId });
     currentStadium = new Stadium(currentStadium);
 
-    await currentStadium.dependentEntitiesDoesntHaveDataOrError(stadiumId);
+    await currentStadium.dataIsNotForeignKeyOrError(stadiumId);
 
     return app.db('stadium').del().where({ id: stadiumId });
   };

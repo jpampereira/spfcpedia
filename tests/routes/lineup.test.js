@@ -9,7 +9,7 @@ beforeAll(() => {
   run('12_lineup');
 });
 
-test('Deve listar todas as escalações', () => {
+test('Deve retornar todas as escalações', () => {
   return request(app).get(MAIN_ROUTE)
     .then((res) => {
       expect(res.status).toBe(200);
@@ -91,9 +91,9 @@ describe('Não deve inserir uma escalação...', () => {
   test('com o valor de shirt_number inválido', () => testTemplate([...newData.slice(0, 10), { ...newData[10], shirt_number: -1 }], 'O valor de shirt_number é inválido'));
   test('com menos de 11 jogadores', () => testTemplate(newData.slice(0, 10), 'O número de itens em lineup é inválido'));
   test('com mais de 11 jogadores', () => testTemplate([...newData, { match_id: 17002, player_id: 19012, position_id: 18002, shirt_number: 14 }], 'O número de itens em lineup é inválido'));
-  test('com jogadores duplicados', () => testTemplate([...newData.slice(0, 10), { ...newData[10], player_id: 19002 }], 'Todos os player_id de um mesmo lineup devem possuir valores diferentes'));
-  test('com números de camisa duplicados', () => testTemplate([...newData.slice(0, 10), { ...newData[10], shirt_number: 5 }], 'Todos os shirt_number de um mesmo lineup devem possuir valores diferentes'));
-  test('para mais de uma partida', () => testTemplate([...newData.slice(0, 10), { ...newData[10], match_id: 17003 }], 'Todos os match_id de um mesmo lineup devem possuir o mesmo valor'));
+  test('com jogadores duplicados', () => testTemplate([...newData.slice(0, 10), { ...newData[10], player_id: 19002 }], 'Todos os player_id devem possuir valores diferentes'));
+  test('com números de camisa duplicados', () => testTemplate([...newData.slice(0, 10), { ...newData[10], shirt_number: 5 }], 'Todos os shirt_number devem possuir valores diferentes'));
+  test('para mais de uma partida', () => testTemplate([...newData.slice(0, 10), { ...newData[10], match_id: 17003 }], 'Todos os match_id devem possuir o mesmo valor'));
 
   test('se a partida já possuir uma cadastrada', () => testTemplate([
     { match_id: 17001, player_id: 19000, position_id: 18000, shirt_number: 23 },

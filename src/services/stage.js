@@ -11,11 +11,11 @@ module.exports = (app) => {
     for (const stage of stages) {
       const newStage = new Stage(stage);
 
-      await newStage.requiredAttributesAreFilledOrError();
-      await newStage.attributesValueAreValidOrError();
-      await newStage.uniqueConstraintInviolatedOrError();
-      await newStage.onlyOneXorAttributeIsFilledOrError();
-      await newStage.instanceDoesntExistInDbOrError();
+      await newStage.requiredAttrsAreFilledOrError();
+      await newStage.attrsValuesAreValidOrError();
+      await newStage.attrsWithUniqueValueOrError();
+      await newStage.oneXorAttrIsFilledOrError();
+      await newStage.instanceIsNotInDbOrError();
 
       newStages.push(newStage.getAttributes());
     }
@@ -28,11 +28,11 @@ module.exports = (app) => {
     let newStage = new Stage(currentStage);
     newStage.setAttributes(updatedStage);
 
-    await newStage.attributesValueAreValidOrError();
-    await newStage.requiredAttributesAreFilledOrError();
-    await newStage.uniqueConstraintInviolatedOrError(stageId);
-    await newStage.onlyOneXorAttributeIsFilledOrError();
-    await newStage.instanceDoesntExistInDbOrError(stageId);
+    await newStage.attrsValuesAreValidOrError();
+    await newStage.requiredAttrsAreFilledOrError();
+    await newStage.attrsWithUniqueValueOrError(stageId);
+    await newStage.oneXorAttrIsFilledOrError();
+    await newStage.instanceIsNotInDbOrError(stageId);
 
     newStage = newStage.getAttributes();
     newStage.updated_at = 'now';
@@ -44,7 +44,7 @@ module.exports = (app) => {
     let [currentStage] = await read({ id: stageId });
     currentStage = new Stage(currentStage);
 
-    await currentStage.dependentEntitiesDoesntHaveDataOrError(stageId);
+    await currentStage.dataIsNotForeignKeyOrError(stageId);
 
     return app.db('stage').del().where({ id: stageId });
   };

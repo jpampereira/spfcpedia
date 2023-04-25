@@ -88,10 +88,10 @@ describe('Não deve inserir as substituições...', () => {
   test('com o valor de period_id inválido', () => testTemplate([...newData.slice(0, 4), { ...newData[4], period_id: 21003 }], 'O valor de period_id é inválido'));
   test('com o valor de time inválido', () => testTemplate([...newData.slice(0, 4), { ...newData[4], time: -1 }], 'O valor de time é inválido'));
   test('com mais de 5 jogadores', () => testTemplate([...newData, { match_id: 17003, player_id: 19012, position_id: 18002, shirt_number: 37, lineup_id: 20033, period_id: 21001, time: 28 }], 'O número de itens em substitution é inválido'));
-  test('com jogadores duplicados', () => testTemplate([...newData.slice(0, 4), { ...newData[4], player_id: 19013 }], 'Todos os player_id de um mesmo substitution devem possuir valores diferentes'));
-  test('com substitutos duplicados', () => testTemplate([...newData.slice(0, 4), { ...newData[4], lineup_id: 20037 }], 'Todos os lineup_id de um mesmo substitution devem possuir valores diferentes'));
-  test('com números de camisa duplicados', () => testTemplate([...newData.slice(0, 4), { ...newData[4], shirt_number: 8 }], 'Todos os shirt_number de um mesmo substitution devem possuir valores diferentes'));
-  test('para mais de uma partida', () => testTemplate([...newData.slice(0, 4), { ...newData[4], match_id: 17002 }], 'Todos os match_id de um mesmo substitution devem possuir o mesmo valor'));
+  test('com jogadores duplicados', () => testTemplate([...newData.slice(0, 4), { ...newData[4], player_id: 19013 }], 'Todos os player_id devem possuir valores diferentes'));
+  test('com substitutos duplicados', () => testTemplate([...newData.slice(0, 4), { ...newData[4], lineup_id: 20037 }], 'Todos os lineup_id devem possuir valores diferentes'));
+  test('com números de camisa duplicados', () => testTemplate([...newData.slice(0, 4), { ...newData[4], shirt_number: 8 }], 'Todos os shirt_number devem possuir valores diferentes'));
+  test('para mais de uma partida', () => testTemplate([...newData.slice(0, 4), { ...newData[4], match_id: 17002 }], 'Todos os match_id devem possuir o mesmo valor'));
 
   test('de uma partida já cadastrada', () => testTemplate([
     { match_id: 17000, player_id: 19011, position_id: 18001, shirt_number: 2, lineup_id: 20001, period_id: 21001, time: 15 },

@@ -11,11 +11,11 @@ module.exports = (app) => {
     for (const period of periods) {
       const newPeriod = new Period(period);
 
-      await newPeriod.requiredAttributesAreFilledOrError();
-      await newPeriod.attributesValueAreValidOrError();
-      await newPeriod.uniqueConstraintInviolatedOrError();
-      await newPeriod.onlyOneXorAttributeIsFilledOrError();
-      await newPeriod.instanceDoesntExistInDbOrError();
+      await newPeriod.requiredAttrsAreFilledOrError();
+      await newPeriod.attrsValuesAreValidOrError();
+      await newPeriod.attrsWithUniqueValueOrError();
+      await newPeriod.oneXorAttrIsFilledOrError();
+      await newPeriod.instanceIsNotInDbOrError();
 
       newPeriods.push(newPeriod.getAttributes());
     }
@@ -28,11 +28,11 @@ module.exports = (app) => {
     let newPeriod = new Period(currentPeriod);
     newPeriod.setAttributes(updatedPeriod);
 
-    await newPeriod.attributesValueAreValidOrError();
-    await newPeriod.requiredAttributesAreFilledOrError();
-    await newPeriod.uniqueConstraintInviolatedOrError(periodId);
-    await newPeriod.onlyOneXorAttributeIsFilledOrError();
-    await newPeriod.instanceDoesntExistInDbOrError(periodId);
+    await newPeriod.attrsValuesAreValidOrError();
+    await newPeriod.requiredAttrsAreFilledOrError();
+    await newPeriod.attrsWithUniqueValueOrError(periodId);
+    await newPeriod.oneXorAttrIsFilledOrError();
+    await newPeriod.instanceIsNotInDbOrError(periodId);
 
     newPeriod = newPeriod.getAttributes();
     newPeriod.updated_at = 'now';
@@ -44,7 +44,7 @@ module.exports = (app) => {
     let [currentPeriod] = await read({ id: periodId });
     currentPeriod = new Period(currentPeriod);
 
-    await currentPeriod.dependentEntitiesDoesntHaveDataOrError(periodId);
+    await currentPeriod.dataIsNotForeignKeyOrError(periodId);
 
     return app.db('period').del().where({ id: periodId });
   };

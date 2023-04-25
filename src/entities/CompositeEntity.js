@@ -5,7 +5,7 @@ module.exports = class CompositeEntity {
   // Attributes:
   // entityName = null;
   // values = [];
-  // constraints = { minLength, maxLength, sharedAttrs, uniqueAttrs }
+  // constraints = { minLength, maxLength, sameValue, diffValue }
 
   constructor(values) {
     const errorMsg = exits.DATA_DOESNT_EXIST_ERROR;
@@ -28,38 +28,35 @@ module.exports = class CompositeEntity {
     );
   }
 
-  async sharedAttributesConstraintOrError() {
+  async attrsWithSameValueOrError() {
     const errorMsgTemplate = exits.SINGLED_LIST_ITEM_ERROR;
-    const sharedAttributesList = this.constraints.sharedAttrs;
+    const attributes = this.constraints.sameValue;
 
-    sharedAttributesList.forEach((attribute) => {
-      let errorMsg = errorMsgTemplate.replace(/<ATTR_NAME>/, attribute);
-      errorMsg = errorMsg.replace(/<ENTITY_NAME>/, this.entityName);
+    attributes.forEach((attribute) => {
+      const errorMsg = errorMsgTemplate.replace(/<ITEM_NAME>/, attribute);
 
       validator.singledValueListOrError(this.values, errorMsg, attribute);
     });
   }
 
-  async uniqueAttributesConstraintOrError() {
+  async attrsWithDiffValueOrError() {
     const errorMsgTemplate = exits.DOUBLED_LIST_ITEM_ERROR;
-    const uniqueAttributesList = this.constraints.uniqueAttrs;
+    const attributes = this.constraints.diffValue;
 
-    uniqueAttributesList.forEach((attribute) => {
-      let errorMsg = errorMsgTemplate.replace(/<ATTR_NAME>/, attribute);
-      errorMsg = errorMsg.replace(/<ENTITY_NAME>/, this.entityName);
+    attributes.forEach((attribute) => {
+      const errorMsg = errorMsgTemplate.replace(/<ITEM_NAME>/, attribute);
 
       validator.nonDuplicateValuesOrError(this.values, errorMsg, attribute);
     });
   }
 
   async instanceIsNotInDbOrError() {
-    const errorMsgTemplate = exits.UNIQUE_CONSTRAINT_ERROR;
-    const errorMsg = errorMsgTemplate.replace(/<ATTR_NAME>/, this.constraints.majorAttr);
-    const sharedAttributesList = this.constraints.sharedAttrs;
+    const errorMsg = exits.DOUBLE_INSTANCE_ERROR;
+    const attributes = this.constraints.sameValue;
 
     const query = {};
 
-    sharedAttributesList.forEach((attribute) => {
+    attributes.forEach((attribute) => {
       query[attribute] = this.values[0][attribute];
     });
 

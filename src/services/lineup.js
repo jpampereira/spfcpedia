@@ -12,11 +12,11 @@ module.exports = (app) => {
     for (const player of lineup) {
       const lineupPlayer = new LineupPlayer(player);
 
-      await lineupPlayer.requiredAttributesAreFilledOrError();
-      await lineupPlayer.attributesValueAreValidOrError();
-      await lineupPlayer.uniqueConstraintInviolatedOrError();
-      await lineupPlayer.onlyOneXorAttributeIsFilledOrError();
-      await lineupPlayer.instanceDoesntExistInDbOrError();
+      await lineupPlayer.requiredAttrsAreFilledOrError();
+      await lineupPlayer.attrsValuesAreValidOrError();
+      await lineupPlayer.attrsWithUniqueValueOrError();
+      await lineupPlayer.oneXorAttrIsFilledOrError();
+      await lineupPlayer.instanceIsNotInDbOrError();
 
       newLineup.push(lineupPlayer.getAttributes());
     }
@@ -24,8 +24,8 @@ module.exports = (app) => {
     newLineup = new Lineup(newLineup);
 
     await newLineup.collectionSizeIntoBoundaryOrError();
-    await newLineup.sharedAttributesConstraintOrError();
-    await newLineup.uniqueAttributesConstraintOrError();
+    await newLineup.attrsWithSameValueOrError();
+    await newLineup.attrsWithDiffValueOrError();
     await newLineup.instanceIsNotInDbOrError();
 
     newLineup = newLineup.getCollection();
@@ -38,11 +38,11 @@ module.exports = (app) => {
     let lineupPlayer = new LineupPlayer(currentLineupPlayer);
     lineupPlayer.setAttributes(updatedLineupPlayer);
 
-    await lineupPlayer.attributesValueAreValidOrError();
-    await lineupPlayer.requiredAttributesAreFilledOrError();
-    await lineupPlayer.uniqueConstraintInviolatedOrError(lineupPlayerId);
-    await lineupPlayer.onlyOneXorAttributeIsFilledOrError();
-    await lineupPlayer.instanceDoesntExistInDbOrError(lineupPlayerId);
+    await lineupPlayer.attrsValuesAreValidOrError();
+    await lineupPlayer.requiredAttrsAreFilledOrError();
+    await lineupPlayer.attrsWithUniqueValueOrError(lineupPlayerId);
+    await lineupPlayer.oneXorAttrIsFilledOrError();
+    await lineupPlayer.instanceIsNotInDbOrError(lineupPlayerId);
 
     lineupPlayer = lineupPlayer.getAttributes();
     lineupPlayer.updated_at = 'now';
@@ -59,7 +59,7 @@ module.exports = (app) => {
       const { id } = currentLineupPlayer;
       currentLineupPlayer = new LineupPlayer(currentLineupPlayer);
 
-      await currentLineupPlayer.dependentEntitiesDoesntHaveDataOrError(id);
+      await currentLineupPlayer.dataIsNotForeignKeyOrError(id);
     }
 
     return app.db('lineup').del().where({ match_id: matchId });

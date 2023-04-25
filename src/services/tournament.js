@@ -11,11 +11,11 @@ module.exports = (app) => {
     for (const tournament of tournaments) {
       const newTournament = new Tournament(tournament);
 
-      await newTournament.requiredAttributesAreFilledOrError();
-      await newTournament.attributesValueAreValidOrError();
-      await newTournament.uniqueConstraintInviolatedOrError();
-      await newTournament.onlyOneXorAttributeIsFilledOrError();
-      await newTournament.instanceDoesntExistInDbOrError();
+      await newTournament.requiredAttrsAreFilledOrError();
+      await newTournament.attrsValuesAreValidOrError();
+      await newTournament.attrsWithUniqueValueOrError();
+      await newTournament.oneXorAttrIsFilledOrError();
+      await newTournament.instanceIsNotInDbOrError();
 
       newTournaments.push(newTournament.getAttributes());
     }
@@ -28,11 +28,11 @@ module.exports = (app) => {
     let newTournament = new Tournament(currentTournament);
     newTournament.setAttributes(updatedTournament);
 
-    await newTournament.attributesValueAreValidOrError();
-    await newTournament.requiredAttributesAreFilledOrError();
-    await newTournament.uniqueConstraintInviolatedOrError(tournamentId);
-    await newTournament.onlyOneXorAttributeIsFilledOrError();
-    await newTournament.instanceDoesntExistInDbOrError(tournamentId);
+    await newTournament.attrsValuesAreValidOrError();
+    await newTournament.requiredAttrsAreFilledOrError();
+    await newTournament.attrsWithUniqueValueOrError(tournamentId);
+    await newTournament.oneXorAttrIsFilledOrError();
+    await newTournament.instanceIsNotInDbOrError(tournamentId);
 
     newTournament = newTournament.getAttributes();
     newTournament.updated_at = 'now';
@@ -44,7 +44,7 @@ module.exports = (app) => {
     let [currentTournament] = await read({ id: tournamentId });
     currentTournament = new Tournament(currentTournament);
 
-    await currentTournament.dependentEntitiesDoesntHaveDataOrError(tournamentId);
+    await currentTournament.dataIsNotForeignKeyOrError(tournamentId);
 
     return app.db('tournament').del().where({ id: tournamentId });
   };
