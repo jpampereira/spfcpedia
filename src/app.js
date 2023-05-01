@@ -9,6 +9,7 @@ app.db = db;
 consign({ cwd: 'src', verbose: false })
   .include('./configs/middlewares.js')
   .then('./services')
+  .then('./business')
   .then('./routes')
   .then('./configs/router.js')
   .into(app);
